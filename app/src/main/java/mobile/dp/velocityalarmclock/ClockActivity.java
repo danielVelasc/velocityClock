@@ -4,6 +4,7 @@ package mobile.dp.velocityalarmclock;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 
@@ -17,6 +18,8 @@ import android.widget.Button;
 public class ClockActivity extends Activity {
 
     private Button addAlarmButton;
+    //private ClockView;
+    //private NewAlarmView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,12 @@ public class ClockActivity extends Activity {
 
         addAlarmButton = (Button)findViewById(R.id.addAlarmButton);
 
+        addAlarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO Show the view here
+            }
+        });
 
     }
 

@@ -1,32 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <TimePicker
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timePicker4"
-        android:padding="10dp"
-        android:numbersSelectorColor="@android:color/holo_green_dark"
-        android:headerBackground="@android:color/holo_green_dark"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:orientation="vertical">
 
-    <Button
-        android:text="+"
+
+        <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/addAlarmButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/timePicker4"
-        android:layout_alignEnd="@+id/timePicker4"
-        android:layout_marginRight="22dp"
-        android:layout_marginEnd="22dp"
-        android:layout_marginTop="18dp"
-        style="@android:style/Widget.DeviceDefault.Light.Button"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+        android:layout_height="wrap_content">
 
-</RelativeLayout>
+
+            <Button
+            android:text="+"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addAlarmButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/timePicker4"
+            android:layout_alignEnd="@+id/timePicker4"
+            android:layout_marginRight="22dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginTop="18dp"
+            style="@android:style/Widget.DeviceDefault.Light.Button"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+
+            <TimePicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/timePicker4"
+                android:padding="10dp"
+                android:numbersSelectorColor="@android:color/holo_green_dark"
+                android:headerBackground="@android:color/holo_green_dark"
+                android:layout_below="@+id/addAlarmButton"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>
