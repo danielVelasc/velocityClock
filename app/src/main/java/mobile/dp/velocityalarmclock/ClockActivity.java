@@ -17,9 +17,8 @@ import android.widget.Button;
  */
 public class ClockActivity extends Activity {
 
-    private Button addAlarmButton;
-    //private ClockView;
-    //private NewAlarmView;
+    Button addAlarmButton;
+    //Fragment addAlarmActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +30,7 @@ public class ClockActivity extends Activity {
         addAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO Show the view here
+                //TODO Create the view fragment
             }
         });
 
