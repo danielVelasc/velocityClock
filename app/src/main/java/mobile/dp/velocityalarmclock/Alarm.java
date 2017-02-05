@@ -1,7 +1,6 @@
 package mobile.dp.velocityalarmclock;
 
-<<<<<<< HEAD
-import java.util.UUID
+import java.util.UUID;
 
 public class Alarm {
 
@@ -11,18 +10,32 @@ public class Alarm {
     private LocalTime time;
     private boolean repeat;
 
+    /**
+     * Dummy class created to compile application
+     */
+    private class DayOfWeek {
+
+    }
+
+    /**
+     * Dummy class created to compile application
+     */
+    private class LocalTime {
+
+    }
+
     //TODO: Add sound and snooze
 
     /**
      * Creates an alarm with default name
      *
      * @param dayOfWeek - the day of the week
-     * @param time - the time of the day
-     * @param repeat - if true repeat more than once
+     * @param time      - the time of the day
+     * @param repeat    - if true repeat more than once
      */
-    public Alarm (DayOfWeek dayOfWeek, LocalTime time, boolean repeat) {
+    public Alarm(DayOfWeek dayOfWeek, LocalTime time, boolean repeat) {
 
-        this (dayOfWeek, time, repeat, "Alarm");
+        this(dayOfWeek, time, repeat, "Alarm");
 
     }
 
@@ -30,10 +43,10 @@ public class Alarm {
      * Creates an alarm with given name
      *
      * @param dayOfWeek - the day of the week
-     * @param time - the time of the day
-     * @param repeat - if true repeat more than once
+     * @param time      - the time of the day
+     * @param repeat    - if true repeat more than once
      */
-    public Alarm (DayOfWeek dayOfWeek, LocalTime time, boolean repeat, name) {
+    public Alarm(DayOfWeek dayOfWeek, LocalTime time, boolean repeat, String name) {
 
         this.dayOfWeek = dayOfWeek;
         this.time = time;
@@ -45,33 +58,11 @@ public class Alarm {
 
     /**
      * Sets a new name for a particular alarm
+     *
      * @param name - the name to set
      */
     public void setName(String name) {
         //TODO: Check for invalid names
         this.name = name;
     }
-
 }
-=======
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * @author Daniel Velasco
- * @since February 3, 2017
- * @version 1.0
- *
- */
-public class Alarm implements Serializable {
-
-    Boolean isActive;
-    Date time;
-
-    public Alarm(Date toSet) {
-        time = toSet;
-        isActive = true;
-    }
-
-}
->>>>>>> origin/main_clock_view

@@ -3,13 +3,16 @@ package mobile.dp.velocityalarmclock;
 
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.app.Fragment;
-import android.widget.Button;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextClock;
@@ -20,7 +23,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-
 /**
  * This class handles the main view in the VelocityAlarmClock application
  *
@@ -28,12 +30,14 @@ import java.io.ObjectOutputStream;
  * @since February 1, 2017
  * @version 1
  */
-public class ClockActivity extends Activity {
+public class ClockActivity extends Activity implements TestFragment.OnTestFragmentInteractionListener {
 
-    Button addAlarmButton;
+    FloatingActionButton addAlarmButton;
     Fragment addAlarmFragment; // todo make sure that the custom class is referenced here instead'
     TextClock digitalClock;
     Alarm[] userAlarms;
+
+    final String fileName = "ALARM_SAVE_FILE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class ClockActivity extends Activity {
 
         digitalClock = (TextClock)findViewById(R.id.digitalClock);
 
-        addAlarmButton = (Button)findViewById(R.id.addAlarmButton);
+        addAlarmButton = (FloatingActionButton) findViewById(R.id.addAlarmButton);
 
         // Retrieve user alarms from file system
 
@@ -71,7 +75,6 @@ public class ClockActivity extends Activity {
         Log.d("CLOCK_ACTIVITY","getAlarms");
 
         try {
-
             FileInputStream fis = this.openFileInput(fileName);
             ObjectInputStream is = new ObjectInputStream(fis);
             Alarm simpleClass = (Alarm) is.readObject();
@@ -83,11 +86,40 @@ public class ClockActivity extends Activity {
         }
     }
 
+    /**
+     * Called when FAB is clicked. Must be public for XML file to locate.
+     * @param view The FloatingActionButton that was clicked
+     */
+    public void createNewAlarm(View view) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-    void createNewAlarm() {
-        //instantiate fragment
+        TestFragment fragment = new TestFragment();
+        fragmentTransaction.add(R.id.new_alarm_container, fragment);
+        fragmentTransaction.commit();
+
+        View fab = findViewById(R.id.addAlarmButton);
+        fab.setVisibility(View.GONE);
+
+        // Disable user input on activity
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
+    @Override
+    public void onCloseNewAlarmView(Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.remove(fragment);
+        fragmentTransaction.commit();
+
+        View fab = findViewById(R.id.addAlarmButton);
+        fab.setVisibility(View.VISIBLE);
+
+        // Re-enable user input on activity
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
     /**
      * Saving alarms upon application exit
      */
