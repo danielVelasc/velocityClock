@@ -1,15 +1,23 @@
 package mobile.dp.velocityalarmclock;
 
-<<<<<<< HEAD
-import java.util.UUID
+import java.io.Serializable;
+import java.util.UUID;
+import java.util.Date;
 
-public class Alarm {
+/**
+ * Implementation of an Alarm and its attributes
+ * @Author Colin Thompson
+ * @Version 1.0
+ * @Date February 5th 2017
+ */
+public class Alarm implements Serializable {
 
     private String name; //Name of the alarm (we may or may not want this)
     private String uuid; //The unique alarm id
-    private DayOfWeek dayOfWeek;
-    private LocalTime time;
+    private int dayOfWeek, hourOfDay, minOfHour, secOfMin;
+    private Date time;
     private boolean repeat;
+    private boolean isActive;
 
     //TODO: Add sound and snooze
 
@@ -20,7 +28,7 @@ public class Alarm {
      * @param time - the time of the day
      * @param repeat - if true repeat more than once
      */
-    public Alarm (DayOfWeek dayOfWeek, LocalTime time, boolean repeat) {
+    public Alarm (int dayOfWeek, Date time, boolean repeat) {
 
         this (dayOfWeek, time, repeat, "Alarm");
 
@@ -33,7 +41,7 @@ public class Alarm {
      * @param time - the time of the day
      * @param repeat - if true repeat more than once
      */
-    public Alarm (DayOfWeek dayOfWeek, LocalTime time, boolean repeat, name) {
+    public Alarm (int dayOfWeek, Date time, boolean repeat, String name) {
 
         this.dayOfWeek = dayOfWeek;
         this.time = time;
@@ -52,26 +60,66 @@ public class Alarm {
         this.name = name;
     }
 
-}
-=======
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * @author Daniel Velasco
- * @since February 3, 2017
- * @version 1.0
- *
- */
-public class Alarm implements Serializable {
-
-    Boolean isActive;
-    Date time;
-
-    public Alarm(Date toSet) {
-        time = toSet;
+    /**
+     * Marks an alarm as enabled
+     */
+    public void enableAlarm() {
         isActive = true;
     }
 
+    /**
+     * Obtains the current day of the week, 1 being sunday and 7 saturday
+     * @return An int corresponding to the day of the week
+     */
+    public int getDayOfWeek() {
+        return this.dayOfWeek;
+    }
+
+    /**
+     * Obtains alarm hour
+     * @return the alarm hour
+     */
+    public int getHourOfDay() {
+        return hourOfDay;
+    }
+
+    /**
+     * Obtains alarm minutes
+     * @return the alarm minutes
+     */
+    public int getMinOfHour() {
+        return minOfHour;
+    }
+
+    /**
+     * Obtains alarm seconds
+     * @return the alarm seconds
+     */
+    public int getSecOfMin() {
+        return minOfHour;
+    }
+
+    /**
+     * If alarm repeats
+     * @return true if the alarm is a repeating alarm
+     */
+    public boolean repeats() {
+        return repeat;
+    }
+
+    /**
+     * Get the name of the alarm
+     * @return the name of the alarm
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Get the Universal Unique Identifier
+     * @return the alarm's UUID
+     */
+    public String getUuid() {
+        return this.uuid;
+    }
 }
->>>>>>> origin/main_clock_view
