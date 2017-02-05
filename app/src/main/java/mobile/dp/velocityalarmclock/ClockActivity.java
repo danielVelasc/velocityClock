@@ -1,44 +1,35 @@
 package mobile.dp.velocityalarmclock;
 
-
-
-import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
-import android.app.Fragment;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextClock;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
+public class ClockActivity extends AppCompatActivity implements NewAlarmFragmentListener {
 
-/**
- * This class handles the main view in the VelocityAlarmClock application
- *
- * @author Daniel Velasco
- * @since February 1, 2017
- * @version 1
- */
-public class ClockActivity extends Activity {
+    NewAlarmFragment createNewAlarmFragment;
 
-    Button addAlarmButton;
-    Fragment addAlarmFragment; // todo make sure that the custom class is referenced here instead'
-    TextClock digitalClock;
-    Alarm[] userAlarms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.clock_activity);
+        setContentView(R.layout.activity_clock);
+
+        String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
+        TextView weekday_month_day = (TextView) findViewById(R.id.dateTextView);
+        weekday_month_day.setText(date);
 
         Log.d("CLOCK_ACTIVITY","onCreate");
 
@@ -47,65 +38,43 @@ public class ClockActivity extends Activity {
         display.getSize(size);
 
         // Get view to resize and layout parameters for that view
-        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.ClockLayout);
+        RelativeLayout clockLayout = (RelativeLayout) findViewById(R.id.clockRelativeLayout);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
-
-        // Initialize new parameters for my element
-        mainLayout.setLayoutParams(params);
-
-        Log.d("CLOCK_ACTIVITY", "Height: " + size.y);
-
-        digitalClock = (TextClock)findViewById(R.id.digitalClock);
-
-        addAlarmButton = (Button)findViewById(R.id.addAlarmButton);
-
-        // Retrieve user alarms from file system
+        clockLayout.setLayoutParams(params);
 
     }
 
-    /**
-     * This method populates the array of alarms that have been set by a user
-     */
-    private void getAlarms() {
+    void createAddNewAlarmFragment(View view) {
+        Toast.makeText(getApplicationContext(), "The button works", Toast.LENGTH_SHORT).show();
 
-        Log.d("CLOCK_ACTIVITY","getAlarms");
+// TODO Uncomment once the fragment has been added to the project
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//        createNewAlarmFragment = new NewAlarmFragment();
+//        fragmentTransaction.add(R.id.fragment_container, createNewAlarmFragment);
+//        fragmentTransaction.commit();
+    }
 
-        try {
+    public void cancelNewAlarmCreation() {
+        closeNewAlarmFragment();
+    }
 
-            FileInputStream fis = this.openFileInput(fileName);
-            ObjectInputStream is = new ObjectInputStream(fis);
-            Alarm simpleClass = (Alarm) is.readObject();
-            is.close();
-            fis.close();
-        } catch(ClassNotFoundException | IOException a) {
-            a.printStackTrace();
-            System.err.println("Error getting saved alarms");
-        }
+    public void submitNewAlarm(Bundle newAlarmInfo) {
+        // TODO create a new alarm
+
+        closeNewAlarmFragment();
     }
 
 
-    void createNewAlarm() {
-        //instantiate fragment
-    }
+    private void closeNewAlarmFragment() {
 
-    /**
-     * Saving alarms upon application exit
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        try{
-            getFilesDir();
-            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
-            ObjectOutputStream os = new ObjectOutputStream(fos);
-            os.writeObject(this);
-            os.close();
-            fos.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-            System.err.println("Error saving alarms");
-        }
+        fragmentTransaction.remove(createNewAlarmFragment);
+        fragmentTransaction.commit();
 
     }
+
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:fitsSystemWindows="true"
+    android:id="@+id/activity_clock"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linear_layout"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/clockRelativeLayout"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextClock
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textClock"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="80sp"
+                android:lineSpacingExtra="8sp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="#ffffff"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textClock"
+                android:layout_alignLeft="@+id/textClock"
+                android:layout_alignStart="@+id/textClock"
+                android:id="@+id/dateTextView"
+                android:textColor="#ffffff"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="16sp" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:fabSize="normal"
+                app:srcCompat="@android:drawable/ic_input_add"
+                android:layout_gravity="right"
+                android:id="@+id/addNewAlarmButton"
+                app:backgroundTint="@android:color/holo_green_dark"
+                android:tint="#ffffff"
+                app:elevation="14dp"
+                android:onClick="createAddNewAlarmFragment"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            app:srcCompat="@android:drawable/alert_dark_frame"
+            android:id="@+id/imageView" />
+
+    </LinearLayout>
+
+</ScrollView>
