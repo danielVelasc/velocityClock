@@ -44,6 +44,11 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
 
     }
 
+    /**
+     * This function is called by the 'Add' button to create a fragment from which
+     * the user can set new alarms
+     * @param view the button that calls this function
+     */
     void createAddNewAlarmFragment(View view) {
         Toast.makeText(getApplicationContext(), "The button works", Toast.LENGTH_SHORT).show();
 
@@ -67,6 +72,9 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
     }
 
 
+    /**
+     * Closes the NewAlarmFragment
+     */
     private void closeNewAlarmFragment() {
 
         FragmentManager fragmentManager = getFragmentManager();

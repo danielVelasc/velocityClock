@@ -53,7 +53,7 @@
                 android:id="@+id/addNewAlarmButton"
                 app:backgroundTint="@android:color/holo_green_dark"
                 android:tint="#ffffff"
-                app:elevation="14dp"
+                app:elevation="12dp"
                 android:onClick="createAddNewAlarmFragment"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
@@ -66,6 +66,11 @@
             android:layout_height="500dp"
             app:srcCompat="@android:drawable/alert_dark_frame"
             android:id="@+id/imageView" />
+
+        <ListView
+            android:id="@+id/alarmListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
