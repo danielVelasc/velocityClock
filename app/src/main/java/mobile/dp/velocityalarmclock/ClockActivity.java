@@ -1,7 +1,11 @@
 package mobile.dp.velocityalarmclock;
 
+import android.app.AlarmManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -40,26 +44,14 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         Log.d("CLOCK_ACTIVITY","onCreate");
 
-        String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
-        TextView weekday_month_day = (TextView) findViewById(R.id.dateTextView);
-        weekday_month_day.setText(date);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        // Get view to resize and layout parameters for that view
-        RelativeLayout clockLayout = (RelativeLayout) findViewById(R.id.clockRelativeLayout);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
-        clockLayout.setLayoutParams(params);
-
-        // TODO: Deserialize the alarms using function
+        //TODO: Deserialize the alarms using function
         //getAlarms();
 
         // Test alarms
         alarmList.add(new Alarm(1, new Date(1000000), true));
         alarmList.add(new Alarm(2, new Date(2000000), false));
         alarmList.add(new Alarm(3, new Date(3000000), true));
+        alarmList.add(new Alarm(3, new Date(4000000), true));
 
 
         AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
@@ -116,8 +108,31 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         closeNewAlarmFragment();
     }
 
-    public void submitNewAlarm(Alarm newAlarm) {
-        // TODO create a new alarm
+
+    /**
+     * Enable an alarm.
+     * @param alarm
+     */
+    public void submitNewAlarm(Alarm alarm) {
+
+        Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
+        cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
+        cal.set(Calendar.HOUR_OF_DAY, alarm.getHourOfDay()); //Reset other time attributes to relevant time, ie when to go off.
+        cal.set(Calendar.MINUTE, alarm.getMinOfHour());
+        cal.set(Calendar.SECOND, alarm.getSecOfMin());
+
+        Intent alertIntent = new Intent(this, AlarmReceiver.class);
+        alertIntent.putExtra("Alarm-Name", alarm.getName());
+        alertIntent.putExtra("Alarm-ID", alarm.getUuid()); //Will probably be helpful later
+
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (alarm.repeats()) //Schedule alarm to repeat if necessary
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000 * 3600 * 24, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        else
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
+        alarm.enableAlarm();
 
         closeNewAlarmFragment();
     }
