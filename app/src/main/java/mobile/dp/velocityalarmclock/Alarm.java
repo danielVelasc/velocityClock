@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Implementation of an Alarm and its attributes
  * @Author Colin Thompson
- * @Version 1.0
+ * @Version 2.0
  * @Date February 5th 2017
  */
 public class Alarm implements Serializable {
@@ -20,7 +20,7 @@ public class Alarm implements Serializable {
     private boolean isActive;
 
     //TODO: Add sound and snooze
-
+    //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
     /**
      * Creates an alarm with default name
      *
@@ -121,5 +121,29 @@ public class Alarm implements Serializable {
      */
     public String getUuid() {
         return this.uuid;
+    }
+
+    /**
+     * Get the time of the alarm
+     * @return the time of the alarm
+     */
+    public Date getTime() { return this.time; }
+
+    /**
+     *
+     * @return true if this alarm is active
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+
+    /**
+     * Changes the active state of this alarm
+     * @param state new state
+     */
+    public void setState(boolean state) {
+        this.isActive = state;
+        // TODO: change status with services too
+
     }
 }

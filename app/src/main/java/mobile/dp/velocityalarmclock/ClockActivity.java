@@ -9,17 +9,20 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class ClockActivity extends AppCompatActivity implements NewAlarmFragmentListener {
 
     NewAlarmFragment createNewAlarmFragment;
+    ArrayList<Alarm> alarmList;
 
 
     @Override
@@ -27,11 +30,11 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
 
+        Log.d("CLOCK_ACTIVITY","onCreate");
+
         String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
         TextView weekday_month_day = (TextView) findViewById(R.id.dateTextView);
         weekday_month_day.setText(date);
-
-        Log.d("CLOCK_ACTIVITY","onCreate");
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -41,6 +44,18 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         RelativeLayout clockLayout = (RelativeLayout) findViewById(R.id.clockRelativeLayout);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
         clockLayout.setLayoutParams(params);
+
+        // TODO: Deserialize the alarms
+        //getAlarms();
+        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
+        alarms.add(new Alarm(1, new Date(1000000), true));
+        alarms.add(new Alarm(2, new Date(2000000), false));
+        alarms.add(new Alarm(3, new Date(3000000), true));
+
+
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarms);
+        ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
+        alarmListView.setAdapter(alarmAdapter);
 
     }
 
@@ -85,4 +100,44 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
 
     }
 
+    /**
+     * This method populates the array of alarms that have been set by a user
+     */
+    private void getAlarms() {
+
+        Log.d("CLOCK_ACTIVITY","getAlarms");
+
+        try {
+            FileInputStream fis = this.openFileInput(fileName);
+            ObjectInputStream is = new ObjectInputStream(fis);
+            Alarm simpleClass = (Alarm) is.readObject();
+            is.close();
+            fis.close();
+        } catch(ClassNotFoundException | IOException a) {
+            a.printStackTrace();
+            System.err.println("Error getting saved alarms");
+        }
+    }
+
+
+    /**
+     * Saving alarms upon application exit
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        try{
+            getFilesDir();
+            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            os.writeObject(this);
+            os.close();
+            fos.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+            System.err.println("Error saving alarms");
+        }
+
+    }
 }

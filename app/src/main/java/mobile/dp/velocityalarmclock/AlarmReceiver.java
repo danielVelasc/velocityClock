@@ -38,7 +38,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      * @param msgAlert - Status bar text
      */
     public void createNotification(Context context, String msg, String msgText, String msgAlert) {
-        Intent intent = new Intent(context, MainActivity.class); //Intent for notification to launch
+        Intent intent = new Intent(context, ClockActivity.class); //Intent for notification to launch
         intent.putExtra("Alarm-ID", uuid);
         PendingIntent notIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
@@ -54,9 +54,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManager notManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notManager.notify((new IDGenerator()).getID(), notifyBuilder.build()); //Execute notification
-
     }
-
 }
 
 /**
