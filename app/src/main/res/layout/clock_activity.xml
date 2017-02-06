@@ -8,16 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/frame">
-        <Button
-            android:text="&lt;"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/backButton"
-            android:clickable="true"
-            style="@android:style/Widget.DeviceDefault.Light.Button"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-            android:layout_alignParentLeft="true"
-            android:elevation="6dp"/>
     </FrameLayout>
 
 

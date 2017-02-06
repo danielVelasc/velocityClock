@@ -16,6 +16,19 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
+            <Button
+                android:text="&lt;"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/backButton"
+                android:clickable="true"
+                style="@android:style/Widget.DeviceDefault.Light.Button"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:layout_alignParentLeft="true"
+                android:elevation="6dp"
+                android:onClick="cancelSetAlarm"/>
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +50,8 @@
                 android:id="@+id/setAlarmButton"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true"
+                android:onClick="submitNewAlarm"/>
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
