@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,10 +25,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class ClockActivity extends AppCompatActivity implements NewAlarmFragmentListener {
+public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
+{
 
-    NewAlarmFragment createNewAlarmFragment;
-    ArrayList<Alarm> alarmList;
+    //NewAlarmFragment createNewAlarmFragment;
+    ArrayList<Alarm> alarmList = new ArrayList<Alarm>();
+    SetAlarmFragment setAlarmFragment;
 
 
     @Override
@@ -51,42 +53,70 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
         clockLayout.setLayoutParams(params);
 
-        // TODO: Deserialize the alarms
+        // TODO: Deserialize the alarms using function
         //getAlarms();
-        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
-        alarms.add(new Alarm(1, new Date(1000000), true));
-        alarms.add(new Alarm(2, new Date(2000000), false));
-        alarms.add(new Alarm(3, new Date(3000000), true));
+
+        // Test alarms
+        alarmList.add(new Alarm(1, new Date(1000000), true));
+        alarmList.add(new Alarm(2, new Date(2000000), false));
+        alarmList.add(new Alarm(3, new Date(3000000), true));
 
 
-        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarms);
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
         ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
+        fixListView(alarmListView);
         alarmListView.setAdapter(alarmAdapter);
 
     }
+
+    private void fixListView(ListView alarmView)
+    {
+        alarmView.setOnTouchListener(new ListView.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
+
 
     /**
      * This function is called by the 'Add' button to create a fragment from which
      * the user can set new alarms
      * @param view the button that calls this function
      */
-    void createAddNewAlarmFragment(View view) {
+    void createSetAlarmFragment(View view) {
         Toast.makeText(getApplicationContext(), "The button works", Toast.LENGTH_SHORT).show();
 
-// TODO Uncomment once the fragment has been added to the project
-//        FragmentManager fragmentManager = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//        createNewAlarmFragment = new NewAlarmFragment();
-//        fragmentTransaction.add(R.id.fragment_container, createNewAlarmFragment);
-//        fragmentTransaction.commit();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        setAlarmFragment = new SetAlarmFragment();
+        fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
+        fragmentTransaction.commit();
     }
 
-    public void cancelNewAlarmCreation() {
+    public void cancelSetAlarm() {
         closeNewAlarmFragment();
     }
 
-    public void submitNewAlarm(Bundle newAlarmInfo) {
+    public void submitNewAlarm(Alarm newAlarm) {
         // TODO create a new alarm
 
         closeNewAlarmFragment();
@@ -101,7 +131,7 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.remove(createNewAlarmFragment);
+       // fragmentTransaction.remove(createNewAlarmFragment);
         fragmentTransaction.commit();
 
     }
@@ -138,6 +168,7 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
     protected void onDestroy() {
         super.onDestroy();
 
+        // TODO: move functionality to an alarm manager
         Log.d("CLOCK_ACTIVITY","getAlarms");
         try{
             String fileName = getFilesDir() + "/alarms";
