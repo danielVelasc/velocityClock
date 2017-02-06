@@ -13,6 +13,12 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -108,12 +114,17 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         Log.d("CLOCK_ACTIVITY","getAlarms");
 
         try {
+            String fileName = getFilesDir() + "/alarms";
             FileInputStream fis = this.openFileInput(fileName);
             ObjectInputStream is = new ObjectInputStream(fis);
-            Alarm simpleClass = (Alarm) is.readObject();
+            alarmList = (ArrayList<Alarm>) is.readObject();
             is.close();
             fis.close();
-        } catch(ClassNotFoundException | IOException a) {
+        } catch(ClassNotFoundException a) {
+            System.out.println("No alarms have been saved ");
+        }
+        catch(IOException a)
+        {
             a.printStackTrace();
             System.err.println("Error getting saved alarms");
         }
@@ -127,11 +138,12 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
     protected void onDestroy() {
         super.onDestroy();
 
+        Log.d("CLOCK_ACTIVITY","getAlarms");
         try{
-            getFilesDir();
+            String fileName = getFilesDir() + "/alarms";
             FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
             ObjectOutputStream os = new ObjectOutputStream(fos);
-            os.writeObject(this);
+            os.writeObject(alarmList);
             os.close();
             fos.close();
         } catch(IOException e) {
