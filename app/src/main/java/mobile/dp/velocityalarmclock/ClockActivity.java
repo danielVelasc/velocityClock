@@ -5,8 +5,12 @@ import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,9 +29,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class ClockActivity extends AppCompatActivity implements NewAlarmFragmentListener {
+public class ClockActivity extends AppCompatActivity /*implements NewAlarmFragmentListener*/ {
 
-    NewAlarmFragment createNewAlarmFragment;
+   // NewAlarmFragment createNewAlarmFragment;
     ArrayList<Alarm> alarmList;
 
 
@@ -35,6 +39,8 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
+        Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         Log.d("CLOCK_ACTIVITY","onCreate");
 
@@ -92,6 +98,36 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         closeNewAlarmFragment();
     }
 
+    /**
+     *  This method is necessary for assigning the appropriate action buttons
+     *  to the toolbar
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflator = getMenuInflater();
+        inflator.inflate(R.menu.actionbar_actions, menu);
+        return true;
+    }
+
+    /**
+     * This method handles the initiation of actions when a user selects
+     * one of the action buttons in the taskbar
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()) {
+            case R.id.action_add_alarm:
+
+            case R.id.setting_pane_opener:
+
+            default:
+                // handle any actions that for whatever reason do not register
+                // as one of the above actions
+                Toast.makeText(this, "Error in Taskbar", Toast.LENGTH_SHORT).show();
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     /**
      * Closes the NewAlarmFragment
@@ -101,7 +137,7 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.remove(createNewAlarmFragment);
+       // fragmentTransaction.remove(createNewAlarmFragment);
         fragmentTransaction.commit();
 
     }

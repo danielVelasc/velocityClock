@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- "Open Settings Pane", should appear as action button, Far Right -->
+    <item
+        android:id="@+id/setting_pane_opener"
+        android:icon="@drawable/ic_settings_pane"
+        android:title="@string/open_settings_pane"
+        app:showAsAction="always"
+        />
+
+    <!-- "Add Alarm", should appear as action button, Far Left -->
+    <item
+        android:id="@+id/action_add_alarm"
+        android:icon="@drawable/ic_action_name"
+        android:title="@string/add_alarm"
+        app:showAsAction="always"/>
+</menu>

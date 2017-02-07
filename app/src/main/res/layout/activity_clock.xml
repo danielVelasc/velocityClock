@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <!-- Houses main view -->
     <ScrollView
         android:layout_width="match_parent"
@@ -19,6 +28,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/linear_layout"
             android:orientation="vertical">
+
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -58,7 +69,7 @@
         </LinearLayout>
 
     </ScrollView>
-
+<!--
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,4 +82,6 @@
         app:elevation="12dp"
         android:onClick="createAddNewAlarmFragment"
         android:layout_gravity="top|end"/>
+        -->
+        
 </RelativeLayout>
