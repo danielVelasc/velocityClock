@@ -33,9 +33,9 @@ public class SetAlarmFragment extends Fragment {
     View v;
     int day, hour, minutes;
     Date time;
-    Button setAlarmButton;
+    Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
-    Spinner daySpin; // Change to list with checkboxes (multi-selection)
+    Spinner daySpin; // TODO - Change spinner to list with checkboxes (multi-selection)
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,14 +43,24 @@ public class SetAlarmFragment extends Fragment {
             v = inflater.inflate(R.layout.set_alarm_fragment, container, false);
 
             setAlarmButton = (Button) v.findViewById(R.id.setAlarmButton);
+            cancelButton = (Button) v.findViewById(R.id.cancelButton);
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
-            daySpin = (Spinner) v.findViewById(R.id.daySpin); // Change to list with checkboxes (multi-selection)
+            daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to list with checkboxes (multi-selection)
+
+            // Cancel setting the alarm and return back to the main alarm view
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.cancelSetAlarm();
+                    Toast.makeText(getActivity(), "alarm cancelled!", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             // Grab day, hour and minutes when setAlarmButton pressed
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    day = dayToInt(daySpin.getSelectedItem().toString());
+                    day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
 
                     if (Build.VERSION.SDK_INT >= 23 ){
                         hour = setAlarmTime.getHour();
@@ -58,13 +68,12 @@ public class SetAlarmFragment extends Fragment {
                     }
                     // Deprecated methods, but are necessary for SDK < 23
                     else{
-                        hour = setAlarmTime.getCurrentHour();
-                        minutes = setAlarmTime.getCurrentMinute();
+                        hour = setAlarmTime.getCurrentHour();   // getCurrentHour
+                        minutes = setAlarmTime.getCurrentMinute();  // getCurrentMinute
                     }
 
                     String timeString = String.valueOf(hour + minutes);
 
-                    Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                     try {
                         time = simpleDateFormat.parse(timeString);
@@ -74,6 +83,8 @@ public class SetAlarmFragment extends Fragment {
 
                     Alarm newAlarm = new Alarm(day, time, false);
                     mListener.submitNewAlarm(newAlarm);
+                    Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -92,6 +103,7 @@ public class SetAlarmFragment extends Fragment {
         }
     }
 
+    // Converts the String format of a day into an Integer
     public int dayToInt(String convertDay){
         HashMap<String, Integer> convertMap = new HashMap<String, Integer>();
             convertMap.put("Sunday",1);
@@ -103,6 +115,11 @@ public class SetAlarmFragment extends Fragment {
             convertMap.put("Saturday",7);
 
         return convertMap.get(convertDay).intValue();
+    }
+
+    // Call the cancelSetAlarm method in the main activity
+    public void cancelSet(){
+        mListener.cancelSetAlarm();
     }
 }
 
