@@ -17,7 +17,7 @@ public class Alarm implements Serializable {
     private int dayOfWeek, hourOfDay, minOfHour, secOfMin;
     private Date time;
     private boolean repeat;
-    private boolean isActive;
+    private boolean isActive = true;
 
     //TODO: Add sound and snooze
     //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
@@ -58,13 +58,6 @@ public class Alarm implements Serializable {
     public void setName(String name) {
         //TODO: Check for invalid names
         this.name = name;
-    }
-
-    /**
-     * Marks an alarm as enabled
-     */
-    public void enableAlarm() {
-        isActive = true;
     }
 
     /**
@@ -139,10 +132,10 @@ public class Alarm implements Serializable {
 
     /**
      * Changes the active state of this alarm
-     * @param state new state
+     * @param active true if it's active
      */
-    public void setState(boolean state) {
-        this.isActive = state;
+    public void setState(boolean active) {
+        this.isActive = active;
         // TODO: change status with services too
 
     }

@@ -51,7 +51,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         alarmList.add(new Alarm(1, new Date(1000000), true));
         alarmList.add(new Alarm(2, new Date(2000000), false));
         alarmList.add(new Alarm(3, new Date(3000000), true));
-        alarmList.add(new Alarm(3, new Date(4000000), true));
+        alarmList.add(new Alarm(4, new Date(4000000), true));
 
 
         AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
@@ -132,7 +132,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         else
             alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
-        alarm.enableAlarm();
+        alarm.setState(true);
 
         closeNewAlarmFragment();
     }
