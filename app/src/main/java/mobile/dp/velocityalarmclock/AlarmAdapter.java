@@ -79,7 +79,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
 
             // Put the clock in this row (with the same height as the device)
             if(position == 0) {
-                view = inflater.inflate(R.layout.clock_layout, null);
+                view = inflater.inflate(R.layout.clock_element, null);
                 String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
                 TextView weekday_month_day = (TextView) view.findViewById(R.id.dateTextView);
                 weekday_month_day.setText(date);
@@ -95,7 +95,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
             }
             else // Put single alarms in each row
             {
-                view = inflater.inflate(R.layout.single_alarm, null);
+                view = inflater.inflate(R.layout.single_alarm_element, null);
 
                 //Handle TextView and display string from your list
                 TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
@@ -115,16 +115,6 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
                     }
                 });
 
-
-                // Handle delete button
-                Button deleteButton = (Button)view.findViewById(R.id.deleteButton);
-                deleteButton.setOnClickListener(new Button.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // TODO: Delete alarm
-                        alarmList.remove(position);
-                    }
-                });
             }
         }
 
