@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -41,7 +42,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
-
         Log.d("CLOCK_ACTIVITY","onCreate");
 
         //TODO: Deserialize the alarms using function
@@ -120,10 +120,9 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-       // fragmentTransaction.remove(createNewAlarmFragment);
+        fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.set_alarm_container));
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.commit();
-
     }
 
     /**
