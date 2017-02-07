@@ -99,7 +99,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
 
                 //Handle TextView and display string from your list
                 TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
-                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
+                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position-1).getTime()));
 
                 // TODO: Implement a way to show the frequency of the alarm
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
@@ -107,11 +107,11 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
 
                 //Handle switch (setting on/off)
                 SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
-                activeStatusSwitch.setChecked(alarmList.get(position).isActive());
+                activeStatusSwitch.setChecked(alarmList.get(position-1).isActive());
 
                 activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        alarmList.get(position).setState(isChecked);
+                        alarmList.get(position-1).setState(isChecked);
                     }
                 });
 
