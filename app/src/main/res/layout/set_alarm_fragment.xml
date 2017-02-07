@@ -82,8 +82,5 @@
             android:layout_height="wrap_content"
             android:id="@+id/freqSpin"
             android:entries="@array/frequency"/>
-
-
     </LinearLayout>
-
 </LinearLayout>

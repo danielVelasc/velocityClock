@@ -1,66 +1,175 @@
 package mobile.dp.velocityalarmclock;
 
-
-
-import android.app.Activity;
-import android.app.Fragment;
+import android.app.AlarmManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
+{
 
-/**
- * This class handles the main view in the VelocityAlarmClock application
- *
- * @author Daniel Velasco
- * @since February 1, 2017
- * @version 1
- */
-public class ClockActivity extends Activity {
+    //NewAlarmFragment createNewAlarmFragment;
+    ArrayList<Alarm> alarmList = new ArrayList<Alarm>();
+    SetAlarmFragment setAlarmFragment;
 
-    private Button addAlarmButton;
-    private Button backButton;
-    //private ClockView;
-    //private NewAlarmView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.clock_activity);
-        final FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
-        addAlarmButton = (Button) findViewById(R.id.addAlarmButton);
-        backButton = (Button) findViewById(R.id.backButton);
-        frameLayout.setVisibility(View.GONE);
-        backButton.setVisibility(View.GONE);
+        setContentView(R.layout.activity_clock);
 
-        addAlarmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment setAlarm = new SetAlarmFragment();
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                //ft.addToBackStack("tag");
-                ft.replace(R.id.frame, setAlarm);
-                ft.commit();
-                frameLayout.setVisibility(View.VISIBLE);
-                backButton.setVisibility(View.VISIBLE);
-                backButton.bringToFront();
-            }
-        });
+        Log.d("CLOCK_ACTIVITY","onCreate");
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                frameLayout.setVisibility(View.GONE);
-                backButton.setVisibility(View.GONE);
-            }
-        });
+        //TODO: Deserialize the alarms using function
+        //getAlarms();
+
+        // Test alarms
+        alarmList.add(new Alarm(1, new Date(1000000), true));
+        alarmList.add(new Alarm(2, new Date(2000000), false));
+        alarmList.add(new Alarm(3, new Date(3000000), true));
+        alarmList.add(new Alarm(4, new Date(4000000), true));
+
+        //TODO: Fix issue where one less alarm will be displayed
+        // alarmList.add(null);
 
 
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
+        ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
+        alarmListView.setAdapter(alarmAdapter);
 
     }
 
+    /**
+     * This function is called by the 'Add' button to create a fragment from which
+     * the user can set new alarms
+     * @param view the button that calls this function
+     */
+    void createSetAlarmFragment(View view) {
+        Toast.makeText(getApplicationContext(), "The button works", Toast.LENGTH_SHORT).show();
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        setAlarmFragment = new SetAlarmFragment();
+        fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
+        fragmentTransaction.commit();
+    }
+
+    public void cancelSetAlarm() {
+        closeNewAlarmFragment();
+    }
+
+
+    /**
+     * Enable an alarm.
+     * @param alarm
+     */
+    public void submitNewAlarm(Alarm alarm) {
+
+        Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
+        cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
+        cal.set(Calendar.HOUR_OF_DAY, alarm.getHourOfDay()); //Reset other time attributes to relevant time, ie when to go off.
+        cal.set(Calendar.MINUTE, alarm.getMinOfHour());
+        cal.set(Calendar.SECOND, alarm.getSecOfMin());
+
+        Intent alertIntent = new Intent(this, AlarmReceiver.class);
+        alertIntent.putExtra("Alarm-Name", alarm.getName());
+        alertIntent.putExtra("Alarm-ID", alarm.getUuid()); //Will probably be helpful later
+
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (alarm.repeats()) //Schedule alarm to repeat if necessary
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000 * 3600 * 24, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        else
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
+        alarm.setState(true);
+
+        closeNewAlarmFragment();
+    }
+
+
+    /**
+     * Closes the NewAlarmFragment
+     */
+    private void closeNewAlarmFragment() {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+       // fragmentTransaction.remove(createNewAlarmFragment);
+        fragmentTransaction.commit();
+
+    }
+
+    /**
+     * This method populates the array of alarms that have been set by a user
+     */
+    private void getAlarms() {
+
+        Log.d("CLOCK_ACTIVITY","getAlarms");
+
+        try {
+            String fileName = getFilesDir() + "/alarms";
+            FileInputStream fis = this.openFileInput(fileName);
+            ObjectInputStream is = new ObjectInputStream(fis);
+            alarmList = (ArrayList<Alarm>) is.readObject();
+            is.close();
+            fis.close();
+        } catch(ClassNotFoundException a) {
+            System.out.println("No alarms have been saved ");
+        }
+        catch(IOException a)
+        {
+            a.printStackTrace();
+            System.err.println("Error getting saved alarms");
+        }
+    }
+
+
+    /**
+     * Saving alarms upon application exit
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d("CLOCK_ACTIVITY","onDestroy");
+//        try{
+//            String fileName = getFilesDir() + "/alarms";
+//            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
+//            ObjectOutputStream os = new ObjectOutputStream(fos);
+//            os.writeObject(alarmList);
+//            os.close();
+//            fos.close();
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//            System.err.println("Error saving alarms");
+//        }
+
+    }
 }
