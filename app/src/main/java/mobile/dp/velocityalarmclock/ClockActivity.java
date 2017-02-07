@@ -53,40 +53,15 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         alarmList.add(new Alarm(3, new Date(3000000), true));
         alarmList.add(new Alarm(4, new Date(4000000), true));
 
+        //TODO: Fix issue where one less alarm will be displayed
+        // alarmList.add(null);
+
 
         AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
         ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
-        fixListView(alarmListView);
         alarmListView.setAdapter(alarmAdapter);
 
     }
-
-    private void fixListView(ListView alarmView)
-    {
-        alarmView.setOnTouchListener(new ListView.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
-    }
-
 
     /**
      * This function is called by the 'Add' button to create a fragment from which
@@ -183,19 +158,18 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     protected void onDestroy() {
         super.onDestroy();
 
-        // TODO: move functionality to an alarm manager
-        Log.d("CLOCK_ACTIVITY","getAlarms");
-        try{
-            String fileName = getFilesDir() + "/alarms";
-            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
-            ObjectOutputStream os = new ObjectOutputStream(fos);
-            os.writeObject(alarmList);
-            os.close();
-            fos.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-            System.err.println("Error saving alarms");
-        }
+        Log.d("CLOCK_ACTIVITY","onDestroy");
+//        try{
+//            String fileName = getFilesDir() + "/alarms";
+//            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
+//            ObjectOutputStream os = new ObjectOutputStream(fos);
+//            os.writeObject(alarmList);
+//            os.close();
+//            fos.close();
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//            System.err.println("Error saving alarms");
+//        }
 
     }
 }
