@@ -1,13 +1,20 @@
 package mobile.dp.velocityalarmclock;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 import android.app.Activity;
 =======
 >>>>>>> fv_branch
+=======
+import android.app.AlarmManager;
+>>>>>>> set_alarm_view
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 <<<<<<< HEAD
@@ -21,6 +28,7 @@ import android.view.WindowManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 >>>>>>> fv_branch
 import android.widget.LinearLayout;
@@ -28,7 +36,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,6 +47,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 /**
  * This class handles the main view in the VelocityAlarmClock application
@@ -56,9 +64,14 @@ public class ClockActivity extends Activity implements TestFragment.OnTestFragme
     Alarm[] userAlarms;
 =======
 public class ClockActivity extends AppCompatActivity implements NewAlarmFragmentListener {
+=======
+public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
+{
+>>>>>>> set_alarm_view
 
-    NewAlarmFragment createNewAlarmFragment;
-    ArrayList<Alarm> alarmList;
+    //NewAlarmFragment createNewAlarmFragment;
+    ArrayList<Alarm> alarmList = new ArrayList<Alarm>();
+    SetAlarmFragment setAlarmFragment;
 
 >>>>>>> fv_branch
 
@@ -71,6 +84,7 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
 
         Log.d("CLOCK_ACTIVITY","onCreate");
 
+<<<<<<< HEAD
         //Register ActivityLifecycleCallbacks in for a lifecycle manager for recording data about
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
@@ -78,25 +92,22 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
         TextView weekday_month_day = (TextView) findViewById(R.id.dateTextView);
         weekday_month_day.setText(date);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        // Get view to resize and layout parameters for that view
-        RelativeLayout clockLayout = (RelativeLayout) findViewById(R.id.clockRelativeLayout);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
-        clockLayout.setLayoutParams(params);
-
-        // TODO: Deserialize the alarms
+=======
+        //TODO: Deserialize the alarms using function
         //getAlarms();
-        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
-        alarms.add(new Alarm(1, new Date(1000000), true));
-        alarms.add(new Alarm(2, new Date(2000000), false));
-        alarms.add(new Alarm(3, new Date(3000000), true));
+>>>>>>> set_alarm_view
+
+        // Test alarms
+        alarmList.add(new Alarm(1, new Date(1000000), true));
+        alarmList.add(new Alarm(2, new Date(2000000), false));
+        alarmList.add(new Alarm(3, new Date(3000000), true));
+        alarmList.add(new Alarm(4, new Date(4000000), true));
+
+        //TODO: Fix issue where one less alarm will be displayed
+        // alarmList.add(null);
 
 
-        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarms);
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
         ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
         alarmListView.setAdapter(alarmAdapter);
 
@@ -107,24 +118,46 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
      * the user can set new alarms
      * @param view the button that calls this function
      */
-    void createAddNewAlarmFragment(View view) {
+    void createSetAlarmFragment(View view) {
         Toast.makeText(getApplicationContext(), "The button works", Toast.LENGTH_SHORT).show();
 
-// TODO Uncomment once the fragment has been added to the project
-//        FragmentManager fragmentManager = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//        createNewAlarmFragment = new NewAlarmFragment();
-//        fragmentTransaction.add(R.id.fragment_container, createNewAlarmFragment);
-//        fragmentTransaction.commit();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        setAlarmFragment = new SetAlarmFragment();
+        fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
+        fragmentTransaction.commit();
     }
 
-    public void cancelNewAlarmCreation() {
+    public void cancelSetAlarm() {
         closeNewAlarmFragment();
     }
 
-    public void submitNewAlarm(Bundle newAlarmInfo) {
-        // TODO create a new alarm
+
+    /**
+     * Enable an alarm.
+     * @param alarm
+     */
+    public void submitNewAlarm(Alarm alarm) {
+
+        Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
+        cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
+        cal.set(Calendar.HOUR_OF_DAY, alarm.getHourOfDay()); //Reset other time attributes to relevant time, ie when to go off.
+        cal.set(Calendar.MINUTE, alarm.getMinOfHour());
+        cal.set(Calendar.SECOND, alarm.getSecOfMin());
+
+        Intent alertIntent = new Intent(this, AlarmReceiver.class);
+        alertIntent.putExtra("Alarm-Name", alarm.getName());
+        alertIntent.putExtra("Alarm-ID", alarm.getUuid()); //Will probably be helpful later
+
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (alarm.repeats()) //Schedule alarm to repeat if necessary
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000 * 3600 * 24, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        else
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
+        alarm.setState(true);
 
         closeNewAlarmFragment();
     }
@@ -142,7 +175,7 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 >>>>>>> fv_branch
 
-        fragmentTransaction.remove(createNewAlarmFragment);
+       // fragmentTransaction.remove(createNewAlarmFragment);
         fragmentTransaction.commit();
 
     }
@@ -218,18 +251,18 @@ public class ClockActivity extends AppCompatActivity implements NewAlarmFragment
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d("CLOCK_ACTIVITY","getAlarms");
-        try{
-            String fileName = getFilesDir() + "/alarms";
-            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
-            ObjectOutputStream os = new ObjectOutputStream(fos);
-            os.writeObject(alarmList);
-            os.close();
-            fos.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-            System.err.println("Error saving alarms");
-        }
+        Log.d("CLOCK_ACTIVITY","onDestroy");
+//        try{
+//            String fileName = getFilesDir() + "/alarms";
+//            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
+//            ObjectOutputStream os = new ObjectOutputStream(fos);
+//            os.writeObject(alarmList);
+//            os.close();
+//            fos.close();
+//        } catch(IOException e) {
+//            e.printStackTrace();
+//            System.err.println("Error saving alarms");
+//        }
 
     }
 }

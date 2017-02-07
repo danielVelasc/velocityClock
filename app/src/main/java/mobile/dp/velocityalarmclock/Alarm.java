@@ -21,7 +21,7 @@ public class Alarm implements Serializable {
     private int dayOfWeek, hourOfDay, minOfHour, secOfMin;
     private Date time;
     private boolean repeat;
-    private boolean isActive;
+    private boolean isActive = true;
 
     /**
      * Dummy class created to compile application
@@ -88,13 +88,6 @@ public class Alarm implements Serializable {
     }
 <<<<<<< HEAD
 =======
-
-    /**
-     * Marks an alarm as enabled
-     */
-    public void enableAlarm() {
-        isActive = true;
-    }
 
     /**
      * Obtains the current day of the week, 1 being sunday and 7 saturday
@@ -168,10 +161,10 @@ public class Alarm implements Serializable {
 
     /**
      * Changes the active state of this alarm
-     * @param state new state
+     * @param active true if it's active
      */
-    public void setState(boolean state) {
-        this.isActive = state;
+    public void setState(boolean active) {
+        this.isActive = active;
         // TODO: change status with services too
 
     }
