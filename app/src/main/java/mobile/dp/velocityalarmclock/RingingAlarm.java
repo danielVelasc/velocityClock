@@ -1,5 +1,6 @@
 package mobile.dp.velocityalarmclock;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -8,8 +9,14 @@ import android.os.Bundle;
  */
 public class RingingAlarm extends AppCompatActivity {
 
+    String nameOfAlarm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Intent callingIntent = getIntent();
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ringing_alarm);
 

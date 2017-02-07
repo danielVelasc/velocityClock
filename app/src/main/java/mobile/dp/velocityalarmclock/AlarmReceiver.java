@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AlarmReceiver extends BroadcastReceiver {
 
     String uuid;
+    String name;
 
     public AlarmReceiver() {
     }
@@ -40,6 +41,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void createNotification(Context context, String msg, String msgText, String msgAlert) {
         Intent intent = new Intent(context, ClockActivity.class); //Intent for notification to launch
         intent.putExtra("Alarm-ID", uuid);
+        intent.putExtra("Alarm-Name", name);
         PendingIntent notIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(context) //Create a notification
