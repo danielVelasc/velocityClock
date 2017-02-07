@@ -64,7 +64,7 @@
         <TimePicker
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/timePicker4"
+            android:id="@+id/setAlarmTime"
             android:padding="10dp"
             android:numbersSelectorColor="@android:color/holo_green_dark"
             android:headerBackground="@android:color/holo_green_dark"
