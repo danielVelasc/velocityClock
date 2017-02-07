@@ -1,6 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/set_alarm_fragment"
+    android:background="@color/colorPrimaryDark">
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
+            <Button
+                android:text="&lt;"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/cancelButton"
+                android:clickable="true"
+                style="@android:style/Widget.DeviceDefault.Light.Button"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:layout_alignParentLeft="true"
+                android:elevation="6dp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Alarm"
+                android:textSize="32dp"
+                android:typeface="sans"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-thin"
+                android:textColor="#0a0909"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:id="@+id/setAlarmText"
+                android:layout_centerInParent="true"/>
+
+            <Button
+                android:text="set"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/setAlarmButton"
+                style="@android:style/Widget.DeviceDefault.Light.Button"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:layout_alignParentRight="true"
+                android:onClick="submitNewAlarm"/>
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TimePicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/setAlarmTime"
+            android:padding="10dp"
+            android:numbersSelectorColor="@android:color/holo_green_dark"
+            android:headerBackground="@android:color/holo_green_dark"
+            android:layout_below="@+id/addAlarmButton"
+            android:layout_centerHorizontal="true" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/daySpin"
+            android:entries="@array/days"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/freqSpin"
+            android:entries="@array/frequency"/>
+    </LinearLayout>
 </LinearLayout>
