@@ -2,6 +2,7 @@ package mobile.dp.velocityalarmclock;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.Display;
@@ -67,7 +68,6 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
     @Override
     public long getItemId(int i) {
         return 0;
-        // TODO figure out if an alarm is going to have a type long ID
     }
 
     @Override
@@ -101,7 +101,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
                 TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
                 alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position-1).getTime()));
 
-                // TODO: Implement a way to show the frequency of the alarm
+                // TODO: Show frequency of alarm
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
 //              alarmFrequencyText.setText(alarmList.get(position).getFrequency());
 
@@ -112,6 +112,17 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
                 activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         alarmList.get(position-1).setState(isChecked);
+                    }
+                });
+
+                FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
+                deleteButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        alarmList.remove(position-1);
+                        //TODO: Cancel system service
+                        notifyDataSetChanged();
                     }
                 });
 
