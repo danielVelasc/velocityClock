@@ -1,0 +1,94 @@
+package mobile.dp.velocityalarmclock;
+
+import android.content.Context;
+import android.support.v7.widget.SwitchCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ListAdapter;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+
+/**
+ * @author Daniel Velasco
+ * @since February 05, 2017
+ * @version 1.0
+ *
+ * The goal of this class is to create the alarm layouts and handle
+ * events such as turning an alarm as active/inactive and deleting existing alarms
+ *
+ */
+public class AlarmAdapter extends BaseAdapter implements ListAdapter {
+
+    private ArrayList<Alarm> alarmList;
+    private Context context;
+
+
+    public AlarmAdapter(Context context, ArrayList<Alarm> alarmList) {
+        this.context = context;
+        this.alarmList = alarmList;
+    }
+
+    @Override
+    public int getCount() {
+        return alarmList.size();
+    }
+
+    @Override
+    public Object getItem(int i) {
+        return alarmList.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return 0;
+        // TODO figure out if an alarm is going to have a type long ID
+    }
+
+    @Override
+    public View getView(final int position, View convertView, ViewGroup viewGroup) {
+
+        View view = convertView;
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.single_alarm, null);
+        }
+
+        //Handle TextView and display string from your list
+        TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
+        alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
+
+        // TODO: Implement a way to show the frequency of the alarm
+//        TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
+//        alarmFrequencyText.setText(alarmList.get(position).getFrequency());
+
+        //Handle switch (setting on/off)
+        SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
+        activeStatusSwitch.setChecked(alarmList.get(position).isActive());
+
+        activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                alarmList.get(position).setState(isChecked);
+            }
+        });
+
+
+        // Handle delete button
+        Button deleteButton = (Button)view.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: Delete alarm
+            }
+        });
+
+        return view;
+    }
+}
