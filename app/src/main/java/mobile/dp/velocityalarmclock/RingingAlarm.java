@@ -1,10 +1,9 @@
 package mobile.dp.velocityalarmclock;
 
 import android.content.Intent;
-<<<<<<< HEAD
-=======
+
 import android.support.v4.app.DialogFragment;
->>>>>>> fv_branch
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -13,20 +12,7 @@ import android.os.Bundle;
  */
 public class RingingAlarm extends AppCompatActivity {
 
-<<<<<<< HEAD
-    String nameOfAlarm;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        Intent callingIntent = getIntent();
-
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ringing_alarm);
-
-        //TODO: Launch Dialog
-=======
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -35,8 +21,7 @@ public class RingingAlarm extends AppCompatActivity {
 
         //Launch dialog
         DialogFragment frag = new AlarmRingDialogFragment();
-        frag.show(getSupportFragmentManager(), "missiles");
->>>>>>> fv_branch
+        frag.show(getSupportFragmentManager(), "AlarmRingDialog");
     }
 
 

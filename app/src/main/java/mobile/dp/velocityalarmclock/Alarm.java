@@ -1,12 +1,8 @@
 package mobile.dp.velocityalarmclock;
 
-<<<<<<< HEAD
-import java.util.UUID;
-=======
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.Date;
->>>>>>> fv_branch
 
 /**
  * Implementation of an Alarm and its attributes
@@ -23,36 +19,18 @@ public class Alarm implements Serializable {
     private boolean repeat;
     private boolean isActive = true;
 
-    /**
-     * Dummy class created to compile application
-     */
-    private class DayOfWeek {
-
-    }
-
-    /**
-     * Dummy class created to compile application
-     */
-    private class LocalTime {
-
-    }
-
     //TODO: Add sound and snooze
     //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
     /**
      * Creates an alarm with default name
      *
      * @param dayOfWeek - the day of the week
-     * @param time      - the time of the day
-     * @param repeat    - if true repeat more than once
+     * @param time - the time of the day
+     * @param repeat - if true repeat more than once
      */
-<<<<<<< HEAD
-    public Alarm(DayOfWeek dayOfWeek, LocalTime time, boolean repeat) {
-=======
     public Alarm (int dayOfWeek, Date time, boolean repeat) {
->>>>>>> fv_branch
 
-        this(dayOfWeek, time, repeat, "Alarm");
+        this (dayOfWeek, time, repeat, "Alarm");
 
     }
 
@@ -60,14 +38,10 @@ public class Alarm implements Serializable {
      * Creates an alarm with given name
      *
      * @param dayOfWeek - the day of the week
-     * @param time      - the time of the day
-     * @param repeat    - if true repeat more than once
+     * @param time - the time of the day
+     * @param repeat - if true repeat more than once
      */
-<<<<<<< HEAD
-    public Alarm(DayOfWeek dayOfWeek, LocalTime time, boolean repeat, String name) {
-=======
     public Alarm (int dayOfWeek, Date time, boolean repeat, String name) {
->>>>>>> fv_branch
 
         this.dayOfWeek = dayOfWeek;
         this.time = time;
@@ -79,15 +53,12 @@ public class Alarm implements Serializable {
 
     /**
      * Sets a new name for a particular alarm
-     *
      * @param name - the name to set
      */
     public void setName(String name) {
         //TODO: Check for invalid names
         this.name = name;
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Obtains the current day of the week, 1 being sunday and 7 saturday
@@ -168,5 +139,4 @@ public class Alarm implements Serializable {
         // TODO: change status with services too
 
     }
->>>>>>> fv_branch
 }

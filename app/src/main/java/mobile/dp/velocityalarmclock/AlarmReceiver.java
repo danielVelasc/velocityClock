@@ -27,9 +27,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String alarmName = intent.getStringExtra("Alarm-Name");
         uuid = intent.getStringExtra("Alarm-ID");
-<<<<<<< HEAD
         createNotification(context, "Alarm", alarmName, "Alarm " + alarmName + "!");
-=======
+
 
         if (ApplicationLifecycleManager.isAppInForeground()) { //Check if app is open to skip the notification
             Intent dialogIntent = new Intent(context, RingingAlarm.class); //Open activity that creates dialog prompt
@@ -37,7 +36,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         } else {
             createNotification(context, "Alarm", alarmName, "Alarm " + alarmName + "!");
         }
->>>>>>> fv_branch
 
     }
 

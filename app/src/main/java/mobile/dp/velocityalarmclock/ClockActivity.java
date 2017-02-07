@@ -1,15 +1,6 @@
 package mobile.dp.velocityalarmclock;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-
-import android.app.Activity;
-=======
->>>>>>> fv_branch
-=======
 import android.app.AlarmManager;
->>>>>>> set_alarm_view
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
@@ -17,20 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
-import android.view.Display;
-import android.view.View;
-import android.app.Fragment;
-import android.view.WindowManager;
-=======
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
->>>>>>> fv_branch
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -47,35 +29,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-/**
- * This class handles the main view in the VelocityAlarmClock application
- *
- * @author Daniel Velasco
- * @since February 1, 2017
- * @version 1
- */
-public class ClockActivity extends Activity implements TestFragment.OnTestFragmentInteractionListener {
-
-    FloatingActionButton addAlarmButton;
-    Fragment addAlarmFragment; // todo make sure that the custom class is referenced here instead'
-    TextClock digitalClock;
-    Alarm[] userAlarms;
-=======
-public class ClockActivity extends AppCompatActivity implements NewAlarmFragmentListener {
-=======
 public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
 {
->>>>>>> set_alarm_view
 
     //NewAlarmFragment createNewAlarmFragment;
     ArrayList<Alarm> alarmList = new ArrayList<Alarm>();
     SetAlarmFragment setAlarmFragment;
 
->>>>>>> fv_branch
-
-    final String fileName = "ALARM_SAVE_FILE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,18 +44,12 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         Log.d("CLOCK_ACTIVITY","onCreate");
 
-<<<<<<< HEAD
         //Register ActivityLifecycleCallbacks in for a lifecycle manager for recording data about
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
 
-        String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
-        TextView weekday_month_day = (TextView) findViewById(R.id.dateTextView);
-        weekday_month_day.setText(date);
-=======
         //TODO: Deserialize the alarms using function
         //getAlarms();
->>>>>>> set_alarm_view
 
         // Test alarms
         alarmList.add(new Alarm(1, new Date(1000000), true));
@@ -168,14 +122,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      */
     private void closeNewAlarmFragment() {
 
-<<<<<<< HEAD
-        addAlarmButton = (FloatingActionButton) findViewById(R.id.addAlarmButton);
-=======
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
->>>>>>> fv_branch
 
-       // fragmentTransaction.remove(createNewAlarmFragment);
+        // fragmentTransaction.remove(createNewAlarmFragment);
         fragmentTransaction.commit();
 
     }
@@ -188,10 +138,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         Log.d("CLOCK_ACTIVITY","getAlarms");
 
         try {
-<<<<<<< HEAD
-=======
             String fileName = getFilesDir() + "/alarms";
->>>>>>> fv_branch
             FileInputStream fis = this.openFileInput(fileName);
             ObjectInputStream is = new ObjectInputStream(fis);
             alarmList = (ArrayList<Alarm>) is.readObject();
@@ -207,43 +154,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         }
     }
 
-    /**
-     * Called when FAB is clicked. Must be public for XML file to locate.
-     * @param view The FloatingActionButton that was clicked
-     */
-    public void createNewAlarm(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        TestFragment fragment = new TestFragment();
-        fragmentTransaction.add(R.id.new_alarm_container, fragment);
-        fragmentTransaction.commit();
-
-<<<<<<< HEAD
-        View fab = findViewById(R.id.addAlarmButton);
-        fab.setVisibility(View.GONE);
-
-        // Disable user input on activity
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
-
-    @Override
-    public void onCloseNewAlarmView(Fragment fragment) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction.remove(fragment);
-        fragmentTransaction.commit();
-
-        View fab = findViewById(R.id.addAlarmButton);
-        fab.setVisibility(View.VISIBLE);
-
-        // Re-enable user input on activity
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
-=======
->>>>>>> fv_branch
     /**
      * Saving alarms upon application exit
      */
