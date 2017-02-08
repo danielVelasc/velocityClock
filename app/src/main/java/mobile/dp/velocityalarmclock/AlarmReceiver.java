@@ -32,6 +32,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         if (ApplicationLifecycleManager.isAppInForeground()) { //Check if app is open to skip the notification
             Intent dialogIntent = new Intent(context, RingingAlarm.class); //Open activity that creates dialog prompt
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(dialogIntent);
         } else {
             createNotification(context, "Alarm", alarmName, "Alarm " + alarmName + "!");
@@ -48,6 +49,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      */
     public void createNotification(Context context, String msg, String msgText, String msgAlert) {
         Intent intent = new Intent(context, ClockActivity.class); //Intent for notification to launch
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("Alarm-ID", uuid);
         intent.putExtra("Alarm-Name", name);
         PendingIntent notIntent = PendingIntent.getActivity(context, 0, intent, 0);

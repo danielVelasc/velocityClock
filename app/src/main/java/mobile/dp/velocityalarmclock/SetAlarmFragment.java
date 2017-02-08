@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,16 +63,18 @@ public class SetAlarmFragment extends Fragment {
                         minutes = setAlarmTime.getCurrentMinute();
                     }
 
-                    String timeString = String.valueOf(hour + minutes);
+                    String timeString = String.valueOf(hour + ":" + minutes);
 
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                     try {
                         time = simpleDateFormat.parse(timeString);
                     } catch (ParseException e) {
+                        Log.d(getClass().getName(), e.getMessage());
                         e.printStackTrace();
                     }
 
+                    time.getHours();
                     Alarm newAlarm = new Alarm(day, time, false);
                     mListener.submitNewAlarm(newAlarm);
                 }

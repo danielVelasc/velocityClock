@@ -98,7 +98,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
         cal.set(Calendar.HOUR_OF_DAY, alarm.getHourOfDay()); //Reset other time attributes to relevant time, ie when to go off.
         cal.set(Calendar.MINUTE, alarm.getMinOfHour());
-        cal.set(Calendar.SECOND, alarm.getSecOfMin());
 
         Intent alertIntent = new Intent(this, AlarmReceiver.class);
         alertIntent.putExtra("Alarm-Name", alarm.getName());
@@ -106,10 +105,11 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+        //TODO: Implement functinality for days of the week. I have an idea how but its not great.
         if (alarm.repeats()) //Schedule alarm to repeat if necessary
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000 * 3600 * 24, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         else
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
         alarm.setState(true);
 
