@@ -32,10 +32,6 @@
             android:name=".NewAlarm"
             android:label="@string/title_activity_new_alarm"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".RingingAlarm"
-            android:theme="@style/Theme.Transparent">
-        </activity>
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         Log.d("CLOCK_ACTIVITY","onCreate");
 
+        //Register ActivityLifecycleCallbacks in for a lifecycle manager for recording data about
+        //the apps current location in the lifecycle.
+        getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
+
         //TODO: Deserialize the alarms using function
         //getAlarms();
 
@@ -51,6 +56,12 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
         ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
         alarmListView.setAdapter(alarmAdapter);
+
+        // If the calling intent wants to launch the alarm dialog box do so. ie the alarms going off
+        if (getIntent().getBooleanExtra("Launch-Dialog", false)) {
+            AlarmRingDialogFragment frag = new AlarmRingDialogFragment();
+            frag.show(getSupportFragmentManager(), "AlarmRingDialog");
+        }
 
     }
 
@@ -81,22 +92,17 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      */
     public void submitNewAlarm(Alarm alarm) {
 
-        Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
-        cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
-        cal.set(Calendar.HOUR_OF_DAY, alarm.getHourOfDay()); //Reset other time attributes to relevant time, ie when to go off.
-        cal.set(Calendar.MINUTE, alarm.getMinOfHour());
-        cal.set(Calendar.SECOND, alarm.getSecOfMin());
-
-        Intent alertIntent = new Intent(this, AlarmReceiver.class);
+        Intent alertIntent = new Intent(this, AlarmReceiver.class); //When timer ends, check with reciever
         alertIntent.putExtra("Alarm-Name", alarm.getName());
         alertIntent.putExtra("Alarm-ID", alarm.getUuid()); //Will probably be helpful later
 
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+        //TODO: Make Repeating alarms work for variable time between repeats
         if (alarm.repeats()) //Schedule alarm to repeat if necessary
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000 * 3600 * 24, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT)); //Repeats every 24 hours after
         else
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_ONE_SHOT));
 
         alarm.setState(true);
 
@@ -111,8 +117,8 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-       // fragmentTransaction.remove(createNewAlarmFragment);
+        fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.set_alarm_container));
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.commit();
 
     }
