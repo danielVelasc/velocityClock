@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,6 +37,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     //NewAlarmFragment createNewAlarmFragment;
     ArrayList<Alarm> alarmList = new ArrayList<Alarm>();
     SetAlarmFragment setAlarmFragment;
+    ListView alarmListView;
 
 
     @Override
@@ -58,7 +60,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
 
         AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
-        ListView alarmListView = (ListView)findViewById(R.id.alarmListView);
+        alarmListView = (ListView)findViewById(R.id.alarmListView);
         alarmListView.setAdapter(alarmAdapter);
 
     }
@@ -108,7 +110,8 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
             alarmMgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
         alarm.setState(true);
-
+        alarmList.add(alarm);
+        ((BaseAdapter)alarmListView.getAdapter()).notifyDataSetChanged();
         closeNewAlarmFragment();
     }
 
