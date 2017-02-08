@@ -40,6 +40,7 @@ public class ClockActivity extends AppCompatActivity /*implements NewAlarmFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
+        myToolbar.setLogo(R.mipmap.velocityclock_templogo);
         setSupportActionBar(myToolbar);
 
         Log.d("CLOCK_ACTIVITY","onCreate");
@@ -117,9 +118,9 @@ public class ClockActivity extends AppCompatActivity /*implements NewAlarmFragme
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()) {
             case R.id.action_add_alarm:
-
-            case R.id.setting_pane_opener:
-
+                View view = (View)findViewById(R.id.action_add_alarm);
+                createAddNewAlarmFragment(view);
+                return true;
             default:
                 // handle any actions that for whatever reason do not register
                 // as one of the above actions
