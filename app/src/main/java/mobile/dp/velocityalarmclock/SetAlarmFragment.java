@@ -13,9 +13,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * @author Sharon Wang
@@ -77,17 +81,12 @@ public class SetAlarmFragment extends Fragment {
                     cal.set(Calendar.MINUTE, minutes);
                     cal.set(Calendar.SECOND, 0);
 
-<<<<<<< HEAD
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                    try {
-                        time = simpleDateFormat.parse(timeString);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-=======
+
+
                     Toast.makeText(getActivity(), "Day: " + day + "\nTime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                     Alarm newAlarm = new Alarm(day, cal.getTime(), false);
->>>>>>> Alarm
+
 
                     mListener.submitNewAlarm(newAlarm);
                     Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
