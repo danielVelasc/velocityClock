@@ -1,5 +1,7 @@
 package mobile.dp.velocityalarmclock;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.Date;
@@ -14,7 +16,7 @@ public class Alarm implements Serializable {
 
     private String name; //Name of the alarm (we may or may not want this)
     private String uuid; //The unique alarm id
-    private int dayOfWeek, hourOfDay, minOfHour, secOfMin;
+    private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
     private boolean repeat;
     private boolean isActive = true;
@@ -43,11 +45,15 @@ public class Alarm implements Serializable {
      */
     public Alarm (int dayOfWeek, Date time, boolean repeat, String name) {
 
+        if (time == null) Log.d(this.getClass().getName(), "Time null");
         this.dayOfWeek = dayOfWeek;
+        this.hourOfDay = time.getHours(); //Deprecated but it works for now
+        this.minOfHour = time.getMinutes();
         this.time = time;
         this.repeat = repeat;
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
+        Log.d(getClass().getName(), "Day " + dayOfWeek + "Hour " + hourOfDay + "Minute " + minOfHour);
 
     }
 
@@ -81,14 +87,6 @@ public class Alarm implements Serializable {
      * @return the alarm minutes
      */
     public int getMinOfHour() {
-        return minOfHour;
-    }
-
-    /**
-     * Obtains alarm seconds
-     * @return the alarm seconds
-     */
-    public int getSecOfMin() {
         return minOfHour;
     }
 
@@ -138,5 +136,9 @@ public class Alarm implements Serializable {
         this.isActive = active;
         // TODO: change status with services too
 
+    }
+
+    public long getTimeToGoOff() {
+        return time.getTime();
     }
 }
