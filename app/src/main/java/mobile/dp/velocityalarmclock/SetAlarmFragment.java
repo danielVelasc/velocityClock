@@ -63,19 +63,16 @@ public class SetAlarmFragment extends Fragment {
                         minutes = setAlarmTime.getCurrentMinute();
                     }
 
-                    String timeString = String.valueOf(hour + ":" + minutes);
+                    //TODO: Add day of week
+                    Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
+                    cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
+                    cal.set(Calendar.HOUR_OF_DAY, hour); //Reset other time attributes to relevant time, ie when to go off.
+                    cal.set(Calendar.MINUTE, minutes);
+                    cal.set(Calendar.SECOND, 0);
 
-                    Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                    try {
-                        time = simpleDateFormat.parse(timeString);
-                    } catch (ParseException e) {
-                        Log.d(getClass().getName(), e.getMessage());
-                        e.printStackTrace();
-                    }
+                    Toast.makeText(getActivity(), "Day: " + day + "\nTime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
+                    Alarm newAlarm = new Alarm(day, cal.getTime(), false);
 
-                    time.getHours();
-                    Alarm newAlarm = new Alarm(day, time, false);
                     mListener.submitNewAlarm(newAlarm);
                 }
             });

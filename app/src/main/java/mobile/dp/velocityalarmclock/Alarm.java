@@ -53,6 +53,7 @@ public class Alarm implements Serializable {
         this.repeat = repeat;
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
+        Log.d(getClass().getName(), "Day " + dayOfWeek + "Hour " + hourOfDay + "Minute " + minOfHour);
 
     }
 

@@ -23,19 +23,29 @@ public class AlarmReceiver extends BroadcastReceiver {
     public AlarmReceiver() {
     }
 
+    /**
+     * Called if alarm time has been reached. Determines if the app is in use, if so brings to main
+     * activity and displays dialog. Otherwise, create a notification to do the same. This will pass
+     * along intent extras provided by the AlarmManager.
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
-        String alarmName = intent.getStringExtra("Alarm-Name");
+        name = intent.getStringExtra("Alarm-Name");
         uuid = intent.getStringExtra("Alarm-ID");
-        createNotification(context, "Alarm", alarmName, "Alarm " + alarmName + "!");
 
+        Intent dialogIntent = new Intent(context, ClockActivity.class); //Open activity that creates dialog prompt
+        dialogIntent.putExtra("Launch-Dialog", true);
+        dialogIntent.putExtra("Alarm-ID", uuid);
+        dialogIntent.putExtra("Alarm-Name", name);
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (ApplicationLifecycleManager.isAppInForeground()) { //Check if app is open to skip the notification
-            Intent dialogIntent = new Intent(context, RingingAlarm.class); //Open activity that creates dialog prompt
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
             context.startActivity(dialogIntent);
         } else {
-            createNotification(context, "Alarm", alarmName, "Alarm " + alarmName + "!");
+            createNotification(context, "Alarm", name, "Alarm " + name + "!", dialogIntent);
         }
 
     }
@@ -47,12 +57,9 @@ public class AlarmReceiver extends BroadcastReceiver {
      * @param msgText The Description Text
      * @param msgAlert - Status bar text
      */
-    public void createNotification(Context context, String msg, String msgText, String msgAlert) {
-        Intent intent = new Intent(context, ClockActivity.class); //Intent for notification to launch
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("Alarm-ID", uuid);
-        intent.putExtra("Alarm-Name", name);
-        PendingIntent notIntent = PendingIntent.getActivity(context, 0, intent, 0);
+    public void createNotification(Context context, String msg, String msgText, String msgAlert, Intent intent) {
+
+        PendingIntent notIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(context) //Create a notification
                 .setSmallIcon(R.drawable.bell_icon)
@@ -73,7 +80,7 @@ public class AlarmReceiver extends BroadcastReceiver {
  * A singleton class to keep track of notification id's
  */
 class IDGenerator {
-    //TODO: Should probably be saved somewhere in case app is killed.
+    //TODO: Should probably be saved somewhere in case app is killed. Could also make the same as alarm id
     private final static AtomicInteger c = new AtomicInteger(0);
 
     /**
