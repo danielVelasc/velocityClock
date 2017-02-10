@@ -6,28 +6,22 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true">
 
+    <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <!-- Houses main view -->
     <ListView
-    android:id="@+id/alarmListView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:scrollbarThumbVertical="@drawable/custom_scroll_style"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
+        android:id="@+id/alarmListView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="20sp"
-        android:layout_marginStart="20sp"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:id="@+id/addNewAlarmButton"
-        app:backgroundTint="@android:color/holo_green_dark"
-        android:tint="#ffffff"
-        app:elevation="12dp"
-        android:onClick="createSetAlarmFragment"
-         />
+        android:scrollbarThumbVertical="@drawable/custom_scroll_style"/>
 
     <FrameLayout
         android:layout_width="match_parent"

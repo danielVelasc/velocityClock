@@ -10,8 +10,12 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.BaseAdapter;
@@ -45,6 +49,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
+        Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
+        myToolbar.setLogo(R.mipmap.velocityclock_templogo);
+        setSupportActionBar(myToolbar);
+
         Log.d("CLOCK_ACTIVITY","onCreate");
 
         //Register ActivityLifecycleCallbacks in for a lifecycle manager for recording data about
@@ -119,6 +127,36 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         alarmList.add(alarm);
         ((BaseAdapter)alarmListView.getAdapter()).notifyDataSetChanged();
         closeNewAlarmFragment();
+    }
+
+    /**
+     *  This method is necessary for assigning the appropriate action buttons
+     *  to the toolbar
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflator = getMenuInflater();
+        inflator.inflate(R.menu.actionbar_actions, menu);
+        return true;
+    }
+
+    /**
+     * This method handles the initiation of actions when a user selects
+     * one of the action buttons in the taskbar
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()) {
+            case R.id.action_add_alarm:
+                View view = (View)findViewById(R.id.action_add_alarm);
+                createAddNewAlarmFragment(view);
+                return true;
+            default:
+                // handle any actions that for whatever reason do not register
+                // as one of the above actions
+                Toast.makeText(this, "Error in Taskbar", Toast.LENGTH_SHORT).show();
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
