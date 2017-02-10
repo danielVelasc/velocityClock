@@ -95,6 +95,9 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
+        myToolbar.setVisibility(View.GONE);
+
         setAlarmFragment = new SetAlarmFragment();
         fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
         fragmentTransaction.commit();
@@ -149,7 +152,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         switch(item.getItemId()) {
             case R.id.action_add_alarm:
                 View view = (View)findViewById(R.id.action_add_alarm);
-                createAddNewAlarmFragment(view);
+                createSetAlarmFragment(view);
                 return true;
             default:
                 // handle any actions that for whatever reason do not register
@@ -170,6 +173,8 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.set_alarm_container));
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.commit();
+        Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
+        myToolbar.setVisibility(View.VISIBLE);
     }
 
     /**

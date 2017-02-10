@@ -27,11 +27,6 @@
                 <action android:name="mobile.dp.velocityalarmclock.ALARM_INTENT" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name=".NewAlarm"
-            android:label="@string/title_activity_new_alarm"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
