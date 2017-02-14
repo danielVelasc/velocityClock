@@ -1,5 +1,10 @@
 package mobile.dp.velocityalarmclock;
 
+import android.content.Context;
+
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -19,21 +24,21 @@ import java.util.ArrayList;
  */
 
 public class AlarmCoordinator {
+    private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 
     private ArrayList<Alarm> alarmList;
     private ArrayList<AlarmCoordinatorListener> listeners;
 
-    private static AlarmCoordinator instance = null;
+    private static final AlarmCoordinator instance = new AlarmCoordinator();
 
     private AlarmCoordinator () {
         if(instance == null) {
             alarmList = new ArrayList<>();
             listeners = new ArrayList<>();
-            instance = new AlarmCoordinator();
         }
     }
 
-    protected AlarmCoordinator getInstance ()
+    public static AlarmCoordinator getInstance ()
     { return instance; }
 
     void createNewAlarm(Alarm newAlarm) {
@@ -60,4 +65,36 @@ public class AlarmCoordinator {
         listeners.add(listener);
     }
 
+    /**
+     * Saves alarmList to internal storage.
+     * @param context Calling context (activity)
+     */
+    public void saveAlarmList(Context context) {
+        ObjectOutputStream outputStream;
+
+        try {
+            outputStream =  new ObjectOutputStream(context.openFileOutput(ALARM_LIST_FILE_NAME, Context.MODE_PRIVATE));
+            outputStream.writeObject(alarmList);
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads file containing alarms in internal storage into alarmList.
+     * @param context Calling context (activity)
+     */
+    public void loadAlarmList(Context context) {
+        ObjectInputStream inputStream;
+
+        try {
+            inputStream =  new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
+            alarmList = (ArrayList<Alarm>) inputStream.readObject();
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
+
