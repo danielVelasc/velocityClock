@@ -38,9 +38,6 @@ import java.util.Locale;
 
 public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
 {
-
-    //NewAlarmFragment createNewAlarmFragment;
-    ArrayList<Alarm> alarmList = new ArrayList<Alarm>();
     SetAlarmFragment setAlarmFragment;
     ListView alarmListView;
 
@@ -48,6 +45,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AlarmCoordinator.getInstance().setContext(this);
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
         myToolbar.setLogo(R.mipmap.velocityclock_templogo);
@@ -59,20 +57,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
 
-        //TODO: Deserialize the alarms using function
-        //getAlarms();
-
-        // Test alarms
-        alarmList.add(new Alarm(1, new Date(1000000), true));
-        alarmList.add(new Alarm(2, new Date(2000000), false));
-        alarmList.add(new Alarm(3, new Date(3000000), true));
-        alarmList.add(new Alarm(4, new Date(4000000), true));
-
-        //TODO: Fix issue where one less alarm will be displayed
-        // alarmList.add(null);
-
-
-        AlarmAdapter alarmAdapter = new AlarmAdapter(this, alarmList);
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this);
         alarmListView = (ListView)findViewById(R.id.alarmListView);
         alarmListView.setAdapter(alarmAdapter);
 
@@ -101,35 +86,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         setAlarmFragment = new SetAlarmFragment();
         fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
         fragmentTransaction.commit();
-    }
-
-    public void cancelSetAlarm() {
-        closeNewAlarmFragment();
-    }
-
-
-    /**
-     * Enable an alarm.
-     * @param alarm
-     */
-    public void submitNewAlarm(Alarm alarm) {
-
-        Intent alertIntent = new Intent(this, AlarmReceiver.class); //When timer ends, check with reciever
-        alertIntent.putExtra("Alarm-Name", alarm.getName());
-        alertIntent.putExtra("Alarm-ID", alarm.getUuid()); //Will probably be helpful later
-
-        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        //TODO: Make Repeating alarms work for variable time between repeats
-        if (alarm.repeats()) //Schedule alarm to repeat if necessary
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT)); //Repeats every 24 hours after
-        else
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_ONE_SHOT));
-
-        alarm.setState(true);
-        alarmList.add(alarm);
-        ((BaseAdapter)alarmListView.getAdapter()).notifyDataSetChanged();
-        closeNewAlarmFragment();
     }
 
     /**
@@ -166,7 +122,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     /**
      * Closes the NewAlarmFragment
      */
-    private void closeNewAlarmFragment() {
+     public void closeSetAlarmFragment() {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -178,49 +134,13 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     }
 
     /**
-     * This method populates the array of alarms that have been set by a user
-     */
-    private void getAlarms() {
-
-        Log.d("CLOCK_ACTIVITY","getAlarms");
-
-        try {
-            String fileName = getFilesDir() + "/alarms";
-            FileInputStream fis = this.openFileInput(fileName);
-            ObjectInputStream is = new ObjectInputStream(fis);
-            alarmList = (ArrayList<Alarm>) is.readObject();
-            is.close();
-            fis.close();
-        } catch(ClassNotFoundException a) {
-            System.out.println("No alarms have been saved ");
-        }
-        catch(IOException a)
-        {
-            a.printStackTrace();
-            System.err.println("Error getting saved alarms");
-        }
-    }
-
-
-    /**
      * Saving alarms upon application exit
      */
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
+        // TODO Tell the AlarmCoordinator to save things
         Log.d("CLOCK_ACTIVITY","onDestroy");
-//        try{
-//            String fileName = getFilesDir() + "/alarms";
-//            FileOutputStream fos = this.openFileOutput(fileName, this.MODE_PRIVATE);
-//            ObjectOutputStream os = new ObjectOutputStream(fos);
-//            os.writeObject(alarmList);
-//            os.close();
-//            fos.close();
-//        } catch(IOException e) {
-//            e.printStackTrace();
-//            System.err.println("Error saving alarms");
-//        }
-
     }
 }
