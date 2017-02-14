@@ -31,16 +31,16 @@ import java.util.Locale;
  * events such as turning an alarm as active/inactive and deleting existing alarms
  *
  */
-public class AlarmAdapter extends BaseAdapter implements ListAdapter {
+public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoordinatorListener {
 
 
     private ArrayList<Alarm> alarmList;
     private Context context;
 
 
-    public AlarmAdapter(Context context, ArrayList<Alarm> alarmList) {
+    public AlarmAdapter(Context context) {
         this.context = context;
-        this.alarmList = alarmList;
+        this.alarmList = AlarmCoordinator.getInstance().getAlarmList();
     }
 
     @Override
@@ -130,6 +130,10 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter {
         }
 
         return view;
+    }
+
+    public void alarmChanged() {
+        notifyDataSetChanged();
     }
 
 }

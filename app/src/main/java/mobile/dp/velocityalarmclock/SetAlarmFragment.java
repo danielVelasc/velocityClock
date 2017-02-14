@@ -53,7 +53,7 @@ public class SetAlarmFragment extends Fragment {
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.cancelSetAlarm();
+                    mListener.closeSetAlarmFragment();
                     Toast.makeText(getActivity(), "alarm cancelled!", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -88,7 +88,8 @@ public class SetAlarmFragment extends Fragment {
                     Alarm newAlarm = new Alarm(day, cal.getTime(), false);
 
 
-                    mListener.submitNewAlarm(newAlarm);
+                    AlarmCoordinator.getInstance().createNewAlarm(newAlarm);
+                    mListener.closeSetAlarmFragment();
                     Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                 }
@@ -123,10 +124,5 @@ public class SetAlarmFragment extends Fragment {
             convertMap.put("Saturday",7);
 
         return convertMap.get(convertDay).intValue();
-    }
-
-    // Call the cancelSetAlarm method in the main activity
-    public void cancelSet(){
-        mListener.cancelSetAlarm();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author Daniel Velasco
@@ -36,6 +37,18 @@ class AlarmCoordinator {
             alarmList = new ArrayList<>();
             listeners = new ArrayList<>();
             instance = new AlarmCoordinator();
+
+            //TODO: Deserialize the alarms using function
+            //getAlarms();
+
+            // Test alarms
+            alarmList.add(new Alarm(1, new Date(1000000), true));
+            alarmList.add(new Alarm(2, new Date(2000000), false));
+            alarmList.add(new Alarm(3, new Date(3000000), true));
+            alarmList.add(new Alarm(4, new Date(4000000), true));
+
+            //TODO: Fix issue where one less alarm will be displayed
+            // alarmList.add(null);
         }
     }
 
@@ -86,4 +99,10 @@ class AlarmCoordinator {
     void setContext(Context context) {
         this.context = context;
     }
+
+    ArrayList<Alarm> getAlarmList() {
+        return alarmList;
+    }
+
+    //TODO Add method to serialize alarms
 }

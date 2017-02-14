@@ -7,15 +7,8 @@ package mobile.dp.velocityalarmclock;
 public interface SetAlarmFragmentListener {
 
     /**
-     * Call this method to notify that user has cancelled the creation
-     * of a new alarm
+     * Call this method to notify that fragment has been prompted to close
      */
-    public void cancelSetAlarm();
-
-    /**
-     * This method is used to notify listeners of a new alarm specified by the user
-     * @param newAlarm to be managed
-     */
-    public void submitNewAlarm(Alarm newAlarm);
+    public void closeSetAlarmFragment();
 
 }
