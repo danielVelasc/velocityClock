@@ -66,7 +66,7 @@ public class AlarmCoordinator {
     }
 
     /**
-     * Saves alarmList to internal storage.
+     * Saves alarmList to file in internal storage.
      * @param context Calling context (activity)
      */
     public void saveAlarmList(Context context) {
