@@ -17,9 +17,7 @@ public class AlarmCoordinatorTest {
     private AlarmCoordinator alarmCoordinator;
 
     @Before
-    public void setUp() {
-        alarmCoordinator = AlarmCoordinator.getInstance();
-    }
+    public void setUp() { };
 
     @After
     public void tearDown() {
@@ -30,6 +28,8 @@ public class AlarmCoordinatorTest {
     public void save_test() throws Exception {
         fail();
     }
+
+
 
     @Test
     public void load_test() throws Exception {

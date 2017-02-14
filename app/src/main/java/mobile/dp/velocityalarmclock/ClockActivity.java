@@ -45,7 +45,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AlarmCoordinator.getInstance().setContext(this);
+        AlarmCoordinator.getInstance();
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
         myToolbar.setLogo(R.mipmap.velocityclock_templogo);

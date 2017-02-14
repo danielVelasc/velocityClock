@@ -87,8 +87,7 @@ public class SetAlarmFragment extends Fragment {
                     Toast.makeText(getActivity(), "Day: " + day + "\nTime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                     Alarm newAlarm = new Alarm(day, cal.getTime(), false);
 
-
-                    AlarmCoordinator.getInstance().createNewAlarm(newAlarm);
+                    AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
                     mListener.closeSetAlarmFragment();
                     Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();

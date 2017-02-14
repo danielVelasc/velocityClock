@@ -29,11 +29,9 @@ import java.util.Date;
  * register method and implementing the corresponding interface.
  */
 
-public class AlarmCoordinator {
-    private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 class AlarmCoordinator {
+    private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 
-    private Context context;
     private ArrayList<Alarm> alarmList;
     private ArrayList<AlarmCoordinatorListener> listeners;
 
@@ -59,7 +57,7 @@ class AlarmCoordinator {
     protected static AlarmCoordinator getInstance ()
     { return instance; }
 
-    void createNewAlarm(Alarm alarm) {
+    void createNewAlarm(Context context, Alarm alarm) {
 
         Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName());
@@ -98,10 +96,6 @@ class AlarmCoordinator {
 
     void registerListener(AlarmCoordinatorListener listener) {
         listeners.add(listener);
-    }
-
-    void setContext(Context context) {
-        this.context = context;
     }
 
     ArrayList<Alarm> getAlarmList() {
