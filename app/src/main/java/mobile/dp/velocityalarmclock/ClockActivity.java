@@ -45,7 +45,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AlarmCoordinator.getInstance();
+        AlarmCoordinator.getInstance().loadAlarmList(this);
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
         myToolbar.setLogo(R.mipmap.velocityclock_templogo);
@@ -137,10 +137,16 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      * Saving alarms upon application exit
      */
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        AlarmCoordinator.getInstance().saveAlarmList(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        // TODO Tell the AlarmCoordinator to save things
         Log.d("CLOCK_ACTIVITY","onDestroy");
     }
 }

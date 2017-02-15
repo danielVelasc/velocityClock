@@ -77,10 +77,6 @@ class AlarmCoordinator {
 
     void deleteAlarm(Alarm alarm) {
 
-
-
-
-
         notifyAlarmChange();
     }
 
@@ -112,7 +108,13 @@ class AlarmCoordinator {
 
         try {
             outputStream =  new ObjectOutputStream(context.openFileOutput(ALARM_LIST_FILE_NAME, Context.MODE_PRIVATE));
-            outputStream.writeObject(alarmList);
+
+            if (alarmList == null) {
+                outputStream.writeObject(new ArrayList<Alarm>());
+            } else {
+                outputStream.writeObject(alarmList);
+            }
+
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +130,12 @@ class AlarmCoordinator {
 
         try {
             inputStream =  new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
-            alarmList = (ArrayList<Alarm>) inputStream.readObject();
+            ArrayList<Alarm> list = (ArrayList<Alarm>) inputStream.readObject();
+
+            if (list != null) {
+                alarmList = list;
+            }
+
             inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
