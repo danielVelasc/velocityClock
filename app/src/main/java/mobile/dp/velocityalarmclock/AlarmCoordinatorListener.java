@@ -10,6 +10,4 @@ package mobile.dp.velocityalarmclock;
 
 public interface AlarmCoordinatorListener {
     public void alarmChanged();
-
-    public void deleteAlarm(Alarm alarm);
 }

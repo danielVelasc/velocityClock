@@ -121,8 +121,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
                     // This method alerts the AlarmCoordinator that the alarm at position-1 is to be deleted
                     @Override
                     public void onClick(View view) {
-                        AlarmCoordinator.getInstance().deleteAlarm(alarmList.get(position-1));
-                        alarmList.remove(position-1);
+                        AlarmCoordinator.getInstance().deleteAlarm(alarmList.get(position-1), context);
                         notifyDataSetChanged();
                     }
                 });
@@ -136,8 +135,4 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
     public void alarmChanged() {
         notifyDataSetChanged();
     }
-
-    @Override
-    public void deleteAlarm(Alarm alarm){ /* Delete is non-functional in AlarmAdapter */ }
-
 }

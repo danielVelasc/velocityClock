@@ -81,8 +81,8 @@ class AlarmCoordinator {
      * same.
      * @param alarm the Alarm to be deleted
      */
-    void deleteAlarm(Alarm alarm) {
-        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    void deleteAlarm(Alarm alarm, Context passedContext) {
+        AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
 
         // 1. Remove the alarm from AlarmCoordinator's alarmList
         for(int position = 0; position < alarmList.size(); position++){
@@ -96,10 +96,6 @@ class AlarmCoordinator {
         alarmMgr.cancel(alarm.getIntent());
 
         // 3. Broadcast a cancel to all registered Listeners
-        for(AlarmCoordinatorListener acl : listeners){
-            acl.deleteAlarm(alarm);
-        }
-
         notifyAlarmChange();
     }
 
