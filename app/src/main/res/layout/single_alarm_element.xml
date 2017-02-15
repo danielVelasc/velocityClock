@@ -4,7 +4,7 @@
     android:id="@+id/singleAlarmView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/black"
+    android:background="@color/mint"
     android:fitsSystemWindows="true">
 
     <TextView
@@ -39,7 +39,9 @@
         app:srcCompat="@android:drawable/ic_delete"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        app:backgroundTint="@android:color/transparent" />
+        app:backgroundTint="@color/mint"
+        app:rippleColor="@color/mint"
+        app:elevation="0dp" />
 
     <android.support.v7.widget.SwitchCompat
         android:layout_width="wrap_content"

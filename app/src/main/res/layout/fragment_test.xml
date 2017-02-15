@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ABABAB"
+    android:background="#ffffff"
     tools:context="mobile.dp.velocityalarmclock.TestFragment">
 
     <TextView
@@ -12,7 +12,8 @@
         android:layout_marginTop="158dp"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/background_dark" />
 
     <Button
         android:text="Close"
