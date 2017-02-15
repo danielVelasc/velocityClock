@@ -57,9 +57,8 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
 
-        AlarmAdapter alarmAdapter = new AlarmAdapter(this);
         alarmListView = (ListView)findViewById(R.id.alarmListView);
-        alarmListView.setAdapter(alarmAdapter);
+        alarmListView.setAdapter(new AlarmAdapter(this));
 
         // If the calling intent wants to launch the alarm dialog box do so. ie the alarms going off
         if (getIntent().getBooleanExtra("Launch-Dialog", false)) {

@@ -77,6 +77,9 @@ class AlarmCoordinator {
 
     void deleteAlarm(Alarm alarm) {
 
+        // delete stuff from array list
+        // delete stuff from system
+
         notifyAlarmChange();
     }
 
