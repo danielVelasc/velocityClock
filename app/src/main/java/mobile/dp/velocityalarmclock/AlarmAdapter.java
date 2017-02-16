@@ -120,10 +120,10 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
                 FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
                 deleteButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
 
+                    // This method alerts the AlarmCoordinator that the alarm at position is to be deleted
                     @Override
                     public void onClick(View view) {
-                        alarmList.remove(position);
-                        //TODO: Cancel system service
+                        AlarmCoordinator.getInstance().deleteAlarm(alarmList.get(position), context);
                         notifyDataSetChanged();
                     }
                 });
