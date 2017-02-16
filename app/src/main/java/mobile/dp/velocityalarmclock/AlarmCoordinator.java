@@ -40,18 +40,6 @@ class AlarmCoordinator {
     private AlarmCoordinator () {
         alarmList = new ArrayList<>();
         listeners = new ArrayList<>();
-
-        //TODO: Deserialize the alarms using function
-        //getAlarms();
-
-        // Test alarms
-        alarmList.add(new Alarm(1, new Date(1000000), true));
-        alarmList.add(new Alarm(2, new Date(2000000), false));
-        alarmList.add(new Alarm(3, new Date(3000000), true));
-        alarmList.add(new Alarm(4, new Date(4000000), true));
-
-        //TODO: Fix issue where one less alarm will be displayed
-        // alarmList.add(null);
     }
 
     protected static AlarmCoordinator getInstance ()
@@ -130,10 +118,13 @@ class AlarmCoordinator {
 
         try {
             inputStream =  new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
-            ArrayList<Alarm> list = (ArrayList<Alarm>) inputStream.readObject();
+            Object list = inputStream.readObject();
 
             if (list != null) {
-                alarmList = list;
+                alarmList = (ArrayList<Alarm>) list;
+            } else {
+                // Add an empty alarm at the start that will never be referenced.
+                alarmList.add(new Alarm());
             }
 
             inputStream.close();

@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * @author Daniel Velasco
  * @since February 05, 2017
@@ -32,7 +35,6 @@ import java.util.Locale;
  *
  */
 public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoordinatorListener {
-
 
     private ArrayList<Alarm> alarmList;
     private Context context;
@@ -99,7 +101,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
                 //Handle TextView and display string from your list
                 TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
-                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position-1).getTime()));
+                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
 
                 // TODO: Show frequency of alarm
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
@@ -107,11 +109,11 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
                 //Handle switch (setting on/off)
                 SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
-                activeStatusSwitch.setChecked(alarmList.get(position-1).isActive());
+                activeStatusSwitch.setChecked(alarmList.get(position).isActive());
 
                 activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        alarmList.get(position-1).setState(isChecked);
+                        alarmList.get(position).setState(isChecked);
                     }
                 });
 
@@ -120,12 +122,11 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
                     @Override
                     public void onClick(View view) {
-                        alarmList.remove(position-1);
+                        alarmList.remove(position);
                         //TODO: Cancel system service
                         notifyDataSetChanged();
                     }
                 });
-
             }
         }
 
@@ -135,5 +136,4 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
     public void alarmChanged() {
         notifyDataSetChanged();
     }
-
 }

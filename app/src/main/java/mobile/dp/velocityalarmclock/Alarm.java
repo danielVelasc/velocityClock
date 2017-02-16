@@ -21,6 +21,8 @@ public class Alarm implements Serializable {
     private boolean repeat;
     private boolean isActive = true;
 
+    public Alarm() {}
+
     //TODO: Add sound and snooze
     //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
     /**
