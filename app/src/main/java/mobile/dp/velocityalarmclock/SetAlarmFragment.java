@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ public class SetAlarmFragment extends Fragment {
     Date time;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
+    // TODO - add field for alarm name
     Spinner daySpin; // TODO - Change spinner to list with checkboxes (multi-selection)
 
     @Override
@@ -98,6 +100,7 @@ public class SetAlarmFragment extends Fragment {
         return v;
     }
 
+    // Set mListener to SetAlarmFragmentLister
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -123,5 +126,21 @@ public class SetAlarmFragment extends Fragment {
             convertMap.put("Saturday",7);
 
         return convertMap.get(convertDay).intValue();
+    }
+
+    // Hides the toolbar of the main activity when this fragment is active
+    // Source: http://stackoverflow.com/questions/29128162/android-hide-toolbar-in-specific-fragment
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+    }
+
+    // Shows the toolbar of the main activity when this fragment is inactive
+    // Source: http://stackoverflow.com/questions/29128162/android-hide-toolbar-in-specific-fragment
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 }

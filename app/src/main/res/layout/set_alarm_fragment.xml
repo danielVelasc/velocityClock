@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/set_alarm_fragment"
-    android:background="@color/colorPrimaryDark">
+    android:background="#82cfb3">
     <android.support.v7.widget.Toolbar
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
@@ -24,8 +24,7 @@
                 android:clickable="true"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentLeft="true"
-                android:elevation="6dp" />
+                android:layout_alignParentLeft="true" />
 
 
             <TextView
@@ -47,6 +46,7 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/setAlarmButton"
+                android:clickable="true"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
                 android:layout_alignParentRight="true"
@@ -65,8 +65,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/setAlarmTime"
             android:padding="10dp"
-            android:numbersSelectorColor="@android:color/holo_green_dark"
-            android:headerBackground="@android:color/holo_green_dark"
+            android:numbersSelectorColor="#26ae93"
+            android:headerBackground="#197361"
             android:layout_below="@+id/addAlarmButton"
             android:layout_centerHorizontal="true" />
 
