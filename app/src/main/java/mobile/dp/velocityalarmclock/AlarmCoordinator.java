@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -33,12 +34,14 @@ import java.util.UUID;
 class AlarmCoordinator {
     private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 
+    private HashMap<Alarm, PendingIntent> scheduledIntents;
     private ArrayList<Alarm> alarmList;
     private ArrayList<AlarmCoordinatorListener> listeners;
 
     private static final AlarmCoordinator instance = new AlarmCoordinator();
 
     private AlarmCoordinator () {
+        scheduledIntents = new HashMap<>();
         alarmList = new ArrayList<>();
         listeners = new ArrayList<>();
     }
@@ -57,11 +60,11 @@ class AlarmCoordinator {
         if (alarm.repeats()) { //Schedule alarm to repeat if necessary
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
-            alarm.setIntent(scheduledIntent);
+            scheduledIntents.put(alarm, scheduledIntent);
         } else {
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_ONE_SHOT);
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_ONE_SHOT));
-            alarm.setIntent(scheduledIntent);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), scheduledIntent  );
+            scheduledIntents.put(alarm, scheduledIntent);
         }
         alarm.setState(true);
         alarmList.add(alarm);
@@ -78,7 +81,7 @@ class AlarmCoordinator {
         AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
 
         // 1. Remove the alarm from AlarmCoordinator's alarmList
-        for(int position = 0; position < alarmList.size(); position++){
+        for(int position = 1; position < alarmList.size(); position++){
             if(alarmList.get(position).getUuid() == alarm.getUuid()){
                 alarmList.remove(position);
                 break;
@@ -86,7 +89,8 @@ class AlarmCoordinator {
         }
 
         // 2. Tell the AlarmManager to cancel the alarm
-        alarmMgr.cancel(alarm.getIntent());
+        alarmMgr.cancel(scheduledIntents.get(alarm));
+        scheduledIntents.remove(alarm);
 
         // 3. Broadcast a cancel to all registered Listeners
         notifyAlarmChange();

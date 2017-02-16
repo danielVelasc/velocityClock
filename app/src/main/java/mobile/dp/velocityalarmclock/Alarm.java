@@ -22,7 +22,6 @@ public class Alarm implements Serializable {
     private Date time;
     private boolean repeat;
     private boolean isActive = true;
-    private PendingIntent scheduledIntent;
 
     public Alarm() {}
 
@@ -146,18 +145,4 @@ public class Alarm implements Serializable {
     public long getTimeToGoOff() {
         return time.getTime();
     }
-
-
-    /**
-     * Sets the scheduledIntent of the alarm that was registered with the AlarmManager
-     * @param intent
-     */
-    public void setIntent(PendingIntent intent){
-        scheduledIntent = intent;
-    }
-
-    /**
-     * @return the scheduledIntent of the Alarm that was registered with the AlarmManager
-     */
-    public PendingIntent getIntent(){ return scheduledIntent; }
 }

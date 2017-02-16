@@ -39,7 +39,6 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
     private ArrayList<Alarm> alarmList;
     private Context context;
 
-
     public AlarmAdapter(Context context) {
         this.context = context;
         this.alarmList = AlarmCoordinator.getInstance().getAlarmList();
@@ -72,8 +71,13 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
         return 0;
     }
 
+    public void deleteItem(int i) {
+        AlarmCoordinator.getInstance().deleteAlarm(alarmList.get(i), context);
+        notifyDataSetChanged();
+    }
+
     @Override
-    public View getView(final int position, View convertView, ViewGroup viewGroup) {
+    public View getView(final int position, View convertView, final ViewGroup viewGroup) {
 
         View view = convertView;
         if (view == null) {
@@ -123,8 +127,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
                     // This method alerts the AlarmCoordinator that the alarm at position is to be deleted
                     @Override
                     public void onClick(View view) {
-                        AlarmCoordinator.getInstance().deleteAlarm(alarmList.get(position), context);
-                        notifyDataSetChanged();
+                        deleteItem(position);
                     }
                 });
             }
@@ -135,5 +138,6 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
     public void alarmChanged() {
         notifyDataSetChanged();
+        // Log.d(TAG, "number of items: " + alarmList.size());
     }
 }
