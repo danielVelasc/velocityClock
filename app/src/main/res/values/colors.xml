@@ -4,7 +4,9 @@
     <color name="colorPrimary1">#CDF2D6</color>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#343838</color>
-    <color name="colorAccent">#17be12</color>
+    <color name="colorAccent">#eeeeee</color>
     <color name="white">#ffffff</color>
-    <color name="mint">#78dec4</color>
+    <color name="mint06">#6eec7a</color>
+    <color name="mint0">#6eecb8</color>
+    <color name="mint">#93E1D8</color>
 </resources>

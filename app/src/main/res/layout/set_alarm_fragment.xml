@@ -26,7 +26,9 @@
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
                 android:layout_alignParentLeft="true"
-                android:elevation="6dp" />
+                android:elevation="6dp"
+                android:background="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark" />
 
 
             <TextView
@@ -48,10 +50,14 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/setAlarmButton"
-                style="@android:style/Widget.DeviceDefault.Light.Button"
+                style="@android:style/Widget.Material.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentRight="true"
-                android:onClick="submitNewAlarm"/>
+                android:onClick="submitNewAlarm"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:background="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>

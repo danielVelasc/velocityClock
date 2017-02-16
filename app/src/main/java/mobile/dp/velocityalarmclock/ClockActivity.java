@@ -48,7 +48,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         AlarmCoordinator.getInstance().loadAlarmList(this);
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
-        myToolbar.setLogo(R.mipmap.velocityclock_templogo);
+        myToolbar.setLogo(R.mipmap.lightning_fixed);
         setSupportActionBar(myToolbar);
 
         Log.d("CLOCK_ACTIVITY","onCreate");
