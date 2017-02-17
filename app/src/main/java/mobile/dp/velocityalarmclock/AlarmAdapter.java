@@ -36,17 +36,15 @@ import static android.content.ContentValues.TAG;
  */
 public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoordinatorListener {
 
-    private ArrayList<Alarm> alarmList;
-    private Context context;
+    Context context;
 
     public AlarmAdapter(Context context) {
-        this.context = context;
-        this.alarmList = AlarmCoordinator.getInstance().getAlarmList();
+        AlarmCoordinator.getInstance().registerListener(this);
     }
 
     @Override
     public int getCount() {
-        return alarmList.size();
+        return AlarmCoordinator.getInstance().getAlarmList().size();
     }
 
     @Override
@@ -63,7 +61,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
     @Override
     public Object getItem(int i) {
-        return alarmList.get(i);
+        return AlarmCoordinator.getInstance().getAlarmList().get(i);
     }
 
     @Override
@@ -77,7 +75,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
     }
 
     @Override
-    public View getView(final int position, View convertView, final ViewGroup viewGroup) {
+    public View getView(final int position, View convertView, ViewGroup viewGroup) {
 
         View view = convertView;
         if (view == null) {
@@ -105,7 +103,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
                 //Handle TextView and display string from your list
                 TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
-                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
+                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(AlarmCoordinator.getInstance().getAlarmList().get(position).getTime()));
 
                 // TODO: Show frequency of alarm
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
@@ -113,11 +111,11 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
                 //Handle switch (setting on/off)
                 SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
-                activeStatusSwitch.setChecked(alarmList.get(position).isActive());
+                activeStatusSwitch.setChecked(AlarmCoordinator.getInstance().getAlarmList().get(position).isActive());
 
                 activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        alarmList.get(position).setState(isChecked);
+                        AlarmCoordinator.getInstance().getAlarmList().get(position).setState(isChecked);
                     }
                 });
 
