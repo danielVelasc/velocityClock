@@ -71,6 +71,10 @@ class AlarmCoordinator {
         notifyAlarmChange();
     }
 
+    void deleteAlarm(int i, Context passedContext) {
+        deleteAlarm(alarmList.get(i), passedContext);
+    }
+
     /**
      * First removes the alarm from the alarmList via its ID, then tells the AlarmManager to cancel it via
      * the alarm's scheduledIntent memeber variable. Finally, broadcasts a message to all listeners to do the
@@ -93,11 +97,6 @@ class AlarmCoordinator {
         scheduledIntents.remove(alarm);
 
         // 3. Broadcast a cancel to all registered Listeners
-        notifyAlarmChange();
-    }
-
-    void modifyAlarm(Alarm alarm) {
-
         notifyAlarmChange();
     }
 

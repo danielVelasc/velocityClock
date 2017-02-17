@@ -33,8 +33,9 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
 
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, R.layout.single_alarm_element, AlarmCoordinator.getInstance().getAlarmList());
         alarmListView = (ListView)findViewById(R.id.alarmListView);
-        alarmListView.setAdapter(new AlarmAdapter(this));
+        alarmListView.setAdapter(alarmAdapter);
 
         AlarmCoordinator.getInstance().registerListener(alarmAdapter);
 
