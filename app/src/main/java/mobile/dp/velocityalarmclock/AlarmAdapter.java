@@ -5,22 +5,29 @@ import android.graphics.Point;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * @author Daniel Velasco
@@ -31,16 +38,15 @@ import java.util.Locale;
  * events such as turning an alarm as active/inactive and deleting existing alarms
  *
  */
-public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoordinatorListener {
+public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinatorListener {
+    Context context;
+    List<Alarm> alarmList;
 
+    public AlarmAdapter(Context context, int resource, List<Alarm> items) {
+        super(context, resource, items);
 
-    private ArrayList<Alarm> alarmList;
-    private Context context;
-
-
-    public AlarmAdapter(Context context) {
         this.context = context;
-        this.alarmList = AlarmCoordinator.getInstance().getAlarmList();
+        this.alarmList = items;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
     }
 
     @Override
-    public Object getItem(int i) {
+    public Alarm getItem(int i) {
         return alarmList.get(i);
     }
 
@@ -70,15 +76,20 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
         return 0;
     }
 
+    public void deleteItem(int i) {
+        AlarmCoordinator.getInstance().deleteAlarm(i, context);
+        notifyDataSetChanged();
+    }
+
     @Override
-    public View getView(final int position, View convertView, ViewGroup viewGroup) {
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
 
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             // Put the clock in this row (with the same height as the device)
-            if(position == 0) {
+            if (position == 0) {
                 view = inflater.inflate(R.layout.clock_element, null);
                 String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
                 TextView weekday_month_day = (TextView) view.findViewById(R.id.dateTextView);
@@ -93,40 +104,53 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
                 clockLayout.setLayoutParams(params);
             }
-            else // Put single alarms in each row
+            else // Inflate alarm view and set listeners.
             {
                 view = inflater.inflate(R.layout.single_alarm_element, null);
 
-                //Handle TextView and display string from your list
-                TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
-                alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position-1).getTime()));
+                // Set listener for switch
+                SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
+                activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        int position = (Integer) buttonView.getTag();
 
-                // TODO: Show frequency of alarm
+                        alarmList.get(position).setState(isChecked);
+                    }
+                });
+
+                // Set listener for delete button
+                FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
+                deleteButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
+                    // This method alerts the AlarmCoordinator that the alarm at position is to be deleted
+                    @Override
+                    public void onClick(View v) {
+                        int position = (Integer) v.getTag();
+
+                        deleteItem(position);
+                    }
+                });
+            }
+        }
+
+        // If position > 0, set fields and position of alarm views.
+        if (position > 0) {
+            //Handle TextView and display string from your list
+            TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
+            alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
+
+            // TODO: Show frequency of alarm
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
 //              alarmFrequencyText.setText(alarmList.get(position).getFrequency());
 
-                //Handle switch (setting on/off)
-                SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
-                activeStatusSwitch.setChecked(alarmList.get(position-1).isActive());
+            //Handle switch (setting on/off)
+            SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
+            activeStatusSwitch.setChecked(alarmList.get(position).isActive());
+            // Cache view position in button with tag
+            activeStatusSwitch.setTag(position);
 
-                activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        alarmList.get(position-1).setState(isChecked);
-                    }
-                });
-
-                FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
-                deleteButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        alarmList.remove(position-1);
-                        //TODO: Cancel system service
-                        notifyDataSetChanged();
-                    }
-                });
-
-            }
+            FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
+            // Cache view position in button with tag
+            deleteButton.setTag(position);
         }
 
         return view;
@@ -134,6 +158,6 @@ public class AlarmAdapter extends BaseAdapter implements ListAdapter, AlarmCoord
 
     public void alarmChanged() {
         notifyDataSetChanged();
+        // Log.d(TAG, "number of items: " + alarmList.size());
     }
-
 }

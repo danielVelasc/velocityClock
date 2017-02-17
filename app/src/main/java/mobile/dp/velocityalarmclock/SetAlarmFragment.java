@@ -83,7 +83,6 @@ public class SetAlarmFragment extends Fragment {
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
-
                     Toast.makeText(getActivity(), "Day: " + day + "\nTime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                     Alarm newAlarm = new Alarm(day, cal.getTime(), false);
 

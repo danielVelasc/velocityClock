@@ -12,6 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * @author Daniel Velasco
@@ -32,26 +34,16 @@ import java.util.Date;
 class AlarmCoordinator {
     private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 
+    private HashMap<Alarm, PendingIntent> scheduledIntents;
     private ArrayList<Alarm> alarmList;
     private ArrayList<AlarmCoordinatorListener> listeners;
 
     private static final AlarmCoordinator instance = new AlarmCoordinator();
 
     private AlarmCoordinator () {
+        scheduledIntents = new HashMap<>();
         alarmList = new ArrayList<>();
         listeners = new ArrayList<>();
-
-        //TODO: Deserialize the alarms using function
-        //getAlarms();
-
-        // Test alarms
-        alarmList.add(new Alarm(1, new Date(1000000), true));
-        alarmList.add(new Alarm(2, new Date(2000000), false));
-        alarmList.add(new Alarm(3, new Date(3000000), true));
-        alarmList.add(new Alarm(4, new Date(4000000), true));
-
-        //TODO: Fix issue where one less alarm will be displayed
-        // alarmList.add(null);
     }
 
     protected static AlarmCoordinator getInstance ()
@@ -65,23 +57,46 @@ class AlarmCoordinator {
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (alarm.repeats()) //Schedule alarm to repeat if necessary
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT)); //Repeats every 24 hours after
-        else
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_ONE_SHOT));
-
+        if (alarm.repeats()) { //Schedule alarm to repeat if necessary
+            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
+            scheduledIntents.put(alarm, scheduledIntent);
+        } else {
+            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, 1, alertIntent, PendingIntent.FLAG_ONE_SHOT);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), scheduledIntent  );
+            scheduledIntents.put(alarm, scheduledIntent);
+        }
         alarm.setState(true);
         alarmList.add(alarm);
         notifyAlarmChange();
     }
 
-    void deleteAlarm(Alarm alarm) {
-
-        notifyAlarmChange();
+    void deleteAlarm(int i, Context passedContext) {
+        deleteAlarm(alarmList.get(i), passedContext);
     }
 
-    void modifyAlarm(Alarm alarm) {
+    /**
+     * First removes the alarm from the alarmList via its ID, then tells the AlarmManager to cancel it via
+     * the alarm's scheduledIntent memeber variable. Finally, broadcasts a message to all listeners to do the
+     * same.
+     * @param alarm the Alarm to be deleted
+     */
+    void deleteAlarm(Alarm alarm, Context passedContext) {
+        AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
 
+        // 1. Remove the alarm from AlarmCoordinator's alarmList
+        for(int position = 1; position < alarmList.size(); position++){
+            if(alarmList.get(position).getUuid() == alarm.getUuid()){
+                alarmList.remove(position);
+                break;
+            }
+        }
+
+        // 2. Tell the AlarmManager to cancel the alarm
+        alarmMgr.cancel(scheduledIntents.get(alarm));
+        scheduledIntents.remove(alarm);
+
+        // 3. Broadcast a cancel to all registered Listeners
         notifyAlarmChange();
     }
 
@@ -130,10 +145,13 @@ class AlarmCoordinator {
 
         try {
             inputStream =  new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
-            ArrayList<Alarm> list = (ArrayList<Alarm>) inputStream.readObject();
+            Object list = inputStream.readObject();
 
             if (list != null) {
-                alarmList = list;
+                alarmList = (ArrayList<Alarm>) list;
+            } else {
+                // Add an empty alarm at the start that will never be referenced.
+                alarmList.add(new Alarm());
             }
 
             inputStream.close();
