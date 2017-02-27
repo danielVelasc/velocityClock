@@ -141,11 +141,10 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 
             // Handle switch (setting on/off)
             SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
-            activeStatusSwitch.setChecked(alarmList.get(position).isActive());
-
             // Cache view position in button with tag
             activeStatusSwitch.setTag(position) ;
-
+            activeStatusSwitch.setChecked(alarmList.get(position).isActive());
+            
             FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
             // Cache view position in button with tag
             deleteButton.setTag(position);
