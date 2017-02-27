@@ -76,25 +76,24 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
         return 0;
     }
 
-    public void deleteItem(int i) {
-        AlarmCoordinator.getInstance().deleteAlarm(i, context);
-        notifyDataSetChanged();
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
 
         View view = convertView;
+
+        // If view is null, we must inflate a view depending on its position.
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            // Put the clock in this row (with the same height as the device)
+            // The clock view is placed at position 0
             if (position == 0) {
                 view = inflater.inflate(R.layout.clock_element, null);
+
                 String date = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH).format(Calendar.getInstance().getTime());
                 TextView weekday_month_day = (TextView) view.findViewById(R.id.dateTextView);
                 weekday_month_day.setText(date);
 
+                // Get size of screen
                 Display display = ((AppCompatActivity)context).getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
@@ -104,8 +103,8 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size.y);
                 clockLayout.setLayoutParams(params);
             }
-            else // Inflate alarm view and set listeners.
-            {
+            // Alarm views are placed at all positions > 0
+            else {
                 view = inflater.inflate(R.layout.single_alarm_element, null);
 
                 // Set listener for switch
@@ -113,7 +112,6 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                 activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         int position = (Integer) buttonView.getTag();
-
                         alarmList.get(position).setState(isChecked);
                     }
                 });
@@ -125,16 +123,15 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                     @Override
                     public void onClick(View v) {
                         int position = (Integer) v.getTag();
-
                         deleteItem(position);
                     }
                 });
             }
         }
 
-        // If position > 0, set fields and position of alarm views.
+        // Alarm view exists so now we must update its fields.
         if (position > 0) {
-            //Handle TextView and display string from your list
+            // Handle TextView and display string from your list
             TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
             alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
 
@@ -142,9 +139,10 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
 //              alarmFrequencyText.setText(alarmList.get(position).getFrequency());
 
-            //Handle switch (setting on/off)
+            // Handle switch (setting on/off)
             SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
             activeStatusSwitch.setChecked(alarmList.get(position).isActive());
+
             // Cache view position in button with tag
             activeStatusSwitch.setTag(position) ;
 
@@ -156,8 +154,19 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
         return view;
     }
 
+    /**
+     * Called when an alarm changes
+     */
     public void alarmChanged() {
         notifyDataSetChanged();
-        // Log.d(TAG, "number of items: " + alarmList.size());
+    }
+
+    /**
+     * Deletes the alarm in alarmList at index i
+     * @param i
+     */
+    public void deleteItem(int i) {
+        AlarmCoordinator.getInstance().deleteAlarm(i, context);
+        notifyDataSetChanged();
     }
 }
