@@ -20,6 +20,7 @@ public class Alarm implements Serializable {
     private String uuid; //The unique alarm id
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
+    private long snoozeTime;
     private boolean repeat;
     private boolean isActive = true;
 
@@ -144,5 +145,19 @@ public class Alarm implements Serializable {
 
     public long getTimeToGoOff() {
         return time.getTime();
+    }
+
+    /**
+     * @return The amount of time this alarm will snooze for in milliseconds
+     */
+    public long getSnoozeTime() {
+        return this.snoozeTime;
+    }
+
+    /**
+     * @param snoozeTime The amount of time this alarm will snooze for in milliseconds
+     */
+    public void setSnoozetime(long snoozeTime) {
+        this.snoozeTime = snoozeTime;
     }
 }

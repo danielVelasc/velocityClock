@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
@@ -61,7 +63,6 @@ class AlarmCoordinator {
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // TODO Replace hardcoded ID with ID-Generated ID
         if (alarm.repeats()) { //Schedule alarm to repeat if necessary
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
@@ -103,6 +104,38 @@ class AlarmCoordinator {
 
         // 3. Broadcast a cancel to all registered Listeners
         notifyAlarmChange();
+    }
+
+    /**
+     * Snoozes an alarm
+     * @param context The calling context
+     * @param alarm The alarm to snooze
+     */
+    public void snoozeAlarm(Context context, Alarm alarm) {
+        stopAlarmNoise(context); //Stop the alarm noise.
+        scheduleNextSnooze(context, alarm);
+    }
+
+    /**
+     * Schedule System alarm to go down in the alarm's snooze time
+     * @param context Calling context
+     * @param alarm Alarm that was snoozed
+     */
+    private void scheduleNextSnooze(Context context, Alarm alarm) {
+
+        Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
+        alertIntent.putExtra("Alarm-Name", alarm.getName() + " - Snoozed");
+        alertIntent.putExtra("Alarm-ID", alarm.getUuid()); // Will be helpful later
+
+        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + alarm.getSnoozeTime(), scheduledIntent);
+        scheduledIntents.put(alarm, scheduledIntent);
+
+        alarm.setState(true);
+        alarmList.add(alarm);
+        notifyAlarmChange();
+
     }
 
     void notifyAlarmChange() {
@@ -185,6 +218,17 @@ class AlarmCoordinator {
         }
     }
 
-
+    /**
+     * Obtains the Alarm with a given UUID
+     * @param UUID The UUID of the alarm to request
+     * @return The alarm with specified UUID
+     * @throws NoSuchElementException if the alarm could not be found
+     */
+    public Alarm getAlarmByID(String UUID) {
+        for (Alarm a : alarmList) {
+            if (a.getUuid().equals(UUID)) return a;
+        }
+        throw new NoSuchElementException("The alarm by the UUID " + UUID + " could not be found");
+    }
 }
 
