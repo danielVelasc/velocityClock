@@ -41,6 +41,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         dialogIntent.putExtra("Alarm-Name", name);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+        AlarmCoordinator.getInstance().playAlarmNoise(context);
+
         if (ApplicationLifecycleManager.isAppInForeground()) { //Check if app is open to skip the notification
 
             context.startActivity(dialogIntent);

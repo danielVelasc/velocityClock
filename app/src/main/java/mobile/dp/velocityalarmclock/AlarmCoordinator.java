@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -39,6 +42,7 @@ class AlarmCoordinator {
     private ArrayList<AlarmCoordinatorListener> listeners;
 
     private static final AlarmCoordinator instance = new AlarmCoordinator();
+    private MediaPlayer mPlayer;
 
     private AlarmCoordinator () {
         scheduledIntents = new HashMap<>();
@@ -160,5 +164,27 @@ class AlarmCoordinator {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Will play the alarm noise on repeat until stopAlarmNoise is called
+     * @param context Calling context
+     */
+    public void playAlarmNoise(Context context) {
+        //activating looping ringtone sound
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        mPlayer = MediaPlayer.create(context, notification);
+        mPlayer.setLooping(true);
+        mPlayer.start();
+    }
+
+    public void stopAlarmNoise(Context context) {
+        if ((mPlayer != null) && (mPlayer.isPlaying())) {
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+        }
+    }
+
+
 }
 
