@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.Context;
+import android.util.Log;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,6 +34,7 @@ import java.util.UUID;
  */
 
 class AlarmCoordinator {
+    private static final String TAG = "ALARM_COORDINATOR";
     private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 
     private HashMap<Alarm, PendingIntent> scheduledIntents;
@@ -51,7 +54,7 @@ class AlarmCoordinator {
 
     void createNewAlarm(Context context, Alarm alarm) {
 
-        Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
+        Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName());
         alertIntent.putExtra("Alarm-ID", alarm.getUuid()); // Will be helpful later
 
@@ -66,6 +69,7 @@ class AlarmCoordinator {
             alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), scheduledIntent  );
             scheduledIntents.put(alarm, scheduledIntent);
         }
+
         alarm.setState(true);
         alarmList.add(alarm);
         notifyAlarmChange();
@@ -144,17 +148,24 @@ class AlarmCoordinator {
         ObjectInputStream inputStream;
 
         try {
-            inputStream =  new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
+            inputStream = new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
             Object list = inputStream.readObject();
 
-            if (list != null) {
+            if (list != null && ((ArrayList<Alarm>) list).size() > 0) {
                 alarmList = (ArrayList<Alarm>) list;
+                Log.d(TAG, "loaded alarm list with " + alarmList.size() + " alarms");
             } else {
                 // Add an empty alarm at the start that will never be referenced.
                 alarmList.add(new Alarm());
+                notifyAlarmChange();
+                Log.d(TAG, "adding null alarm");
             }
 
             inputStream.close();
+        } catch (FileNotFoundException e) {
+            alarmList.add(new Alarm());
+            notifyAlarmChange();
+            Log.d(TAG, "adding null alarm");
         } catch (Exception e) {
             e.printStackTrace();
         }
