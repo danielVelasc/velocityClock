@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
 {
+    private static final String TAG = "CLOCK_ACTIVITY";
     SetAlarmFragment setAlarmFragment;
     ListView alarmListView;
 
@@ -85,7 +86,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()) {
             case R.id.action_add_alarm:
-                View view = (View)findViewById(R.id.action_add_alarm);
+                View view = findViewById(R.id.action_add_alarm);
                 createSetAlarmFragment(view);
                 return true;
             default:
@@ -115,10 +116,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      * Saving alarms upon application exit
      */
     @Override
-    protected void onStop() {
-        super.onStop();
-
+    protected void onPause() {
         AlarmCoordinator.getInstance().saveAlarmList(this);
+
+        super.onStop();
     }
 
     @Override

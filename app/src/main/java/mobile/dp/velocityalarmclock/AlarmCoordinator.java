@@ -10,7 +10,11 @@ import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
+import android.util.Log;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,6 +41,7 @@ import java.util.UUID;
  */
 
 class AlarmCoordinator {
+    private static final String TAG = "ALARM_COORDINATOR";
     private static final String ALARM_LIST_FILE_NAME = "alarm-list";
 
     private HashMap<Alarm, PendingIntent> scheduledIntents;
@@ -55,15 +60,21 @@ class AlarmCoordinator {
     protected static AlarmCoordinator getInstance ()
     { return instance; }
 
+    /**
+     * Schedules a new alarm in the system services. Additionally adds alarms to be kept track of.
+     * @param context
+     * @param alarm
+     */
     void createNewAlarm(Context context, Alarm alarm) {
 
-        Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
+        Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName());
         alertIntent.putExtra("Alarm-ID", alarm.getUuid()); // Will be helpful later
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (alarm.repeats()) { //Schedule alarm to repeat if necessary
+        //TODO: Refactor this is a mess.
+        if (alarm.repeats()) { //Schedule alarm to repeat if necessary - This does not work unless they want it to go off 24 hours there after. (Refractor when we reach the story)
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
             scheduledIntents.put(alarm, scheduledIntent);
@@ -72,9 +83,12 @@ class AlarmCoordinator {
             alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), scheduledIntent  );
             scheduledIntents.put(alarm, scheduledIntent);
         }
+
         alarm.setState(true);
         alarmList.add(alarm);
         notifyAlarmChange();
+
+
     }
 
     void deleteAlarm(int i, Context passedContext) {
@@ -127,15 +141,21 @@ class AlarmCoordinator {
         alertIntent.putExtra("Alarm-Name", alarm.getName() + " - Snoozed");
         alertIntent.putExtra("Alarm-ID", alarm.getUuid()); // Will be helpful later
 
-        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE); //Schedule alarm to go off in the snooze time
         PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
         alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + alarm.getSnoozeTime(), scheduledIntent);
         scheduledIntents.put(alarm, scheduledIntent);
 
-        alarm.setState(true);
-        alarmList.add(alarm);
-        notifyAlarmChange();
+    }
 
+    /**
+     * Dismiss an alarm
+     * @param context Calling context
+     * @param alarm Alarm that was dismissed
+     */
+    public void dismissAlarm(Context context, Alarm alarm) {
+        stopAlarmNoise(context);
+        alarm.setState(false);
     }
 
     void notifyAlarmChange() {
@@ -182,17 +202,24 @@ class AlarmCoordinator {
         ObjectInputStream inputStream;
 
         try {
-            inputStream =  new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
+            inputStream = new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
             Object list = inputStream.readObject();
 
-            if (list != null) {
+            if (list != null && ((ArrayList<Alarm>) list).size() > 0) {
                 alarmList = (ArrayList<Alarm>) list;
+                Log.d(TAG, "loaded alarm list with " + alarmList.size() + " alarms");
             } else {
                 // Add an empty alarm at the start that will never be referenced.
                 alarmList.add(new Alarm());
+                notifyAlarmChange();
+                Log.d(TAG, "adding null alarm");
             }
 
             inputStream.close();
+        } catch (FileNotFoundException e) {
+            alarmList.add(new Alarm());
+            notifyAlarmChange();
+            Log.d(TAG, "adding null alarm");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -210,6 +237,10 @@ class AlarmCoordinator {
         mPlayer.start();
     }
 
+    /**
+     * Stops playing the alarm ringing
+     * @param context Calling context
+     */
     public void stopAlarmNoise(Context context) {
         if ((mPlayer != null) && (mPlayer.isPlaying())) {
             mPlayer.stop();
@@ -225,8 +256,8 @@ class AlarmCoordinator {
      * @throws NoSuchElementException if the alarm could not be found
      */
     public Alarm getAlarmByID(String UUID) {
-        for (Alarm a : alarmList) {
-            if (a.getUuid().equals(UUID)) return a;
+        for (int i = 1; i < alarmList.size(); i++) {
+            if (alarmList.get(i).getUuid().equalsIgnoreCase(UUID)) return alarmList.get(i);
         }
         throw new NoSuchElementException("The alarm by the UUID " + UUID + " could not be found");
     }

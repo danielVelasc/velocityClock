@@ -20,7 +20,7 @@ public class Alarm implements Serializable {
     private String uuid; //The unique alarm id
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
-    private long snoozeTime;
+    private long snoozeTime = 60 * 1000;
     private boolean repeat;
     private boolean isActive = true;
 

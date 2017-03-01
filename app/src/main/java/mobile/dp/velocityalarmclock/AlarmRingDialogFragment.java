@@ -20,18 +20,19 @@ public class AlarmRingDialogFragment extends DialogFragment {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity()); //Create dialog window
         final AlarmCoordinator ac = AlarmCoordinator.getInstance();
+        final Alarm alarm = ac.getAlarmByID(ra.getIntent().getStringExtra("Alarm-ID"));
 
         dialogBuilder.setMessage("Alarm - " + ra.getIntent().getStringExtra("Alarm-Name"))
                 .setIcon(R.drawable.bell_icon)
                 .setPositiveButton("Snooze", new DialogInterface.OnClickListener() { //Add snooze button
                     public void onClick(DialogInterface dialog, int id) {
-                        ac.snoozeAlarm(getContext(), ac.getAlarmByID(ra.getIntent().getStringExtra("Alarm-ID")));
+                        ac.snoozeAlarm(getContext(), alarm);
                         dismiss();
                     }
                 })
                 .setNegativeButton("Stop", new DialogInterface.OnClickListener() { //Add stop button
                    public void onClick(DialogInterface dialog, int id) {
-
+                        ac.dismissAlarm(getContext(), alarm);
                        dismiss(); // In the future - stop the alarm
                     }
                  });

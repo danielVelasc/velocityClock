@@ -78,6 +78,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
+        List<Alarm> alarmList = AlarmCoordinator.getInstance().getAlarmList();
 
         View view = convertView;
 
@@ -112,7 +113,8 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                 activeStatusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         int position = (Integer) buttonView.getTag();
-                        alarmList.get(position).setState(isChecked);
+                        //alarmList.get(position).setState(isChecked);
+                        AlarmCoordinator.getInstance().getAlarmList().get(position).setState(isChecked);
                     }
                 });
 
@@ -131,6 +133,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 
         // Alarm view exists so now we must update its fields.
         if (position > 0) {
+            Log.d(TAG, "updating position " + position + ". alarmList size: " + alarmList.size());
             // Handle TextView and display string from your list
             TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
             alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
@@ -144,7 +147,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
             // Cache view position in button with tag
             activeStatusSwitch.setTag(position) ;
             activeStatusSwitch.setChecked(alarmList.get(position).isActive());
-            
+
             FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
             // Cache view position in button with tag
             deleteButton.setTag(position);
