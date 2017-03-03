@@ -66,7 +66,6 @@
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,16 +81,41 @@
             android:layout_below="@+id/addAlarmButton"
             android:layout_centerHorizontal="true" />
 
-        <Spinner
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/daySpin"
-            android:entries="@array/days"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/alarmName"
+                    android:hint="@string/alarm_name_hint"
+                    android:inputType="text"
+                    android:maxLines="1"/>
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/freqSpin"
-            android:entries="@array/frequency"/>
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/daySpin"
+                    android:entries="@array/days"/>
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/freqSpin"
+                    android:entries="@array/frequency"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snoozeTime"
+                    android:hint="@string/snooze_input_hint"
+                    android:inputType="text"
+                    android:maxLines="1"/>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>

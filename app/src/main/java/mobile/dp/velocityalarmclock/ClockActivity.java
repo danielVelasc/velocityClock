@@ -59,11 +59,9 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
-        myToolbar.setVisibility(View.GONE);
-
         setAlarmFragment = new SetAlarmFragment();
         fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -110,6 +108,21 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         fragmentTransaction.commit();
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
         myToolbar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * This function handles closing the fragment when the device back button is pressed.
+     *
+     * Source: http://stackoverflow.com/questions/18755550/fragment-pressing-back-button
+     */
+    @Override
+    public void onBackPressed(){
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
+            Toast.makeText(this, "alarm cancelled!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
