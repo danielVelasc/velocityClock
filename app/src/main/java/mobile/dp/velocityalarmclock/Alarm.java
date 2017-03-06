@@ -17,7 +17,7 @@ public class Alarm implements Serializable {
 
     private String name; //Name of the alarm (we may or may not want this)
     private String uuid; //The unique alarm id
-    private int pendingIntentID;
+    private int pendingIntentID; // This is the broadcastID of the alarm, should only be used for scheduling
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
     private long snoozeTime = 60 * 1000;
@@ -175,5 +175,18 @@ public class Alarm implements Serializable {
      */
     public void setPendingIntentID(int newPendingIntentID){
         pendingIntentID = newPendingIntentID;
+    }
+
+    /**
+     * Simple method that modifies the time fields of this alarm in accordance with modifiedAlarm
+     * @param modifiedAlarm the temporary modified alarm that needs to be used to modify the current alarm
+     */
+    public void modify(Alarm modifiedAlarm){
+        dayOfWeek = modifiedAlarm.getDayOfWeek();
+        hourOfDay = modifiedAlarm.getHourOfDay();
+        minOfHour = modifiedAlarm.getMinOfHour();
+        time = modifiedAlarm.getTime();
+        // TODO need to modify this once the ENUM is added
+        repeat = modifiedAlarm.repeat;
     }
 }

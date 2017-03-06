@@ -75,8 +75,8 @@ class AlarmCoordinator {
         int pendingIntentID = IDGenerator.getID();
         alarm.setPendingIntentID(pendingIntentID);
 
-        //TODO: Refactor this is a mess.
-        if (alarm.repeats()) { //Schedule alarm to repeat if necessary - This does not work unless they want it to go off 24 hours there after. (Refractor when we reach the story)
+        //TODO: Need to refactor this once the ENUM is added
+        if (alarm.repeats()) { //Schedule alarm to repeat if necessary - This does not work unless they want it to go off 24 hours there after. (Refactor when we reach the story)
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, pendingIntentID, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
             scheduledIntents.put(alarm, scheduledIntent);
@@ -93,6 +93,48 @@ class AlarmCoordinator {
 
     }
 
+    /**
+     * This method performs the following operations:
+     * 1. Modifies the relevant alarm in the alarmList
+     * 2. Reschedules the modified alarm with system services
+     * 3. Broadcasts changes to listeners
+     * @param i The index of the alarm that is to be modified
+     * @param passedContext
+     * @param modifiedAlarm the modify fragment makes a temporary alarm object that should passed
+     *                      to this method
+     */
+    void modifyAlarm(int i, Context passedContext, Alarm modifiedAlarm){
+        // Step 1: Get the current alarm from the alarmList and modify it in accordance with the modifiedAlarm
+        // TODO This might not be the correct way of getting the alarm
+        Alarm alarmToBeModified = alarmList.get(i);
+        alarmToBeModified.modify(modifiedAlarm);
+
+        // Step 2: Reschedule the alarm with system services; the way this will be done is by writing
+        //         over the current alarm that is scheduled by using the same PendingIntentID
+        Intent alertIntent = new Intent(passedContext, AlarmReceiver.class); // When timer ends, check with receiver
+        alertIntent.putExtra("Alarm-Name", alarmToBeModified.getName());
+        alertIntent.putExtra("Alarm-ID", alarmToBeModified.getUuid()); // Will be helpful later
+        AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
+
+        // TODO need to refactor all this stuff once the ENUM is added
+        if(alarmToBeModified.repeats()){
+            PendingIntent scheduledIntent = PendingIntent.getBroadcast(passedContext, alarmToBeModified.getPendingIntentID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarmToBeModified.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
+            scheduledIntents.remove(alarmToBeModified);
+            scheduledIntents.put(alarmToBeModified, scheduledIntent);
+        } else{
+            PendingIntent scheduledIntent = PendingIntent.getBroadcast(passedContext, alarmToBeModified.getPendingIntentID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmToBeModified.getTimeToGoOff(), scheduledIntent);
+            scheduledIntents.remove(alarmToBeModified);
+            scheduledIntents.put(alarmToBeModified, scheduledIntent);
+        }
+
+        // Step 3: Broadcast the changes to all listeners
+        notifyAlarmChange();
+
+    }
+
+
     void deleteAlarm(int i, Context passedContext) {
         deleteAlarm(alarmList.get(i), passedContext);
     }
@@ -108,7 +150,7 @@ class AlarmCoordinator {
 
         // 1. Remove the alarm from AlarmCoordinator's alarmList
         for(int position = 1; position < alarmList.size(); position++){
-            if(alarmList.get(position).getUuid() == alarm.getUuid()){
+            if(alarmList.get(position).getUuid().equals(alarm.getUuid())){
                 alarmList.remove(position);
                 break;
             }
