@@ -1,7 +1,6 @@
 package mobile.dp.velocityalarmclock;
 
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -18,6 +17,7 @@ public class Alarm implements Serializable {
 
     private String name; //Name of the alarm (we may or may not want this)
     private String uuid; //The unique alarm id
+    private int pendingIntentID;
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
     private long snoozeTime = 60 * 1000;
@@ -159,5 +159,21 @@ public class Alarm implements Serializable {
      */
     public void setSnoozetime(long snoozeTime) {
         this.snoozeTime = snoozeTime;
+    }
+
+    /**
+     * Getter for pendingIntentID
+     * @return the alarm's pendingIntentID
+     */
+    public int getPendingIntentID(){
+        return pendingIntentID;
+    }
+
+    /**
+     * Setter for pendingIntentID
+     * @param newPendingIntentID the new value for pendingIntentID
+     */
+    public void setPendingIntentID(int newPendingIntentID){
+        pendingIntentID = newPendingIntentID;
     }
 }
