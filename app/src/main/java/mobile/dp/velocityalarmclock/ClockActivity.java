@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
+public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener, AlarmAdapterListener
 {
     private static final String TAG = "CLOCK_ACTIVITY";
     SetAlarmFragment setAlarmFragment;
@@ -54,8 +54,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      * @param view the button that calls this function
      */
     void createSetAlarmFragment(View view) {
-        Toast.makeText(getApplicationContext(), "The button works", Toast.LENGTH_SHORT).show();
-
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -64,6 +62,22 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
+    /**
+     * This function is called by tapping an alarm view to create a fragment from which
+     * the user can modify an existing alarm
+     * @param position the position of the existing alarm to modify
+     */
+    void createSetAlarmFragment(int position) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        setAlarmFragment = SetAlarmFragment.newInstance(position);
+        fragmentTransaction.add(R.id.set_alarm_container, setAlarmFragment);//
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
 
     /**
      *  This method is necessary for assigning the appropriate action buttons
@@ -140,5 +154,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         super.onDestroy();
 
         Log.d("CLOCK_ACTIVITY","onDestroy");
+    }
+
+    @Override
+    public void alarmViewTapped(int position) {
+        createSetAlarmFragment(position);
     }
 }

@@ -211,6 +211,8 @@ class AlarmCoordinator {
         listeners.add(listener);
     }
 
+    Alarm getAlarm(int position) { return alarmList.get(position); }
+
     ArrayList<Alarm> getAlarmList() {
         return alarmList;
     }

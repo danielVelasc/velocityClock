@@ -30,7 +30,7 @@
                 android:clickable="true"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:elevation="6dp"
                 android:background="@color/colorAccent"
                 android:textColor="@color/colorPrimaryDark" />
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Alarm"
+                android:text="@string/set_alarm_text"
                 android:textSize="32dp"
                 android:typeface="sans"
                 android:textStyle="bold"
@@ -55,14 +55,12 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/setAlarmButton"
-                style="@android:style/Widget.Material.Light.Button"
+                style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
                 android:onClick="submitNewAlarm"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="16dp"
                 android:background="@color/colorAccent"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_alignParentEnd="true" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
