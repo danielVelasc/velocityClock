@@ -14,5 +14,6 @@
     <string name="open_settings_pane">Open Settings Pane</string>
     <string name="alarm_name_hint">Name your alarm!</string>
     <string name="snooze_input_hint">Set the snooze duration!</string>
-
+    <string name="set_alarm_text">Set Alarm</string>
+    <string name="modify_alarm_text">Modify Alarm</string>
 </resources>

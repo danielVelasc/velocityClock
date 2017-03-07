@@ -14,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -32,6 +34,8 @@ import java.util.Locale;
  */
 
 public class SetAlarmFragment extends Fragment {
+    private static final String EXISTING_ALARM_POSITION = "existing-alarm-position";
+    int mPosition;
 
     SetAlarmFragmentListener mListener;
     View v;
@@ -43,6 +47,31 @@ public class SetAlarmFragment extends Fragment {
     Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to list with checkboxes (multi-selection)
     EditText nameField, snoozeTime;
     // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
+
+    public static SetAlarmFragment newInstance() {
+        SetAlarmFragment fragment = new SetAlarmFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXISTING_ALARM_POSITION, 0);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static SetAlarmFragment newInstance(int position) {
+        SetAlarmFragment fragment = new SetAlarmFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXISTING_ALARM_POSITION, position);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mPosition = getArguments().getInt(EXISTING_ALARM_POSITION);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -114,18 +143,17 @@ public class SetAlarmFragment extends Fragment {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                     alarmName = nameField.getText().toString();
 
-                    // if no alarm name is specified
-                    if (alarmName.isEmpty()){
-                        Alarm newAlarm = new Alarm(day, cal.getTime(), false);
-                        AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
-                    }
+                    Alarm newAlarm = new Alarm(day, cal.getTime(), false, alarmName);
 
-                    // else if an alarm name is specified
-                    else{
-                        Alarm newAlarm = new Alarm(day, cal.getTime(), false, alarmName);
+                    // If we are modifying an existing alarm, mPosition will be > 0
+                    if (mPosition > 0) {
+                        AlarmCoordinator.getInstance().modifyAlarm(mPosition, getActivity(), newAlarm);
+                        Toast.makeText(getActivity(), "alarm modified: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                    // Otherwise, create a new alarm
+                    else {
                         AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm set: " + alarmName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "alarm set: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
 
                     mListener.closeSetAlarmFragment();
@@ -133,6 +161,28 @@ public class SetAlarmFragment extends Fragment {
                     Toast.makeText(getActivity(), "frequency: " + frequency + "\nsnooze: " + snooze, Toast.LENGTH_SHORT).show();
                 }
             });
+
+            // If we are modifying an existing alarm, mPosition will be > 0. We must fill fields in the existing alarm
+            if (mPosition > 0) {
+                // Modify title view to say "Modify Alarm"
+                TextView setAlarmText = (TextView) v.findViewById(R.id.setAlarmText);
+                setAlarmText.setText(R.string.modify_alarm_text);
+
+                Alarm existingAlarm = AlarmCoordinator.getInstance().getAlarm(mPosition);
+
+                if (Build.VERSION.SDK_INT >= 23 ) {
+                    setAlarmTime.setHour(existingAlarm.getHourOfDay());
+                    setAlarmTime.setMinute(existingAlarm.getMinOfHour());
+                } else {
+                    setAlarmTime.setCurrentHour(existingAlarm.getHourOfDay());
+                    setAlarmTime.setCurrentMinute(existingAlarm.getMinOfHour());
+                }
+
+                nameField.setText(existingAlarm.getName());
+
+                // need to subtract one because day of week is not 0 indexed (silly humans)
+                daySpin.setSelection(existingAlarm.getDayOfWeek()-1);
+            }
         }
         return v;
     }

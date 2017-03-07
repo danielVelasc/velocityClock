@@ -1,7 +1,8 @@
 package mobile.dp.velocityalarmclock;
 
 import android.app.PendingIntent;
-import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -14,15 +15,59 @@ import java.util.Date;
  * @Version 2.0
  * @Date February 5th 2017
  */
-public class Alarm implements Serializable {
+public class Alarm implements Serializable, Parcelable {
+    private static final long serialVersionUID = 697655753434998385L;
 
     private String name; //Name of the alarm (we may or may not want this)
     private String uuid; //The unique alarm id
+    private int pendingIntentID; // This is the broadcastID of the alarm, should only be used for scheduling
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
     private long snoozeTime = 60 * 1000;
     private boolean repeat;
     private boolean isActive = true;
+
+    // Added Parcelable interface methods so that fragments can accept alarm as a Parcelable
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeStringArray(new String[]{name, uuid});
+        out.writeIntArray(new int[]{pendingIntentID, dayOfWeek, hourOfDay, minOfHour});
+        out.writeLongArray(new long[]{time.getTime(), snoozeTime});
+        out.writeBooleanArray(new boolean[]{repeat, isActive});
+    }
+
+    public static final Parcelable.Creator<Alarm> CREATOR
+            = new Parcelable.Creator<Alarm>() {
+        public Alarm createFromParcel(Parcel in) {
+            return new Alarm(in);
+        }
+
+        public Alarm[] newArray(int size) {
+            return new Alarm[size];
+        }
+    };
+
+    private Alarm(Parcel in) {
+        String[] stringArray = new String[2];
+        in.readStringArray(stringArray);
+        name = stringArray[0]; uuid = stringArray[1];
+
+        int[] intArray = new int[4];
+        in.readIntArray(intArray);
+        pendingIntentID = intArray[0]; dayOfWeek = intArray[1]; hourOfDay = intArray[2]; minOfHour = intArray[3];
+
+        long[] longArray = new long[2];
+        in.readLongArray(longArray);
+        time = new Date(longArray[0]); snoozeTime = longArray[1];
+
+        boolean[] booleanArray = new boolean[2];
+        in.readBooleanArray(booleanArray);
+        repeat = booleanArray[0]; isActive = booleanArray[1];
+    }
 
     public Alarm() {}
 
@@ -36,9 +81,7 @@ public class Alarm implements Serializable {
      * @param repeat - if true repeat more than once
      */
     public Alarm (int dayOfWeek, Date time, boolean repeat) {
-
-        this (dayOfWeek, time, repeat, "Alarm");
-
+        this(dayOfWeek, time, repeat, "Alarm");
     }
 
     /**
@@ -49,16 +92,17 @@ public class Alarm implements Serializable {
      * @param repeat - if true repeat more than once
      */
     public Alarm (int dayOfWeek, Date time, boolean repeat, String name) {
-
         if (time == null) Log.d(this.getClass().getName(), "Time null");
+
         this.dayOfWeek = dayOfWeek;
         this.hourOfDay = time.getHours(); //Deprecated but it works for now
         this.minOfHour = time.getMinutes();
         this.time = time;
         this.repeat = repeat;
         this.uuid = UUID.randomUUID().toString();
-        this.name = name;
-        Log.d(getClass().getName(), "Day " + dayOfWeek + "Hour " + hourOfDay + "Minute " + minOfHour);
+        this.name = name.isEmpty() ? "Alarm" : name;
+
+        Log.d(getClass().getName(), " Day " + dayOfWeek + " Hour " + hourOfDay + " Minute " + minOfHour);
 
     }
 
@@ -159,5 +203,34 @@ public class Alarm implements Serializable {
      */
     public void setSnoozetime(long snoozeTime) {
         this.snoozeTime = snoozeTime;
+    }
+
+    /**
+     * Getter for pendingIntentID
+     * @return the alarm's pendingIntentID
+     */
+    public int getPendingIntentID(){
+        return pendingIntentID;
+    }
+
+    /**
+     * Setter for pendingIntentID
+     * @param newPendingIntentID the new value for pendingIntentID
+     */
+    public void setPendingIntentID(int newPendingIntentID){
+        pendingIntentID = newPendingIntentID;
+    }
+
+    /**
+     * Simple method that modifies the time fields of this alarm in accordance with modifiedAlarm
+     * @param modifiedAlarm the temporary modified alarm that needs to be used to modify the current alarm
+     */
+    public void modify(Alarm modifiedAlarm){
+        dayOfWeek = modifiedAlarm.getDayOfWeek();
+        hourOfDay = modifiedAlarm.getHourOfDay();
+        minOfHour = modifiedAlarm.getMinOfHour();
+        time = modifiedAlarm.getTime();
+        // TODO need to modify this once the ENUM is added
+        repeat = modifiedAlarm.repeat;
     }
 }
