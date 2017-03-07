@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="days">
-        <item>Choose Day(s)</item>
+        <item>Choose Day</item>
         <item>Sunday</item>
         <item>Monday</item>
         <item>Tuesday</item>

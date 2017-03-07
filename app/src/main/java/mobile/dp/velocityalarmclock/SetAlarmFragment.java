@@ -64,7 +64,6 @@ public class SetAlarmFragment extends Fragment {
         return fragment;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,13 +102,15 @@ public class SetAlarmFragment extends Fragment {
                 public void onClick(View view) {
                     Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
 
-                    if (daySpin.getSelectedItem().toString().equals("Choose Day(s)")){
-                        day = cal.get(Calendar.DAY_OF_WEEK);
+                    // Set the day variables
+                    if (daySpin.getSelectedItem().toString().equals("Choose Day")){
+                        day = cal.get(Calendar.DAY_OF_WEEK);    // Default day is the current day
                     }
                     else {
                         day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
                     }
 
+                    // Frequency of repeat for alarm
                     frequency = freqSpin.getSelectedItem().toString();
                     if (frequency.equals("Select Repeat Frequency")){
                         frequency = "None";
