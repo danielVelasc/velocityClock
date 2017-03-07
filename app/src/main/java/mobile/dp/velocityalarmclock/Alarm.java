@@ -102,7 +102,7 @@ public class Alarm implements Serializable, Parcelable {
         this.uuid = UUID.randomUUID().toString();
         this.name = name.isEmpty() ? "Alarm" : name;
 
-        Log.d(getClass().getName(), " Day " + dayOfWeek + " Hour " + hourOfDay + " Minute " + minOfHour);
+        Log.d(getName(), " Day " + dayOfWeek + " Hour " + hourOfDay + " Minute " + minOfHour);
 
     }
 
@@ -232,5 +232,6 @@ public class Alarm implements Serializable, Parcelable {
         time = modifiedAlarm.getTime();
         // TODO need to modify this once the ENUM is added
         repeat = modifiedAlarm.repeat;
+        name = modifiedAlarm.getName();
     }
 }
