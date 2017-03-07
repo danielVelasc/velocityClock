@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -34,11 +36,14 @@ public class SetAlarmFragment extends Fragment {
     SetAlarmFragmentListener mListener;
     View v;
     int day, hour, minutes;
+    String alarmName;
     Date time;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
     // TODO - add field for alarm name
     Spinner daySpin; // TODO - Change spinner to list with checkboxes (multi-selection)
+    EditText nameField;
+    // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,22 +55,26 @@ public class SetAlarmFragment extends Fragment {
             cancelButton = (Button) v.findViewById(R.id.cancelButton);
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
             daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to list with checkboxes (multi-selection)
+            nameField = (EditText) v.findViewById(R.id.alarmName);
 
             // Cancel setting the alarm and return back to the main alarm view
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mListener.closeSetAlarmFragment();
+                    nameField.setText("\r\n");
                     Toast.makeText(getActivity(), "alarm cancelled!", Toast.LENGTH_SHORT).show();
                 }
             });
 
-            // Grab day, hour and minutes when setAlarmButton pressed
+            // Grab alarm name, day, hour and minutes when setAlarmButton pressed
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    alarmName = nameField.getText().toString();
                     day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
 
+                    // Set hour and minutes of the inputted time
                     if (Build.VERSION.SDK_INT >= 23 ){
                         hour = setAlarmTime.getHour();
                         minutes = setAlarmTime.getMinute();
@@ -85,13 +94,21 @@ public class SetAlarmFragment extends Fragment {
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
+                    // if no alarm name is specified
+                    if (alarmName.isEmpty()){
+                        Alarm newAlarm = new Alarm(day, cal.getTime(), false);
+                        AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
+                        Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
+                    }
 
-                    Toast.makeText(getActivity(), "Day: " + day + "\nTime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
-                    Alarm newAlarm = new Alarm(day, cal.getTime(), false);
+                    // else if an alarm name is specified
+                    else{
+                        Alarm newAlarm = new Alarm(day, cal.getTime(), false, alarmName);
+                        AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
+                        Toast.makeText(getActivity(), "alarm set: " + alarmName, Toast.LENGTH_SHORT).show();
+                    }
 
-                    AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
                     mListener.closeSetAlarmFragment();
-                    Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -117,13 +134,13 @@ public class SetAlarmFragment extends Fragment {
     public int dayToInt(String convertDay){
         Log.d("SetAlarmFragment","dayToInt");
         HashMap<String, Integer> convertMap = new HashMap<String, Integer>();
-            convertMap.put("Sunday",1);
-            convertMap.put("Monday",2);
-            convertMap.put("Tuesday",3);
-            convertMap.put("Wednesday",4);
-            convertMap.put("Thursday",5);
-            convertMap.put("Friday",6);
-            convertMap.put("Saturday",7);
+        convertMap.put("Sunday",1);
+        convertMap.put("Monday",2);
+        convertMap.put("Tuesday",3);
+        convertMap.put("Wednesday",4);
+        convertMap.put("Thursday",5);
+        convertMap.put("Friday",6);
+        convertMap.put("Saturday",7);
 
         return convertMap.get(convertDay).intValue();
     }

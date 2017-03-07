@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/set_alarm_fragment"
-    android:background="#82cfb3">
+    android:background="@color/white">
+
     <android.support.v7.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:background="@android:color/white"
+        android:weightSum="1"
+        android:padding="10dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_gravity="center_vertical|center"
+            android:orientation="horizontal"
+            android:gravity="center_vertical|center">
 
             <Button
                 android:text="&lt;"
@@ -24,7 +30,10 @@
                 android:clickable="true"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentLeft="true" />
+                android:layout_alignParentLeft="true"
+                android:elevation="6dp"
+                android:background="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark" />
 
 
             <TextView
@@ -35,7 +44,7 @@
                 android:typeface="sans"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-thin"
-                android:textColor="#0a0909"
+                android:textColor="@color/colorPrimaryDark"
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:id="@+id/setAlarmText"
@@ -46,15 +55,17 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/setAlarmButton"
-                android:clickable="true"
-                style="@android:style/Widget.DeviceDefault.Light.Button"
+                style="@android:style/Widget.Material.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentRight="true"
-                android:onClick="submitNewAlarm"/>
+                android:onClick="submitNewAlarm"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:background="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,21 +76,46 @@
             android:layout_height="wrap_content"
             android:id="@+id/setAlarmTime"
             android:padding="10dp"
-            android:numbersSelectorColor="#26ae93"
-            android:headerBackground="#197361"
+            android:numbersSelectorColor="@color/mint"
+            android:headerBackground="@color/mint"
             android:layout_below="@+id/addAlarmButton"
             android:layout_centerHorizontal="true" />
 
-        <Spinner
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/daySpin"
-            android:entries="@array/days"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/alarmName"
+                    android:hint="@string/alarm_name_hint"
+                    android:inputType="text"
+                    android:maxLines="1"/>
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/freqSpin"
-            android:entries="@array/frequency"/>
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/daySpin"
+                    android:entries="@array/days"/>
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/freqSpin"
+                    android:entries="@array/frequency"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snoozeTime"
+                    android:hint="@string/snooze_input_hint"
+                    android:inputType="text"
+                    android:maxLines="1"/>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>

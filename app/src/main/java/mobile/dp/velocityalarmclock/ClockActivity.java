@@ -1,46 +1,23 @@
 package mobile.dp.velocityalarmclock;
 
-import android.app.AlarmManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener
 {
+    private static final String TAG = "CLOCK_ACTIVITY";
     SetAlarmFragment setAlarmFragment;
     ListView alarmListView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +25,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         AlarmCoordinator.getInstance().loadAlarmList(this);
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
-        myToolbar.setLogo(R.mipmap.velocityclock_templogo);
+        myToolbar.setLogo(R.mipmap.lightning_fixed);
         setSupportActionBar(myToolbar);
 
         Log.d("CLOCK_ACTIVITY","onCreate");
@@ -57,9 +34,11 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
 
-        AlarmAdapter alarmAdapter = new AlarmAdapter(this);
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, R.layout.single_alarm_element, AlarmCoordinator.getInstance().getAlarmList());
         alarmListView = (ListView)findViewById(R.id.alarmListView);
         alarmListView.setAdapter(alarmAdapter);
+
+        AlarmCoordinator.getInstance().registerListener(alarmAdapter);
 
         // If the calling intent wants to launch the alarm dialog box do so. ie the alarms going off
         if (getIntent().getBooleanExtra("Launch-Dialog", false)) {
@@ -105,7 +84,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()) {
             case R.id.action_add_alarm:
-                View view = (View)findViewById(R.id.action_add_alarm);
+                View view = findViewById(R.id.action_add_alarm);
                 createSetAlarmFragment(view);
                 return true;
             default:
@@ -150,10 +129,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      * Saving alarms upon application exit
      */
     @Override
-    protected void onStop() {
-        super.onStop();
-
+    protected void onPause() {
         AlarmCoordinator.getInstance().saveAlarmList(this);
+
+        super.onStop();
     }
 
     @Override

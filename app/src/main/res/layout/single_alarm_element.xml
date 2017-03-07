@@ -4,7 +4,7 @@
     android:id="@+id/singleAlarmView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/black"
+    android:background="@color/mint"
     android:fitsSystemWindows="true">
 
     <TextView
@@ -39,7 +39,9 @@
         app:srcCompat="@android:drawable/ic_delete"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        app:backgroundTint="@android:color/transparent" />
+        app:backgroundTint="@android:color/transparent"
+        app:rippleColor="@color/white"
+        app:elevation="0dp" />
 
     <android.support.v7.widget.SwitchCompat
         android:layout_width="wrap_content"
@@ -48,6 +50,8 @@
         android:id="@+id/alarmSwitch"
         android:padding="30dp"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/deleteButton" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="14dp"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

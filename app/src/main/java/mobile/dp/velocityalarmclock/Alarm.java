@@ -1,5 +1,7 @@
 package mobile.dp.velocityalarmclock;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -18,8 +20,11 @@ public class Alarm implements Serializable {
     private String uuid; //The unique alarm id
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
+    private long snoozeTime = 60 * 1000;
     private boolean repeat;
     private boolean isActive = true;
+
+    public Alarm() {}
 
     //TODO: Add sound and snooze
     //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
@@ -140,5 +145,19 @@ public class Alarm implements Serializable {
 
     public long getTimeToGoOff() {
         return time.getTime();
+    }
+
+    /**
+     * @return The amount of time this alarm will snooze for in milliseconds
+     */
+    public long getSnoozeTime() {
+        return this.snoozeTime;
+    }
+
+    /**
+     * @param snoozeTime The amount of time this alarm will snooze for in milliseconds
+     */
+    public void setSnoozetime(long snoozeTime) {
+        this.snoozeTime = snoozeTime;
     }
 }

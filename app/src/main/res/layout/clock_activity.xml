@@ -47,9 +47,11 @@
         android:clickable="true"
         android:layout_gravity="top|end"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:backgroundTint="@android:color/holo_green_dark"
+        app:backgroundTint="@color/colorPrimaryDark"
         android:onClick="createNewAlarm"
-        android:layout_margin="20dp" />
+        android:layout_margin="20dp"
+        app:rippleColor="@color/colorPrimary"
+        android:tint="@color/colorPrimary" />
 
     <!-- Houses new alarm fragment -->
     <FrameLayout

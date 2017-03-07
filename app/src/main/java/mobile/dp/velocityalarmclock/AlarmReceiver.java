@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,15 +35,16 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         name = intent.getStringExtra("Alarm-Name");
         uuid = intent.getStringExtra("Alarm-ID");
-
+        Log.d("Snooze", "nameReciever " + uuid);
         Intent dialogIntent = new Intent(context, ClockActivity.class); //Open activity that creates dialog prompt
         dialogIntent.putExtra("Launch-Dialog", true);
         dialogIntent.putExtra("Alarm-ID", uuid);
         dialogIntent.putExtra("Alarm-Name", name);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if (ApplicationLifecycleManager.isAppInForeground()) { //Check if app is open to skip the notification
+        AlarmCoordinator.getInstance().playAlarmNoise(context);
 
+        if (ApplicationLifecycleManager.isAppInForeground()) { //Check if app is open to skip the notification
             context.startActivity(dialogIntent);
         } else {
             createNotification(context, "Alarm", name, "Alarm " + name + "!", dialogIntent);
