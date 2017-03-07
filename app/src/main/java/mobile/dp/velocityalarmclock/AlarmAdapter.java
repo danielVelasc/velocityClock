@@ -196,6 +196,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
             FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
             // Cache view position in button with tag
             deleteButton.setTag(position);
+
+            TextView alarmNameView = (TextView) view.findViewById(R.id.alarmName);
+            alarmNameView.setText(alarmList.get(position).getName());
         }
 
         return view;
