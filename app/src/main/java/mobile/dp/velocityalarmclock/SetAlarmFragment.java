@@ -181,8 +181,7 @@ public class SetAlarmFragment extends Fragment {
 
                 nameField.setText(existingAlarm.getName());
 
-                // need to subtract one because day of week is not 0 indexed (silly humans)
-                daySpin.setSelection(existingAlarm.getDayOfWeek()-1);
+                daySpin.setSelection(existingAlarm.getDayOfWeek());
             }
         }
         return v;
