@@ -35,14 +35,13 @@ public class SetAlarmFragment extends Fragment {
 
     SetAlarmFragmentListener mListener;
     View v;
-    int day, hour, minutes;
-    String alarmName;
+    int day, hour, minutes, snooze;
+    String alarmName, frequency;
     Date time;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
-    // TODO - add field for alarm name
-    Spinner daySpin; // TODO - Change spinner to list with checkboxes (multi-selection)
-    EditText nameField;
+    Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to list with checkboxes (multi-selection)
+    EditText nameField, snoozeTime;
     // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
 
     @Override
@@ -56,6 +55,8 @@ public class SetAlarmFragment extends Fragment {
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
             daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to list with checkboxes (multi-selection)
             nameField = (EditText) v.findViewById(R.id.alarmName);
+            freqSpin = (Spinner) v.findViewById(R.id.freqSpin);
+            snoozeTime = (EditText) v.findViewById(R.id.snoozeTime);
 
             // Cancel setting the alarm and return back to the main alarm view
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -71,8 +72,27 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    alarmName = nameField.getText().toString();
-                    day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
+                    Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
+
+                    if (daySpin.getSelectedItem().toString().equals("Choose Day(s)")){
+                        day = cal.get(Calendar.DAY_OF_WEEK);
+                    }
+                    else {
+                        day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
+                    }
+
+                    frequency = freqSpin.getSelectedItem().toString();
+                    if (frequency.equals("Select Repeat Frequency")){
+                        frequency = "None";
+                    }
+
+                    // If no snooze time inputted, default is 10 minutes
+                    if (snoozeTime.getText().toString().equals("")){
+                        snooze = 10; // Default snooze duration in minutes
+                    }
+                    else {
+                        snooze = Integer.parseInt(snoozeTime.getText().toString());
+                    }
 
                     // Set hour and minutes of the inputted time
                     if (Build.VERSION.SDK_INT >= 23 ){
@@ -86,13 +106,13 @@ public class SetAlarmFragment extends Fragment {
                     }
 
                     //TODO: Add day of week
-                    Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
                     cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
                     cal.set(Calendar.HOUR_OF_DAY, hour); //Reset other time attributes to relevant time, ie when to go off.
                     cal.set(Calendar.MINUTE, minutes);
                     cal.set(Calendar.SECOND, 0);
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                    alarmName = nameField.getText().toString();
 
                     // if no alarm name is specified
                     if (alarmName.isEmpty()){
@@ -110,9 +130,9 @@ public class SetAlarmFragment extends Fragment {
 
                     mListener.closeSetAlarmFragment();
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "frequency: " + frequency + "\nsnooze: " + snooze, Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
         return v;
     }

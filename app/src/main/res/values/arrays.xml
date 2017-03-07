@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="days">
+        <item>Choose Day(s)</item>
         <item>Sunday</item>
         <item>Monday</item>
         <item>Tuesday</item>
@@ -10,8 +11,9 @@
         <item>Saturday</item>
     </string-array>
     <string-array name="frequency">
+        <item>Select Repeat Frequency</item>
         <item>Daily</item>
         <item>Weekly</item>
-        <item>Biweekly</item>
+        <item>None</item>
     </string-array>
 </resources>
