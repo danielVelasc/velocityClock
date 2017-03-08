@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -138,9 +140,11 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
             TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
             alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
 
-            // TODO: Show frequency of alarm
-//              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
-//              alarmFrequencyText.setText(alarmList.get(position).getFrequency());
+            // Show the name and frequency of the alarm
+            TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
+            alarmFrequencyText.setText(alarmList.get(position).getFrequency());
+            TextView alarmName = (TextView)view.findViewById(R.id.alarmName);
+            alarmName.setText(alarmList.get(position).getName());
 
             // Handle switch (setting on/off)
             SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);

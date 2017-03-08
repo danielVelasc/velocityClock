@@ -16,18 +16,21 @@
         android:textSize="40sp"
         android:padding="15dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/alarmSwitch" />
 
     <TextView
-        android:text="Everyday"
+        android:text="Name"
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/alarmFrequency"
+        android:id="@+id/alarmLabel"
         android:textSize="16sp"
         android:padding="15dp"
+        android:textStyle="normal|bold"
         android:layout_below="@+id/alarmTime"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/alarmSwitch" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
@@ -53,5 +56,17 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="14dp"
         android:textColor="@color/white"/>
+
+    <TextView
+        android:text="Everyday"
+        android:textColor="#ffffff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/alarmFrequency"
+        android:textSize="16sp"
+        android:padding="15dp"
+        android:layout_below="@+id/alarmLabel"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/alarmLabel" />
 
 </RelativeLayout>

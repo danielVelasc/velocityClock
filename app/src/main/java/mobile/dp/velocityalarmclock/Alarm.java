@@ -160,4 +160,8 @@ public class Alarm implements Serializable {
     public void setSnoozetime(long snoozeTime) {
         this.snoozeTime = snoozeTime;
     }
+
+    public String getFrequency() {
+        return "Weekly";
+    }
 }
