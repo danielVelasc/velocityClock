@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -280,8 +281,10 @@ class AlarmCoordinator {
      */
     public void playAlarmNoise(Context context) {
         //activating looping ringtone sound
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        mPlayer = MediaPlayer.create(context, notification);
+    /*    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        mPlayer = MediaPlayer.create(context, notification); */
+        mPlayer = MediaPlayer.create(context, R.raw.alarm_sound);
+        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mPlayer.setLooping(true);
         mPlayer.start();
     }
