@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,14 +41,14 @@ import static android.content.ContentValues.TAG;
  *
  */
 public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinatorListener {
-    Context context;
     List<Alarm> alarmList;
+    AlarmAdapterListener mListener;
 
     public AlarmAdapter(Context context, int resource, List<Alarm> items) {
         super(context, resource, items);
 
-        this.context = context;
-        this.alarmList = items;
+        alarmList = items;
+        mListener = (AlarmAdapterListener)context;
     }
 
     @Override
@@ -84,7 +86,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 
         // If view is null, we must inflate a view depending on its position.
         if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             // The clock view is placed at position 0
             if (position == 0) {
@@ -95,7 +97,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                 weekday_month_day.setText(date);
 
                 // Get size of screen
-                Display display = ((AppCompatActivity)context).getWindowManager().getDefaultDisplay();
+                Display display = ((AppCompatActivity)getContext()).getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
 
@@ -128,6 +130,46 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                         deleteItem(position);
                     }
                 });
+
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    private final long tapTime = 200;
+                    private long downTime = 0;
+                    private boolean tapCancelled = true;
+
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getActionMasked()) {
+                            case (MotionEvent.ACTION_DOWN):
+                                Log.d(TAG, "Action was DOWN");
+                                downTime = event.getEventTime();
+                                tapCancelled = false;
+                                return true;
+                            case (MotionEvent.ACTION_MOVE):
+                                Log.d(TAG, "Action was MOVE");
+                                tapCancelled = true;
+                                return true;
+                            case (MotionEvent.ACTION_UP):
+                                Log.d(TAG, "Action was UP");
+                                long upTime = event.getEventTime();
+                                if(!tapCancelled && (upTime-downTime)<tapTime) {
+                                    Log.d(TAG,"Action was TAP");
+                                    int position = (Integer) v.getTag();
+                                    mListener.alarmViewTapped(position);
+                                }
+                                return true;
+                            case (MotionEvent.ACTION_CANCEL):
+                                Log.d(TAG, "Action was CANCEL");
+                                tapCancelled = true;
+                                return true;
+                            case (MotionEvent.ACTION_OUTSIDE):
+                                Log.d(TAG, "Movement occurred outside bounds " +
+                                        "of current screen element");
+                                tapCancelled = true;
+                                return true;
+                            default:
+                                return true;
+                        }
+                    }
+                });
             }
         }
 
@@ -142,15 +184,21 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 //              TextView alarmFrequencyText = (TextView)view.findViewById(R.id.alarmFrequency);
 //              alarmFrequencyText.setText(alarmList.get(position).getFrequency());
 
+            // Cache view position on main view with tag
+            view.setTag(position);
+
             // Handle switch (setting on/off)
             SwitchCompat activeStatusSwitch = (SwitchCompat)view.findViewById(R.id.alarmSwitch);
-            // Cache view position in button with tag
+            // Cache view position in status switch with tag
             activeStatusSwitch.setTag(position) ;
             activeStatusSwitch.setChecked(alarmList.get(position).isActive());
 
             FloatingActionButton deleteButton = (FloatingActionButton)view.findViewById(R.id.deleteButton);
             // Cache view position in button with tag
             deleteButton.setTag(position);
+
+            TextView alarmNameView = (TextView) view.findViewById(R.id.alarmName);
+            alarmNameView.setText(alarmList.get(position).getName());
         }
 
         return view;
@@ -168,7 +216,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
      * @param i
      */
     public void deleteItem(int i) {
-        AlarmCoordinator.getInstance().deleteAlarm(i, context);
+        AlarmCoordinator.getInstance().deleteAlarm(i, getContext());
         notifyDataSetChanged();
     }
 }

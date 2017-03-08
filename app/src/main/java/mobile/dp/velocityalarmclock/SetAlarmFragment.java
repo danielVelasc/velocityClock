@@ -14,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -32,18 +34,43 @@ import java.util.Locale;
  */
 
 public class SetAlarmFragment extends Fragment {
+    private static final String EXISTING_ALARM_POSITION = "existing-alarm-position";
+    int mPosition;
 
     SetAlarmFragmentListener mListener;
     View v;
-    int day, hour, minutes;
-    String alarmName;
+    int day, hour, minutes, snooze;
+    String alarmName, frequency;
     Date time;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
-    // TODO - add field for alarm name
-    Spinner daySpin; // TODO - Change spinner to list with checkboxes (multi-selection)
-    EditText nameField;
+    Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to list with checkboxes (multi-selection)
+    EditText nameField, snoozeTime;
     // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
+
+    public static SetAlarmFragment newInstance() {
+        SetAlarmFragment fragment = new SetAlarmFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXISTING_ALARM_POSITION, 0);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static SetAlarmFragment newInstance(int position) {
+        SetAlarmFragment fragment = new SetAlarmFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXISTING_ALARM_POSITION, position);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mPosition = getArguments().getInt(EXISTING_ALARM_POSITION);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,6 +83,8 @@ public class SetAlarmFragment extends Fragment {
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
             daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to list with checkboxes (multi-selection)
             nameField = (EditText) v.findViewById(R.id.alarmName);
+            freqSpin = (Spinner) v.findViewById(R.id.freqSpin);
+            snoozeTime = (EditText) v.findViewById(R.id.snoozeTime);
 
             // Cancel setting the alarm and return back to the main alarm view
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -71,8 +100,31 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    alarmName = nameField.getText().toString();
-                    day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
+                    Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
+
+                    // Set the day variables
+                    if (daySpin.getSelectedItem().toString().equals("Choose Day")){
+                        day = cal.get(Calendar.DAY_OF_WEEK);    // Default day is the current day
+                    }
+                    else {
+                        day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
+                    }
+
+                    // Frequency of repeat for alarm
+                    Alarm.AlarmFrequency alarmFreq = Alarm.AlarmFrequency.NO_REPEAT;
+                    frequency = freqSpin.getSelectedItem().toString();
+                    if (frequency.equals("Daily")) {
+                        alarmFreq = Alarm.AlarmFrequency.DAILY_REPEAT;
+                    } else if (frequency.equals("Weekly")) {
+                        alarmFreq = Alarm.AlarmFrequency.WEEKLY_REPEAT;
+                    }
+
+                    // If no snooze time inputted, set default
+                    try {
+                        snooze = Integer.parseInt(snoozeTime.getText().toString());
+                    } catch (NumberFormatException e) {
+                        snooze = Alarm.DEFAULT_SNOOZE;
+                    }
 
                     // Set hour and minutes of the inputted time
                     if (Build.VERSION.SDK_INT >= 23 ){
@@ -85,35 +137,47 @@ public class SetAlarmFragment extends Fragment {
                         minutes = setAlarmTime.getCurrentMinute();  // getCurrentMinute
                     }
 
-                    //TODO: Add day of week
-                    Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
-                    cal.setTimeInMillis(System.currentTimeMillis()); //Current time (for year, month etc)
-                    cal.set(Calendar.HOUR_OF_DAY, hour); //Reset other time attributes to relevant time, ie when to go off.
-                    cal.set(Calendar.MINUTE, minutes);
-                    cal.set(Calendar.SECOND, 0);
+                    alarmName = nameField.getText().toString();
 
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                    Alarm newAlarm = new Alarm(day, hour, minutes, alarmFreq, alarmName);
 
-                    
-                    // if no alarm name is specified
-                    if (alarmName.isEmpty()){
-                        Alarm newAlarm = new Alarm(day, cal.getTime(), false);
-                        AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm set!", Toast.LENGTH_SHORT).show();
+                    // If we are modifying an existing alarm, mPosition will be > 0
+                    if (mPosition > 0) {
+                        AlarmCoordinator.getInstance().modifyAlarm(mPosition, getActivity(), newAlarm);
+                        Toast.makeText(getActivity(), "alarm modified: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
-
-                    // else if an alarm name is specified
-                    else{
-                        Alarm newAlarm = new Alarm(day, cal.getTime(), false, alarmName);
+                    // Otherwise, create a new alarm
+                    else {
                         AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm set: " + alarmName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "alarm set: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
 
                     mListener.closeSetAlarmFragment();
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "frequency: " + frequency + "\nsnooze: " + snooze, Toast.LENGTH_SHORT).show();
                 }
             });
 
+            // If we are modifying an existing alarm, mPosition will be > 0. We must fill fields in the existing alarm
+            if (mPosition > 0) {
+                // Modify title view to say "Modify Alarm"
+                TextView setAlarmText = (TextView) v.findViewById(R.id.setAlarmText);
+                setAlarmText.setText(R.string.modify_alarm_text);
+
+                Alarm existingAlarm = AlarmCoordinator.getInstance().getAlarm(mPosition);
+
+                if (Build.VERSION.SDK_INT >= 23 ) {
+                    setAlarmTime.setHour(existingAlarm.getHourOfDay());
+                    setAlarmTime.setMinute(existingAlarm.getMinOfHour());
+                } else {
+                    setAlarmTime.setCurrentHour(existingAlarm.getHourOfDay());
+                    setAlarmTime.setCurrentMinute(existingAlarm.getMinOfHour());
+                }
+
+                nameField.setText(existingAlarm.getName());
+
+                daySpin.setSelection(existingAlarm.getDayOfWeek());
+            }
         }
         return v;
     }

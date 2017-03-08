@@ -30,8 +30,7 @@
                 android:clickable="true"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_alignParentLeft="true"
-                android:elevation="6dp"
+                android:layout_alignParentStart="true"
                 android:background="@color/colorAccent"
                 android:textColor="@color/colorPrimaryDark" />
 
@@ -39,8 +38,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Alarm"
-                android:textSize="32dp"
+                android:text="@string/set_alarm_text"
+                android:textSize="32sp"
                 android:typeface="sans"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-thin"
@@ -55,7 +54,7 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/setAlarmButton"
-                style="@android:style/Widget.Material.Light.Button"
+                style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
                 android:onClick="submitNewAlarm"
                 android:layout_alignParentTop="true"
@@ -113,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/snoozeTime"
                     android:hint="@string/snooze_input_hint"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:maxLines="1"/>
             </LinearLayout>
         </ScrollView>
