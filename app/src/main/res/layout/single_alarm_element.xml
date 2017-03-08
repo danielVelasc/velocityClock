@@ -23,7 +23,7 @@
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
+        android:id="@+id/alarmRepeating"
         android:textSize="16sp"
         android:padding="15dp"
         android:layout_below="@+id/alarmTime"

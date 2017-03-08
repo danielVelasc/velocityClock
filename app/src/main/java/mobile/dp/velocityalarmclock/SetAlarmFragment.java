@@ -113,6 +113,7 @@ public class SetAlarmFragment extends Fragment {
                     // Frequency of repeat for alarm
                     Alarm.AlarmFrequency alarmFreq = Alarm.AlarmFrequency.NO_REPEAT;
                     frequency = freqSpin.getSelectedItem().toString();
+
                     if (frequency.equals("Daily")) {
                         alarmFreq = Alarm.AlarmFrequency.DAILY_REPEAT;
                     } else if (frequency.equals("Weekly")) {
@@ -175,8 +176,8 @@ public class SetAlarmFragment extends Fragment {
                 }
 
                 nameField.setText(existingAlarm.getName());
-
                 daySpin.setSelection(existingAlarm.getDayOfWeek());
+                freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
             }
         }
         return v;

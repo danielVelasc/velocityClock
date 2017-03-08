@@ -197,6 +197,11 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
             // Cache view position in button with tag
             deleteButton.setTag(position);
 
+            // update alarm repeating label
+            TextView alarmRepeatingView = (TextView) view.findViewById(R.id.alarmRepeating);
+            alarmRepeatingView.setText(Alarm.ALARM_FREQUENCY_TO_STRING[alarmList.get(position).getAlarmFrequency().ordinal()]);
+
+            // update alarm name label
             TextView alarmNameView = (TextView) view.findViewById(R.id.alarmName);
             alarmNameView.setText(alarmList.get(position).getName());
         }
