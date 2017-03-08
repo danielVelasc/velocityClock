@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -159,6 +160,22 @@ public class SetAlarmFragment extends Fragment {
                 }
             });
 
+            freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
+                        daySpin.setVisibility(View.INVISIBLE);
+                    } else {
+                        daySpin.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
             // If we are modifying an existing alarm, mPosition will be > 0. We must fill fields in the existing alarm
             if (mPosition > 0) {
                 // Modify title view to say "Modify Alarm"
@@ -178,6 +195,10 @@ public class SetAlarmFragment extends Fragment {
                 nameField.setText(existingAlarm.getName());
                 daySpin.setSelection(existingAlarm.getDayOfWeek());
                 freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
+
+                if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {
+                    daySpin.setVisibility(View.INVISIBLE);
+                }
             }
         }
         return v;

@@ -199,7 +199,18 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 
             // update alarm repeating label
             TextView alarmRepeatingView = (TextView) view.findViewById(R.id.alarmRepeating);
-            alarmRepeatingView.setText(Alarm.ALARM_FREQUENCY_TO_STRING[alarmList.get(position).getAlarmFrequency().ordinal()]);
+            switch (alarmList.get(position).getAlarmFrequency()) {
+                case DAILY_REPEAT:
+                    alarmRepeatingView.setText("Daily");
+                    break;
+                case WEEKLY_REPEAT:
+                    alarmRepeatingView.setText(getContext().getResources().getStringArray(R.array.days)[alarmList.get(position).getDayOfWeek()] + " (R)");
+                    break;
+                case NO_REPEAT:
+                    alarmRepeatingView.setText(getContext().getResources().getStringArray(R.array.days)[alarmList.get(position).getDayOfWeek()]);
+                    break;
+            }
+            //alarmRepeatingView.setText(Alarm.ALARM_FREQUENCY_TO_STRING[alarmList.get(position).getAlarmFrequency().ordinal()]);
 
             // update alarm name label
             TextView alarmNameView = (TextView) view.findViewById(R.id.alarmName);
