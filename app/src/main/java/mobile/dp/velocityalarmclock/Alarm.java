@@ -21,7 +21,7 @@ public class Alarm implements Serializable {
     private int dayOfWeek, hourOfDay, minOfHour;
     private Date time;
     private long snoozeTime = 60 * 1000;
-    private boolean repeat;
+    private AlarmFrequency frequency;
     private boolean isActive = true;
 
     public Alarm() {}
@@ -33,11 +33,11 @@ public class Alarm implements Serializable {
      *
      * @param dayOfWeek - the day of the week
      * @param time - the time of the day
-     * @param repeat - if true repeat more than once
+     * @param frequency - if true repeat more than once
      */
-    public Alarm (int dayOfWeek, Date time, boolean repeat) {
+    public Alarm (int dayOfWeek, Date time, AlarmFrequency frequency) {
 
-        this (dayOfWeek, time, repeat, "Alarm");
+        this (dayOfWeek, time, frequency, "Alarm");
 
     }
 
@@ -48,14 +48,14 @@ public class Alarm implements Serializable {
      * @param time - the time of the day
      * @param repeat - if true repeat more than once
      */
-    public Alarm (int dayOfWeek, Date time, boolean repeat, String name) {
+    public Alarm (int dayOfWeek, Date time, AlarmFrequency repeat, String name) {
 
         if (time == null) Log.d(this.getClass().getName(), "Time null");
         this.dayOfWeek = dayOfWeek;
         this.hourOfDay = time.getHours(); //Deprecated but it works for now
         this.minOfHour = time.getMinutes();
         this.time = time;
-        this.repeat = repeat;
+        this.frequency = frequency;
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
         Log.d(getClass().getName(), "Day " + dayOfWeek + "Hour " + hourOfDay + "Minute " + minOfHour);
@@ -93,14 +93,6 @@ public class Alarm implements Serializable {
      */
     public int getMinOfHour() {
         return minOfHour;
-    }
-
-    /**
-     * If alarm repeats
-     * @return true if the alarm is a repeating alarm
-     */
-    public boolean repeats() {
-        return repeat;
     }
 
     /**
@@ -160,4 +152,29 @@ public class Alarm implements Serializable {
     public void setSnoozetime(long snoozeTime) {
         this.snoozeTime = snoozeTime;
     }
+
+    /**
+     * The frequency of the alarm.
+     * @return The alarm frequency
+     */
+    public AlarmFrequency getAlarmFrequency() {
+        return this.frequency;
+    }
+
+    /**
+     * Set the frequency of the alarm
+     * @param frequency of the alarm
+     */
+    public void setAlarmFrequency(AlarmFrequency frequency) {
+        this.frequency = frequency;
+    }
+
+    /**
+     * Alarm frequency types: NO_REPEAT does not repeat, DAILY_REPEAT for repeating every 24 hours,
+     * and WEEKLY_REPEAT repeats every 168 hours.
+     */
+    public enum AlarmFrequency {
+        NO_REPEAT, DAILY_REPEAT, WEEKLY_REPEAT
+    }
 }
+

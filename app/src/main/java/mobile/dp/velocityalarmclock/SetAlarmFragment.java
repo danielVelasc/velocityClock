@@ -94,6 +94,7 @@ public class SetAlarmFragment extends Fragment {
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
+                    
                     // if no alarm name is specified
                     if (alarmName.isEmpty()){
                         Alarm newAlarm = new Alarm(day, cal.getTime(), false);

@@ -73,16 +73,19 @@ class AlarmCoordinator {
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        //TODO: Refactor this is a mess.
-        if (alarm.repeats()) { //Schedule alarm to repeat if necessary - This does not work unless they want it to go off 24 hours there after. (Refractor when we reach the story)
-            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
-            scheduledIntents.put(alarm, scheduledIntent);
-        } else {
-            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), scheduledIntent  );
-            scheduledIntents.put(alarm, scheduledIntent);
+        PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
+        switch (alarm.getAlarmFrequency()) {
+            case NO_REPEAT:
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), scheduledIntent); // Don't repeat
+                break;
+            case DAILY_REPEAT:
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
+                break;
+            case WEEKLY_REPEAT:
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeToGoOff(), 24 * 60 * 60 * 1000 * 7, scheduledIntent); //Repeats every 7 days hours after
         }
+
+        scheduledIntents.put(alarm, scheduledIntent); //Add to list of Scheduledintents
 
         alarm.setState(true);
         alarmList.add(alarm);
