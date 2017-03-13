@@ -27,13 +27,12 @@ public class Alarm implements Serializable {
     private String name;
     private String uuid; //The unique alarm id
     private int hourOfDay, minOfHour;
-    private int[] daysOfWeek, pendingIntentIDs;
+    private int[] pendingIntentIDs;
+    private boolean[] daysOfWeek;
     private long snoozeTime = 60 * 1000;
     private AlarmFrequency frequency;
     private boolean isActive = true;
 
-    //TODO: Add sound and snooze
-    //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
     /**
      * Creates an alarm with default name
      *
@@ -42,7 +41,7 @@ public class Alarm implements Serializable {
      * @param minOfHour - the minute of the hour
      * @param frequency - the frequency of the alarm, if daily repeat the bitmask of daysOfWeek should be full.
      */
-    public Alarm (int[] daysOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency) {
+    public Alarm (boolean[] daysOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency) {
 
         this(daysOfWeek, hourOfDay, minOfHour, frequency, "Alarm");
     }
@@ -55,7 +54,7 @@ public class Alarm implements Serializable {
      * @param minOfHour - the minute of the hour
      * @param frequency - the frequency of the alarm, if daily repeat the bitmask of daysOfWeek should be full.
      */
-    public Alarm (int[] daysOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency, String name) {
+    public Alarm (boolean[] daysOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency, String name) {
 
         this.daysOfWeek = Arrays.copyOf(daysOfWeek, daysOfWeek.length);
         this.hourOfDay = hourOfDay; //Deprecated but it works for now
@@ -84,7 +83,7 @@ public class Alarm implements Serializable {
         cal.set(Calendar.SECOND, 0);
 
         for (int day = 0; day < daysOfWeek.length; day++) {
-            if (daysOfWeek[day] == 0) {
+            if (daysOfWeek[day] == false) { // No time for this day
                 initialTimes[day] = -1;
                 continue;
             }
@@ -148,7 +147,7 @@ public class Alarm implements Serializable {
      * Obtains the current day of the week, 1 being sunday and 7 saturday
      * @return An int corresponding to the day of the week
      */
-    public int[] getDaysOfWeek() {
+    public boolean[] getDaysOfWeek() {
         return Arrays.copyOf(this.daysOfWeek, 7);
     }
 
@@ -198,7 +197,6 @@ public class Alarm implements Serializable {
      */
     public void setState(boolean active) {
         this.isActive = active;
-        // TODO: change status with services too
 
     }
 
