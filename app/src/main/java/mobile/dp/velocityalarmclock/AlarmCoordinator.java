@@ -86,12 +86,10 @@ class AlarmCoordinator {
 
             if (freq.equals(Alarm.AlarmFrequency.NO_REPEAT)) { //If it doesnt repeat don't schedule reg intent
                 alarmMgr.set(AlarmManager.RTC_WAKEUP, times[day], scheduledIntent);
-                scheduledIntents.put(alarm, scheduledIntent); //TODO: Change this to implemnt the new scheduled intent functionality
                 break; //No need to iterate through the rest of the days
             } else {
                 alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, times[day], 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
             }
-            scheduledIntents.put(alarm, scheduledIntent); //TODO: Change this to implemnt the new scheduled intent functionality
 
         }
 
