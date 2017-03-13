@@ -320,8 +320,10 @@ class AlarmCoordinator {
      * @param context Context that is passed from BootReceiver
      */
     public void rescheduleAlarms(Context context){
-        // TODO implement this
-        /* STUB */
+        loadAlarmList(context);
+        for(int i = 0; i < alarmList.size(); i++){
+            createNewAlarm(context, alarmList.get(i));
+        }
     }
 }
 
