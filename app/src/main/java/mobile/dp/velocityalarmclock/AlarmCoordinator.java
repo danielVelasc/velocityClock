@@ -62,7 +62,7 @@ class AlarmCoordinator {
     { return instance; }
 
     /**
-     * Schedules a new alarm in the system services. Additionally adds alarms to be kept track of.
+     * Schedules a new alarm(s) in the system services. Additionally adds alarms to be kept track of.
      * @param context
      * @param alarm
      */
@@ -73,22 +73,27 @@ class AlarmCoordinator {
         alertIntent.putExtra("Alarm-ID", alarm.getUuid()); // Will be helpful later
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        int pendingIntentID = IDGenerator.getID();
-        alarm.setPendingIntentID(pendingIntentID);
+        long[] times = alarm.calcInitialAlarmTime();
+        Alarm.AlarmFrequency freq = alarm.getAlarmFrequency();
 
-        PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
-        switch (alarm.getAlarmFrequency()) {
-            case NO_REPEAT:
-                alarmMgr.set(AlarmManager.RTC_WAKEUP, alarm.calcInitialAlarmTime(), scheduledIntent); // Don't repeat
-                break;
-            case DAILY_REPEAT:
-                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.calcInitialAlarmTime(), 1000 * 60/*24 * 60 * 60 * 1000*/, scheduledIntent); //Repeats every 24 hours after
-                break;
-            case WEEKLY_REPEAT:
-                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.calcInitialAlarmTime(), 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
+        for (int day = 0; day < 7; day++) { //Create the initial start time for any enabled day of the week
+            if (times[day] == -1) continue; //No alarm that day
+
+            int pendingIntentID = IDGenerator.getID(); //Generate the intent ID and set in alarm
+            alarm.setPendingIntentID(pendingIntentID, day);
+
+            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
+
+            if (freq.equals(Alarm.AlarmFrequency.NO_REPEAT)) { //If it doesnt repeat don't schedule reg intent
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, times[day], scheduledIntent);
+                scheduledIntents.put(alarm, scheduledIntent); //TODO: Change this to implemnt the new scheduled intent functionality
+                break; //No need to iterate through the rest of the days
+            } else {
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, times[day], 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
+            }
+            scheduledIntents.put(alarm, scheduledIntent); //TODO: Change this to implemnt the new scheduled intent functionality
+
         }
-
-        scheduledIntents.put(alarm, scheduledIntent); //Add to list of Scheduledintents
 
         alarm.setState(true);
         alarmList.add(alarm);
