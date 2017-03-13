@@ -313,5 +313,15 @@ class AlarmCoordinator {
         }
         throw new NoSuchElementException("The alarm by the UUID " + UUID + " could not be found");
     }
+
+    /**
+     * This function is called by the onReceive method of the BootReceiver. When called, it
+     * should reschedule all of the PendingIntents.
+     * @param context Context that is passed from BootReceiver
+     */
+    public void rescheduleAlarms(Context context){
+        // TODO implement this
+        /* STUB */
+    }
 }
 
