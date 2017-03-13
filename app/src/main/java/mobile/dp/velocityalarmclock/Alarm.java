@@ -17,7 +17,7 @@ import java.util.Date;
  * @Version 2.0
  * @Date February 5th 2017
  */
-public class Alarm implements Serializable, Parcelable {
+public class Alarm implements Serializable {
     static final String[] ALARM_FREQUENCY_TO_STRING = {"", "Daily", "Weekly"};
 
     static final int DEFAULT_SNOOZE = 60 * 1000;
@@ -33,50 +33,6 @@ public class Alarm implements Serializable, Parcelable {
     private long snoozeTime = 60 * 1000;
     private AlarmFrequency frequency;
     private boolean isActive = true;
-
-    // Added Parcelable interface methods so that fragments can accept alarm as a Parcelable
-
-    public int describeContents() {
-        return 0;
-    }
-
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeStringArray(new String[]{name, uuid, frequency.toString()});
-        out.writeIntArray(new int[]{pendingIntentID, dayOfWeek, hourOfDay, minOfHour});
-        out.writeLongArray(new long[]{time.getTime(), snoozeTime});
-        out.writeBooleanArray(new boolean[]{isActive});
-    }
-
-    public static final Parcelable.Creator<Alarm> CREATOR
-            = new Parcelable.Creator<Alarm>() {
-        public Alarm createFromParcel(Parcel in) {
-            return new Alarm(in);
-        }
-
-        public Alarm[] newArray(int size) {
-            return new Alarm[size];
-        }
-    };
-
-    private Alarm(Parcel in) {
-        String[] stringArray = new String[3];
-        in.readStringArray(stringArray);
-        name = stringArray[0]; uuid = stringArray[1]; frequency = AlarmFrequency.valueOf(stringArray[2]);
-
-        int[] intArray = new int[4];
-        in.readIntArray(intArray);
-        pendingIntentID = intArray[0]; dayOfWeek = intArray[1]; hourOfDay = intArray[2]; minOfHour = intArray[3];
-
-        long[] longArray = new long[2];
-        in.readLongArray(longArray);
-        time = new Date(longArray[0]); snoozeTime = longArray[1];
-
-        boolean[] booleanArray = new boolean[1];
-        in.readBooleanArray(booleanArray);
-        isActive = booleanArray[0];
-    }
-
-    public Alarm() {}
 
     //TODO: Add sound and snooze
     //ToDo: Determine if the dayOfWeek, hourOfDay, minOfHour, secOfMin are redundant if there is also time
