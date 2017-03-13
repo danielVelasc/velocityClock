@@ -26,10 +26,8 @@ public class Alarm implements Serializable {
 
     private String name;
     private String uuid; //The unique alarm id
-    private int pendingIntentID; // This is the broadcastID of the alarm, should only be used for scheduling
     private int hourOfDay, minOfHour;
     private int[] daysOfWeek, pendingIntentIDs;
-    private Date time;
     private long snoozeTime = 60 * 1000;
     private AlarmFrequency frequency;
     private boolean isActive = true;
