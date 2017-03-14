@@ -1,4 +1,3 @@
-
 package mobile.dp.velocityalarmclock;
 
 import android.app.Fragment;
@@ -19,6 +18,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,12 +40,14 @@ public class SetAlarmFragment extends Fragment {
 
     SetAlarmFragmentListener mListener;
     View v;
-    int day, hour, minutes, snooze;
+    boolean [] day = new boolean[7]; // Array to store boolean values of selected days
+    int hour, minutes, snooze;
     String alarmName, frequency;
     Date time;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
-    Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to list with checkboxes (multi-selection)
+    Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to toggle buttons (multi-selection)
+    HashMap<ToggleButton, Boolean> toggleMap = new HashMap<>();
     EditText nameField, snoozeTime;
     // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
 
@@ -82,7 +84,7 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton = (Button) v.findViewById(R.id.setAlarmButton);
             cancelButton = (Button) v.findViewById(R.id.cancelButton);
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
-            daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to list with checkboxes (multi-selection)
+            daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to toggle buttons (multi-selection)
             nameField = (EditText) v.findViewById(R.id.alarmName);
             freqSpin = (Spinner) v.findViewById(R.id.freqSpin);
             snoozeTime = (EditText) v.findViewById(R.id.snoozeTime);
@@ -101,15 +103,16 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    populateDayArray(v);
                     Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
 
-                    // Set the day variables
-                    if (daySpin.getSelectedItem().toString().equals("Choose Day")){
-                        day = cal.get(Calendar.DAY_OF_WEEK);    // Default day is the current day
-                    }
-                    else {
-                        day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to list with checkboxes (multi-selection)
-                    }
+//                    // Set the day variables
+//                    if (daySpin.getSelectedItem().toString().equals("Choose Day")){
+//                        //day = cal.get(Calendar.DAY_OF_WEEK);    // Default day is the current day
+//                    }
+//                    else {
+//                       // day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to toggle buttons (multi-selection)
+//                    }
 
                     // Frequency of repeat for alarm
                     Alarm.AlarmFrequency alarmFreq = Alarm.AlarmFrequency.NO_REPEAT;
@@ -168,9 +171,16 @@ public class SetAlarmFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
-                        daySpin.setVisibility(View.INVISIBLE);
+                        //daySpin.setVisibility(View.INVISIBLE);
+                        for (ToggleButton button : toggleMap.keySet()){
+                            button.setVisibility(View.INVISIBLE);
+                        }
+
                     } else {
-                        daySpin.setVisibility(View.VISIBLE);
+                        //daySpin.setVisibility(View.VISIBLE);
+                        for (ToggleButton button : toggleMap.keySet()){
+                            button.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 
@@ -197,10 +207,8 @@ public class SetAlarmFragment extends Fragment {
                 }
 
                 nameField.setText(existingAlarm.getName());
-
-                // TODO: Remove this spinner
-                daySpin.setSelection(existingAlarm.getFirstActiveDayOfWeek());
-
+                // TODO - dayspin to toggle buttons
+                //daySpin.setSelection(existingAlarm.getDaysOfWeek());
                 freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
 
                 if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {
@@ -237,6 +245,34 @@ public class SetAlarmFragment extends Fragment {
         convertMap.put("Saturday",7);
 
         return convertMap.get(convertDay).intValue();
+    }
+
+    public void populateDayArray(View v){
+        ToggleButton sundayToggle = (ToggleButton) v.findViewById(R.id.sundayButton);
+        ToggleButton mondayToggle = (ToggleButton) v.findViewById(R.id.mondayButton);
+        ToggleButton tuesdayToggle = (ToggleButton) v.findViewById(R.id.tuesdayButton);
+        ToggleButton wednesdayToggle = (ToggleButton) v.findViewById(R.id.wednesdayButton);
+        ToggleButton thursdayToggle = (ToggleButton) v.findViewById(R.id.thursdayButton);
+        ToggleButton fridayToggle = (ToggleButton) v.findViewById(R.id.fridayButton);
+        ToggleButton saturdayToggle = (ToggleButton) v.findViewById(R.id.saturdayButton);
+
+        day[0] = sundayToggle.isChecked();
+        day[1] = mondayToggle.isChecked();
+        day[2] = tuesdayToggle.isChecked();
+        day[3] = wednesdayToggle.isChecked();
+        day[4] = thursdayToggle.isChecked();
+        day[5] = fridayToggle.isChecked();
+        day[6] = saturdayToggle.isChecked();
+
+        toggleMap.put(sundayToggle, sundayToggle.isEnabled());
+        toggleMap.put(mondayToggle, mondayToggle.isEnabled());
+        toggleMap.put(tuesdayToggle, tuesdayToggle.isEnabled());
+        toggleMap.put(wednesdayToggle, wednesdayToggle.isEnabled());
+        toggleMap.put(thursdayToggle, thursdayToggle.isEnabled());
+        toggleMap.put(fridayToggle, fridayToggle.isEnabled());
+        toggleMap.put(saturdayToggle, saturdayToggle.isEnabled());
+
+        System.out.println(day);
     }
 
     // Hides the toolbar of the main activity when this fragment is active
