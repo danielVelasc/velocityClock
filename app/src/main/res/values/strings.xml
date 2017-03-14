@@ -16,4 +16,12 @@
     <string name="snooze_input_hint">Set the snooze duration!</string>
     <string name="set_alarm_text">Set Alarm</string>
     <string name="modify_alarm_text">Modify Alarm</string>
+
+    <string name="sunday_button_name">Su</string>
+    <string name="monday_button_name">Mo</string>
+    <string name="tuesday_button_name">Tu</string>
+    <string name="wednesday_button_name">We</string>
+    <string name="thursday_button_name">Th</string>
+    <string name="friday_button_name">Fr</string>
+    <string name="saturday_button_name">Sa</string>
 </resources>
