@@ -60,18 +60,31 @@ class AlarmCoordinator {
     { return instance; }
 
     /**
-     * Schedules a new alarm in the system services. Additionally adds alarms to be kept track of.
+     * Schedules a new alarm in the system services. Additionally, adds alarms to be kept track of.
      * @param context
      * @param alarm
      */
     void createNewAlarm(Context context, Alarm alarm) {
+        createNewAlarm(context, alarm, false);
+    }
+
+    /**
+     * Schedules a new alarm in the system services. Additionally adds alarms to be kept track of.
+     * @param context
+     * @param alarm
+     */
+    void createNewAlarm(Context context, Alarm alarm, boolean appRestart) {
 
         Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName());
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        int pendingIntentID = IDGenerator.getID();
-        alarm.setPendingIntentID(pendingIntentID);
+
+        // Only give new pendingIntentID if creating new alarm
+        if (!appRestart) {
+            int pendingIntentID = IDGenerator.getID();
+            alarm.setPendingIntentID(pendingIntentID);
+        }
 
         alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()); // Will be helpful later
 
@@ -87,11 +100,11 @@ class AlarmCoordinator {
                 alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarm.calcInitialAlarmTime(), 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
         }
 
-        alarm.setState(true);
-        alarmList.add(alarm);
-        notifyAlarmChange();
-
-
+        if (!appRestart) {
+            alarm.setState(true);
+            alarmList.add(alarm);
+            notifyAlarmChange();
+        }
     }
 
     /**
@@ -342,7 +355,7 @@ class AlarmCoordinator {
     public void rescheduleAlarms(Context context){
         loadAlarmList(context);
         for(int i = 1; i < alarmList.size(); i++){
-            createNewAlarm(context, alarmList.get(i));
+            createNewAlarm(context, alarmList.get(i), true);
         }
     }
 }
