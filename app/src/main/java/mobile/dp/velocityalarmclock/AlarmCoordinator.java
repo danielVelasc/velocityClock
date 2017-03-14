@@ -65,7 +65,6 @@ class AlarmCoordinator {
      * @param alarm
      */
     void createNewAlarm(Context context, Alarm alarm) {
-        // TODO create alertIntent, scheduledIntent for each day in alarm
 
         Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName());
@@ -333,6 +332,18 @@ class AlarmCoordinator {
             if (alarmList.get(i).getPendingIntentID() == ID) return alarmList.get(i);
         }
         throw new NoSuchElementException("The alarm by the PendingIntentID " + ID + " could not be found");
+    }
+
+    /**
+     * This function is called by the onReceive method of the BootReceiver. When called, it
+     * should reschedule all of the PendingIntents.
+     * @param context Context that is passed from BootReceiver
+     */
+    public void rescheduleAlarms(Context context){
+        loadAlarmList(context);
+        for(int i = 1; i < alarmList.size(); i++){
+            createNewAlarm(context, alarmList.get(i));
+        }
     }
 }
 
