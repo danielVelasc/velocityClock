@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import java.util.Calendar;
 import java.util.NoSuchElementException;
 
 /**
@@ -25,7 +26,7 @@ public class AlarmRingDialogFragment extends DialogFragment {
         final AlarmCoordinator ac = AlarmCoordinator.getInstance();
 
         try {
-            mAlarm = ac.getAlarmByPendingIntentID(ra.getIntent().getIntExtra("Alarm-ID", 0));
+            mAlarm = ac.getAlarmByPendingIntentID(Calendar.getInstance().getTime().getDay(), ra.getIntent().getIntExtra("Alarm-ID", -1));
 
             dialogBuilder.setMessage("Alarm - " + ra.getIntent().getStringExtra("Alarm-Name"))
                     .setIcon(R.drawable.bell_icon)

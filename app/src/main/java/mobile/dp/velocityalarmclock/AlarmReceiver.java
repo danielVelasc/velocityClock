@@ -21,6 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     String uuid;
     String name;
+    int dayIndex;
     int pendingIntentID;
 
     public AlarmReceiver() {
@@ -36,7 +37,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         name = intent.getStringExtra("Alarm-Name");
-        pendingIntentID = intent.getIntExtra("Alarm-ID", 0);
+        dayIndex = intent.getIntExtra("Day-Index", 0);
+        pendingIntentID = intent.getIntExtra("Alarm-ID", -1);
         Log.d("ALARM-RECEIVER", "onReceiver " + pendingIntentID);
 
         try {
@@ -44,7 +46,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 Log.d("ALARM-RECEIVER", "app is not visible, loading alarms!");
                 AlarmCoordinator.getInstance().loadAlarmList(context);
             }
-            Alarm alarm = AlarmCoordinator.getInstance().getAlarmByPendingIntentID(pendingIntentID);
+            Alarm alarm = AlarmCoordinator.getInstance().getAlarmByPendingIntentID(dayIndex, pendingIntentID);
         } catch (NoSuchElementException e) {
             return;
         }

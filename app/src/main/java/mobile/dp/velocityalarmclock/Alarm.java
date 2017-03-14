@@ -34,6 +34,10 @@ public class Alarm implements Serializable {
     private AlarmFrequency frequency;
     private boolean isActive = true;
 
+    public Alarm () {
+
+    }
+
     /**
      * Creates an alarm with default name
      *
@@ -63,6 +67,7 @@ public class Alarm implements Serializable {
         this.frequency = frequency;
         this.uuid = UUID.randomUUID().toString();
         this.name = name.isEmpty() ? "Alarm" : name;
+        this.pendingIntentIDs = new int[7];
 
         Log.d(getName(), " Days: " + Arrays.toString(daysOfWeek) + " @ Hour " + hourOfDay + " and Minute " + minOfHour);
 
@@ -84,20 +89,19 @@ public class Alarm implements Serializable {
         cal.set(Calendar.SECOND, 0);
 
         for (int day = 0; day < daysOfWeek.length; day++) {
-            if (daysOfWeek[day] == false) { // No time for this day
+            if (!daysOfWeek[day]) { // No time for this day
                 initialTimes[day] = -1;
                 continue;
             }
             cal.set(Calendar.DAY_OF_WEEK, day);
-
 
             //If the time is earlier in the day, move the time so it goes off at the next correct instance
             Date futureAlarmTime = cal.getTime();
             if (futureAlarmTime.getTime() < System.currentTimeMillis()) {
                 futureAlarmTime = new Date(futureAlarmTime.getTime() + 1000 * 3600 * 24 * 7);
             }
-            initialTimes[day] = futureAlarmTime.getTime();
 
+            initialTimes[day] = futureAlarmTime.getTime();
         }
 
         return initialTimes;
@@ -112,7 +116,11 @@ public class Alarm implements Serializable {
         daysOfWeek = Arrays.copyOf(modifiedAlarm.getDaysOfWeek(), 7);
         hourOfDay = modifiedAlarm.getHourOfDay();
         minOfHour = modifiedAlarm.getMinOfHour();
-        // TODO: Pending intents shoudl probably have been added here hey?
+
+        // scramble ALL days' pendingIntentIDs to enforce any changes
+        for (int i = 0; i < pendingIntentIDs.length; i++) {
+            pendingIntentIDs[i] = IDGenerator.getID();
+        }
         // TODO need to modify this once the ENUM is added
         frequency = modifiedAlarm.getAlarmFrequency();
         name = modifiedAlarm.getName();
@@ -168,6 +176,15 @@ public class Alarm implements Serializable {
         return minOfHour;
     }
 
+    public Date getTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.MINUTE, minOfHour);
+
+        return cal.getTime();
+    }
+
     /**
      * Get the name of the alarm
      * @return the name of the alarm
@@ -199,35 +216,6 @@ public class Alarm implements Serializable {
     public void setState(boolean active) {
         this.isActive = active;
         // TODO: change status with services too
-
-    }
-
-    /**
-     * A method for calculating the initial time to set the alarm for.
-     * @return
-     */
-    public long calcInitialAlarmTime() {
-        // TODO: return array of inital alarm times
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cal.set(Calendar.MINUTE, minOfHour);
-        cal.set(Calendar.SECOND, 0);
-
-        //If the time is earlier in the day, move the time so it goes off at the next correct instance
-        Date futureAlarmTime = cal.getTime();
-        if (futureAlarmTime.getTime() < System.currentTimeMillis()) {
-            if (this.frequency == AlarmFrequency.DAILY_REPEAT) {
-                futureAlarmTime = new Date(futureAlarmTime.getTime() + 1000 * 3600 * 24);
-            } else { //weekly or non repeat
-                futureAlarmTime = new Date(futureAlarmTime.getTime() + 1000 * 3600 * 24 * 7);
-            }
-        }
-
-        this.time = futureAlarmTime; //Set in case the original alarm time is needed in the future.
-        return futureAlarmTime.getTime();
 
     }
 
@@ -277,22 +265,17 @@ public class Alarm implements Serializable {
         NO_REPEAT, DAILY_REPEAT, WEEKLY_REPEAT
     }
 
-
-
-
     /**
-     * Simple method that modifies the time fields of this alarm in accordance with modifiedAlarm
-     * @param modifiedAlarm the temporary modified alarm that needs to be used to modify the current alarm
+     * Helper function until we implement multiple day repeating alarms in SetAlarmFragment
+     * @return
      */
-    public void modify(Alarm modifiedAlarm){
-        dayOfWeek = modifiedAlarm.getDayOfWeek();
-        hourOfDay = modifiedAlarm.getHourOfDay();
-        minOfHour = modifiedAlarm.getMinOfHour();
-        time = modifiedAlarm.getTime();
-        // TODO need to modify this once the ENUM is added
-        frequency = modifiedAlarm.getAlarmFrequency();
-        name = modifiedAlarm.getName();
-        pendingIntentID = IDGenerator.getID();
+    public int getFirstActiveDayOfWeek() {
+        for (int i = 0; i < daysOfWeek.length; i++) {
+            if (daysOfWeek[i])
+                return i;
+        }
+
+        return 0;
     }
 }
 

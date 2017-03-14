@@ -141,8 +141,11 @@ public class SetAlarmFragment extends Fragment {
 
                     alarmName = nameField.getText().toString();
 
-                    // TODO: Pass a boolean array of days (Sunday=0, ..., Saturday=6)
-                    Alarm newAlarm = new Alarm(day, hour, minutes, alarmFreq, alarmName);
+                    // TODO: Fetch true values from day buttons
+                    boolean[] days = new boolean[7];
+                    days[day] = true;
+
+                    Alarm newAlarm = new Alarm(days, hour, minutes, alarmFreq, alarmName);
 
                     // If we are modifying an existing alarm, mPosition will be > 0
                     if (mPosition > 0) {
@@ -194,7 +197,10 @@ public class SetAlarmFragment extends Fragment {
                 }
 
                 nameField.setText(existingAlarm.getName());
-                daySpin.setSelection(existingAlarm.getDayOfWeek());
+
+                // TODO: Remove this spinner
+                daySpin.setSelection(existingAlarm.getFirstActiveDayOfWeek());
+
                 freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
 
                 if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {

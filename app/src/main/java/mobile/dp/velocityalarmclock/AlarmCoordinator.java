@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -83,16 +84,9 @@ class AlarmCoordinator {
         Alarm.AlarmFrequency freq = alarm.getAlarmFrequency();
 
         // Only give new pendingIntentID if creating new alarm
-        if (!appRestart) {
-            for (int day = 0; day < 7; day++) { //Create the initial start time for any enabled day of the week
-                if (times[day] == -1) continue; //No alarm that day
-
-                int pendingIntentID = IDGenerator.getID(); //Generate the intent ID and set in alarm
-                alarm.setPendingIntentID(pendingIntentID, day);
-            }
-        }
-
-        alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()); // Will be helpful later
+        for (int day = 0; day < 7; day++) { //Create the initial start time for any enabled day of the week
+            if (times[day] == -1) continue; //No alarm that day
+            alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[day]); // Will be helpful later
 
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
 
@@ -102,7 +96,6 @@ class AlarmCoordinator {
             } else {
                 alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, times[day], 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
             }
-
         }
 
         if (!appRestart) {
@@ -128,25 +121,35 @@ class AlarmCoordinator {
         Alarm alarmToBeModified = alarmList.get(i);
         alarmToBeModified.modify(modifiedAlarm);
 
+        int[] pendingIntentIDs = alarmToBeModified.getPendingIntentID();
+        long[] initialAlarmTime = alarmToBeModified.calcInitialAlarmTime();
+
         // Step 2: Reschedule the alarm with system services; the way this will be done is by writing
         //         over the current alarm that is scheduled by using the same PendingIntentID
-        Intent alertIntent = new Intent(passedContext, AlarmReceiver.class); // When timer ends, check with receiver
-        alertIntent.putExtra("Alarm-Name", alarmToBeModified.getName());
-        alertIntent.putExtra("Alarm-ID", alarmToBeModified.getPendingIntentID()); // Will be helpful later
-        AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
+        int dayIndex = 0;
+        for (boolean day : modifiedAlarm.getDaysOfWeek()) {
+            if (!day)
+                continue;
 
-        // TODO need to refactor all this stuff once the ENUM is added
-        if(alarmToBeModified.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT || alarmToBeModified.getAlarmFrequency() == Alarm.AlarmFrequency.WEEKLY_REPEAT){
-            PendingIntent scheduledIntent = PendingIntent.getBroadcast(passedContext, alarmToBeModified.getPendingIntentID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, alarmToBeModified.calcInitialAlarmTime(), 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
-        } else {
-            PendingIntent scheduledIntent = PendingIntent.getBroadcast(passedContext, alarmToBeModified.getPendingIntentID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
-            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmToBeModified.calcInitialAlarmTime(), scheduledIntent);
+            Intent alertIntent = new Intent(passedContext, AlarmReceiver.class); // When timer ends, check with receiver
+            alertIntent.putExtra("Alarm-Name", alarmToBeModified.getName());
+            alertIntent.putExtra("Alarm-ID", alarmToBeModified.getPendingIntentID()[dayIndex]); // Will be helpful later
+            AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
+
+            // TODO need to refactor all this stuff once the ENUM is added
+            if (alarmToBeModified.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT || alarmToBeModified.getAlarmFrequency() == Alarm.AlarmFrequency.WEEKLY_REPEAT) {
+                PendingIntent scheduledIntent = PendingIntent.getBroadcast(passedContext, pendingIntentIDs[dayIndex], alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, initialAlarmTime[dayIndex], 24 * 60 * 60 * 1000, scheduledIntent); //Repeats every 24 hours after
+            } else {
+                PendingIntent scheduledIntent = PendingIntent.getBroadcast(passedContext, pendingIntentIDs[dayIndex], alertIntent, PendingIntent.FLAG_ONE_SHOT);
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, initialAlarmTime[dayIndex], scheduledIntent);
+            }
+
+            dayIndex++;
         }
 
         // Step 3: Broadcast the changes to all listeners
         notifyAlarmChange();
-
     }
 
     void deleteAlarm(int i, Context passedContext) {
@@ -194,10 +197,11 @@ class AlarmCoordinator {
      * @param alarm Alarm that was snoozed
      */
     private void scheduleNextSnooze(Context context, Alarm alarm) {
+        int day = Calendar.getInstance().getTime().getDay();
 
         Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName() + " - Snoozed");
-        alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()); // Will be helpful later
+        alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[day]); // Will be helpful later
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE); //Schedule alarm to go off in the snooze time
         PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
@@ -328,9 +332,9 @@ class AlarmCoordinator {
      * @return The alarm with specified UUID
      * @throws NoSuchElementException if the alarm could not be found
      */
-    public Alarm getAlarmByPendingIntentID(int ID) {
+    public Alarm getAlarmByPendingIntentID(int day, int ID) {
         for (int i = 1; i < alarmList.size(); i++) {
-            if (alarmList.get(i).getPendingIntentID() == ID) return alarmList.get(i);
+            if (alarmList.get(i).getPendingIntentID()[day] == ID) return alarmList.get(i);
         }
         throw new NoSuchElementException("The alarm by the PendingIntentID " + ID + " could not be found");
     }
