@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -31,6 +32,9 @@ public class Alarm implements Serializable, Parcelable {
     private long snoozeTime = 60 * 1000;
     private AlarmFrequency frequency;
     private boolean isActive = true;
+
+    // TODO: Hold boolean array of days
+    // TODO: hold array of pendingIntentIDs
 
     // Added Parcelable interface methods so that fragments can accept alarm as a Parcelable
 
@@ -87,7 +91,7 @@ public class Alarm implements Serializable, Parcelable {
      * @param frequency - if true repeat more than once
      */
     public Alarm (int dayOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency) {
-
+        // TODO: Take boolean array of days in first argument
         this(dayOfWeek, hourOfDay, minOfHour, frequency, "Alarm");
     }
 
@@ -100,6 +104,7 @@ public class Alarm implements Serializable, Parcelable {
      * @param frequency - if true repeat more than once
      */
     public Alarm (int dayOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency, String name) {
+        // TODO: Take boolean array of days in first argument
 
         this.dayOfWeek = dayOfWeek;
         this.hourOfDay = hourOfDay; //Deprecated but it works for now
@@ -118,6 +123,7 @@ public class Alarm implements Serializable, Parcelable {
      */
     public void setName(String name) {
         //TODO: Check for invalid names
+
         this.name = name;
     }
 
@@ -190,6 +196,8 @@ public class Alarm implements Serializable, Parcelable {
      * @return
      */
     public long calcInitialAlarmTime() {
+        // TODO: return array of inital alarm times
+
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
@@ -282,6 +290,7 @@ public class Alarm implements Serializable, Parcelable {
         // TODO need to modify this once the ENUM is added
         frequency = modifiedAlarm.getAlarmFrequency();
         name = modifiedAlarm.getName();
+        pendingIntentID = IDGenerator.getID();
     }
 }
 
