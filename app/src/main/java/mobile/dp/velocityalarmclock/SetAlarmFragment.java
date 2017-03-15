@@ -40,7 +40,7 @@ public class SetAlarmFragment extends Fragment {
 
     SetAlarmFragmentListener mListener;
     View v;
-    boolean [] day = new boolean[7]; // Array to store boolean values of selected days
+    boolean [] day; // Array to store boolean values of selected days
     int hour, minutes, snooze;
     String alarmName, frequency;
     Date time;
@@ -84,10 +84,11 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton = (Button) v.findViewById(R.id.setAlarmButton);
             cancelButton = (Button) v.findViewById(R.id.cancelButton);
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
-            daySpin = (Spinner) v.findViewById(R.id.daySpin); // TODO - Change spinner to toggle buttons (multi-selection)
             nameField = (EditText) v.findViewById(R.id.alarmName);
             freqSpin = (Spinner) v.findViewById(R.id.freqSpin);
             snoozeTime = (EditText) v.findViewById(R.id.snoozeTime);
+            day = new boolean[7];
+
 
             // Cancel setting the alarm and return back to the main alarm view
             cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +104,6 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    populateDayArray(v);
                     Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
 
 //                    // Set the day variables
@@ -143,12 +143,8 @@ public class SetAlarmFragment extends Fragment {
                     }
 
                     alarmName = nameField.getText().toString();
-
-                    // TODO: Fetch true values from day buttons
-                    boolean[] days = new boolean[7];
-                    days[day] = true;
-
-                    Alarm newAlarm = new Alarm(days, hour, minutes, alarmFreq, alarmName);
+                    populateDayArray(v);
+                    Alarm newAlarm = new Alarm(day, hour, minutes, alarmFreq, alarmName);
 
                     // If we are modifying an existing alarm, mPosition will be > 0
                     if (mPosition > 0) {
@@ -171,7 +167,6 @@ public class SetAlarmFragment extends Fragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
-                        //daySpin.setVisibility(View.INVISIBLE);
                         for (ToggleButton button : toggleMap.keySet()){
                             button.setVisibility(View.INVISIBLE);
                         }
@@ -272,7 +267,57 @@ public class SetAlarmFragment extends Fragment {
         toggleMap.put(fridayToggle, fridayToggle.isEnabled());
         toggleMap.put(saturdayToggle, saturdayToggle.isEnabled());
 
-        System.out.println(day);
+        boolean allFalse = true;
+        int indexCount = 0;
+        for (boolean b : day) {
+            if (b){
+                break;
+            }
+            indexCount++;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        int today = cal.get(Calendar.DAY_OF_WEEK);
+        Calendar setCal = Calendar.getInstance();
+
+        setCal.set(Calendar.HOUR_OF_DAY, hour);
+        setCal.set(Calendar.MINUTE, minutes);
+        // if set time is less than current time
+
+        // If the set time is greater than the current time, set the alarm for the current day
+        if (setCal.getTimeInMillis()-cal.getTimeInMillis() > 500){
+            if (allFalse && indexCount == 7)
+            {
+                // If today is not Sunday
+                if (today < 7){
+                    day[today] = true;
+                }
+                else {
+                    day[0] = true;  // Sunday
+                }
+            }
+        }
+        // Set the alarm for the next day
+        else {
+            if (allFalse && indexCount == 7)
+            {
+                // Calendar
+                // 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat, 7-Sun
+                // day array
+                // 0-Sun, 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat
+
+                // If today is not Sunday
+                if (today == 6){
+                    day[0] = true;  // Saturday --> set Sunday
+                }
+                else if (today == 7){
+                    day[1] = true;  // Sunday --> set Monday
+                }
+                else {
+                    day[today+1] = true;
+                }
+            }
+        }
     }
 
     // Hides the toolbar of the main activity when this fragment is active

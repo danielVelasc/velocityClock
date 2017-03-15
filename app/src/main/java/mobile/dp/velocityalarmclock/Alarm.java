@@ -93,7 +93,13 @@ public class Alarm implements Serializable {
                 initialTimes[day] = -1;
                 continue;
             }
-            cal.set(Calendar.DAY_OF_WEEK, day);
+
+            if (day > 0){
+                cal.set(Calendar.DAY_OF_WEEK, day);
+            }
+            else {
+                cal.set(Calendar.DAY_OF_WEEK, 7);
+            }
 
             //If the time is earlier in the day, move the time so it goes off at the next correct instance
             Date futureAlarmTime = cal.getTime();
