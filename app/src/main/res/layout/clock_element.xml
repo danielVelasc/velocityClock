@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/clockRelativeLayout"
-    android:background="#ffffff">
+    android:background="@color/colorPrimary">
 
     <TextClock
         android:layout_width="wrap_content"
@@ -15,7 +15,7 @@
         android:lineSpacingExtra="8sp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorSecondary"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_alignLeft="@+id/textClock"
         android:layout_alignStart="@+id/textClock"
         android:id="@+id/dateTextView"
-        android:textColor="#111111"
+        android:textColor="@color/colorPrimaryText"
         android:fontFamily="sans-serif-condensed"
         android:textSize="16sp" />
 

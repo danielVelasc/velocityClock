@@ -23,45 +23,45 @@
             android:gravity="center_vertical|center">
 
             <Button
-                android:text="&lt;"
+                android:id="@+id/cancelButton"
+                style="@android:style/Widget.DeviceDefault.Light.Button"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/cancelButton"
-                android:clickable="true"
-                style="@android:style/Widget.DeviceDefault.Light.Button"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
                 android:layout_alignParentStart="true"
-                android:background="@color/colorAccent"
-                android:textColor="@color/colorPrimaryDark" />
+                android:background="@color/mint"
+                android:clickable="true"
+                android:text="&lt;"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:textColor="@color/colorPrimaryText" />
 
 
             <TextView
+                android:id="@+id/setAlarmText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/set_alarm_text"
-                android:textSize="32sp"
-                android:typeface="sans"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-thin"
-                android:textColor="@color/colorPrimaryDark"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
+                android:fontFamily="sans-serif"
+                android:text="@string/set_alarm_text"
                 android:textAlignment="center"
-                android:id="@+id/setAlarmText"
-                android:layout_centerInParent="true"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/grey1"
+                android:textSize="30sp"
+                android:typeface="sans" />
 
             <Button
-                android:text="set"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
                 android:id="@+id/setAlarmButton"
                 style="@android:style/Widget.DeviceDefault.Light.Button"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:onClick="submitNewAlarm"
-                android:layout_alignParentTop="true"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="16dp"
-                android:background="@color/colorAccent"
-                android:textColor="@color/colorPrimaryDark" />
+                android:layout_alignParentTop="true"
+                android:background="@color/mint"
+                android:fontFamily="sans-serif"
+                android:onClick="submitNewAlarm"
+                android:text="set"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:textColor="@color/colorPrimaryText" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
