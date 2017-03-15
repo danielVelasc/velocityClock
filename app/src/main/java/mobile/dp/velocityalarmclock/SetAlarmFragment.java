@@ -141,6 +141,7 @@ public class SetAlarmFragment extends Fragment {
 
                     alarmName = nameField.getText().toString();
 
+                    // TODO: Pass a boolean array of days (Sunday=0, ..., Saturday=6)
                     Alarm newAlarm = new Alarm(day, hour, minutes, alarmFreq, alarmName);
 
                     // If we are modifying an existing alarm, mPosition will be > 0

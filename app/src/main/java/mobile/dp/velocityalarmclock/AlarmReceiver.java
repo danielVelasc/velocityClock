@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,6 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     String uuid;
     String name;
+    int pendingIntentID;
 
     public AlarmReceiver() {
     }
@@ -34,11 +36,22 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         name = intent.getStringExtra("Alarm-Name");
-        uuid = intent.getStringExtra("Alarm-ID");
-        Log.d("Snooze", "nameReciever " + uuid);
+        pendingIntentID = intent.getIntExtra("Alarm-ID", 0);
+        Log.d("ALARM-RECEIVER", "onReceiver " + pendingIntentID);
+
+        try {
+            if (!ApplicationLifecycleManager.isAppVisible()) {
+                Log.d("ALARM-RECEIVER", "app is not visible, loading alarms!");
+                AlarmCoordinator.getInstance().loadAlarmList(context);
+            }
+            Alarm alarm = AlarmCoordinator.getInstance().getAlarmByPendingIntentID(pendingIntentID);
+        } catch (NoSuchElementException e) {
+            return;
+        }
+
         Intent dialogIntent = new Intent(context, ClockActivity.class); //Open activity that creates dialog prompt
         dialogIntent.putExtra("Launch-Dialog", true);
-        dialogIntent.putExtra("Alarm-ID", uuid);
+        dialogIntent.putExtra("Alarm-ID", pendingIntentID);
         dialogIntent.putExtra("Alarm-Name", name);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
