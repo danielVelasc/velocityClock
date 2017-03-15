@@ -271,50 +271,52 @@ public class SetAlarmFragment extends Fragment {
         int indexCount = 0;
         for (boolean b : day) {
             if (b){
+                allFalse = false;
                 break;
             }
             indexCount++;
         }
 
-        Calendar cal = Calendar.getInstance();
-        int today = cal.get(Calendar.DAY_OF_WEEK);
-        Calendar setCal = Calendar.getInstance();
+        if (allFalse && indexCount == 7) {
+            Calendar cal = Calendar.getInstance();
+            int calDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            int today; // For some reason, this day is 1 day ahead...subtracted 1 to compensate
+            if (calDayOfWeek > 1){
+                today = calDayOfWeek - 1;
+            }
+            else {
+                today = 6;
+            }
+            Calendar setCal = Calendar.getInstance();
 
-        setCal.set(Calendar.HOUR_OF_DAY, hour);
-        setCal.set(Calendar.MINUTE, minutes);
-        // if set time is less than current time
+            setCal.set(Calendar.HOUR_OF_DAY, hour);
+            setCal.set(Calendar.MINUTE, minutes);
+            // if set time is less than current time
 
-        // If the set time is greater than the current time, set the alarm for the current day
-        if (setCal.getTimeInMillis()-cal.getTimeInMillis() > 500){
-            if (allFalse && indexCount == 7)
-            {
+            // If the set time is greater than the current time, set the alarm for the current day
+            //long diff = setCal.getTimeInMillis() - cal.getTimeInMillis();
+            if (setCal.getTimeInMillis() > cal.getTimeInMillis()) {
                 // If today is not Sunday
-                if (today < 7){
+                if (today < 7) {
                     day[today] = true;
-                }
-                else {
+                } else {
                     day[0] = true;  // Sunday
                 }
             }
-        }
-        // Set the alarm for the next day
-        else {
-            if (allFalse && indexCount == 7)
-            {
+            // Set the alarm for the next day
+            else {
                 // Calendar
                 // 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat, 7-Sun
                 // day array
                 // 0-Sun, 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat
 
                 // If today is not Sunday
-                if (today == 6){
+                if (today == 6) {
                     day[0] = true;  // Saturday --> set Sunday
-                }
-                else if (today == 7){
+                } else if (today == 7) {
                     day[1] = true;  // Sunday --> set Monday
-                }
-                else {
-                    day[today+1] = true;
+                } else {
+                    day[today + 1] = true;
                 }
             }
         }

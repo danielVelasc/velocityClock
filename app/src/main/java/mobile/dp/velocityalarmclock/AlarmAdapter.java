@@ -205,10 +205,10 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                     alarmRepeatingView.setText("Daily");
                     break;
                 case WEEKLY_REPEAT:
-                    alarmRepeatingView.setText(getContext().getResources().getStringArray(R.array.days)[alarmList.get(position).getFirstActiveDayOfWeek()] + " (R)");
+                    alarmRepeatingView.setText(getContext().getResources().getStringArray(R.array.days)[alarmList.get(position).getFirstActiveDayOfWeek()+1] + " (R)");
                     break;
                 case NO_REPEAT:
-                    alarmRepeatingView.setText(getContext().getResources().getStringArray(R.array.days)[alarmList.get(position).getFirstActiveDayOfWeek()]);
+                    alarmRepeatingView.setText(getContext().getResources().getStringArray(R.array.days)[alarmList.get(position).getFirstActiveDayOfWeek()+1]);
                     break;
             }
             //alarmRepeatingView.setText(Alarm.ALARM_FREQUENCY_TO_STRING[alarmList.get(position).getAlarmFrequency().ordinal()]);

@@ -94,6 +94,7 @@ public class Alarm implements Serializable {
                 continue;
             }
 
+            // If day is not Sunday (0)
             if (day > 0){
                 cal.set(Calendar.DAY_OF_WEEK, day);
             }

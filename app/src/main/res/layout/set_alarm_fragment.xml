@@ -87,6 +87,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal">
+                    <ToggleButton
+                        android:id="@+id/sundayButton"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/sunday_button_name"
+                        android:textOff="@string/sunday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                    <ToggleButton
+                        android:id="@+id/mondayButton"
+                        android:layout_width="46dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/monday_button_name"
+                        android:textOff="@string/monday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                    <ToggleButton
+                        android:id="@+id/tuesdayButton"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/tuesday_button_name"
+                        android:textOff="@string/tuesday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                    <ToggleButton
+                        android:id="@+id/wednesdayButton"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/wednesday_button_name"
+                        android:textOff="@string/wednesday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                    <ToggleButton
+                        android:id="@+id/thursdayButton"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/thursday_button_name"
+                        android:textOff="@string/thursday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                    <ToggleButton
+                        android:id="@+id/fridayButton"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/friday_button_name"
+                        android:textOff="@string/friday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                    <ToggleButton
+                        android:id="@+id/saturdayButton"
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:disabledAlpha="1.2"
+                        android:textOn="@string/saturday_button_name"
+                        android:textOff="@string/saturday_button_name"
+                        android:layout_gravity="center_horizontal"/>
+                </TableRow>
+
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -94,12 +157,6 @@
                     android:hint="@string/alarm_name_hint"
                     android:inputType="text"
                     android:maxLines="1"/>
-
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/daySpin"
-                    android:entries="@array/days"/>
 
                 <Spinner
                     android:layout_width="wrap_content"
