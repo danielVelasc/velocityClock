@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.NoSuchElementException;
@@ -16,6 +17,7 @@ import java.util.NoSuchElementException;
  * @Date February 5th 2017
  */
 public class AlarmRingDialogFragment extends DialogFragment {
+    public final static String TAG = "ALARM_RING_DIALOG";
     Alarm mAlarm;
 
     @Override
@@ -26,7 +28,10 @@ public class AlarmRingDialogFragment extends DialogFragment {
         final AlarmCoordinator ac = AlarmCoordinator.getInstance();
 
         try {
-            mAlarm = ac.getAlarmByPendingIntentID(Calendar.getInstance().getTime().getDay(), ra.getIntent().getIntExtra("Alarm-ID", -1));
+            int pendingIntentID = ra.getIntent().getIntExtra("Alarm-ID", -1);
+            Log.d(TAG, "Looking for alarm with PendingIntentID = " + pendingIntentID);
+
+            mAlarm = ac.getAlarmByPendingIntentID(Calendar.getInstance().getTime().getDay(), pendingIntentID);
 
             dialogBuilder.setMessage("Alarm - " + ra.getIntent().getStringExtra("Alarm-Name"))
                     .setIcon(R.drawable.bell_icon)

@@ -19,6 +19,7 @@ import java.util.Date;
  * @Date February 5th 2017
  */
 public class Alarm implements Serializable {
+    public static final String TAG = "ALARM";
     static final String[] ALARM_FREQUENCY_TO_STRING = {"", "Daily", "Weekly"};
 
     static final int DEFAULT_SNOOZE = 60 * 1000;
@@ -67,6 +68,9 @@ public class Alarm implements Serializable {
         this.uuid = UUID.randomUUID().toString();
         this.name = name.isEmpty() ? "Alarm" : name;
         this.pendingIntentIDs = new int[7];
+        for (int i = 0; i < 7; i++) {
+            this.pendingIntentIDs[i] = IDGenerator.getID();
+        }
 
         Log.d(getName(), " Days: " + Arrays.toString(daysOfWeek) + " @ Hour " + hourOfDay + " and Minute " + minOfHour);
     }
@@ -80,29 +84,41 @@ public class Alarm implements Serializable {
     public long[] calcInitialAlarmTime() {
         long[] initialTimes = new long[7];
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cal.set(Calendar.MINUTE, minOfHour);
-        cal.set(Calendar.SECOND, 0);
+        Calendar currentCal = Calendar.getInstance();
 
         for (int day = 0; day < daysOfWeek.length; day++) {
+            Calendar cal = Calendar.getInstance();
+
+            // Current time already grabbed.
+            // cal.setTimeInMillis(System.currentTimeMillis());
+
+            cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            cal.set(Calendar.MINUTE, minOfHour);
+            cal.set(Calendar.SECOND, 0);
+
             if (!daysOfWeek[day]) { // No time for this day
                 initialTimes[day] = -1;
                 continue;
             }
 
+            // DAY_OF_WEEK: SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7;
+            cal.set(Calendar.DAY_OF_WEEK, day + 1);
+
             // If day is not Sunday (0)
+            /*
             if (day > 0){
-                cal.set(Calendar.DAY_OF_WEEK, day);
+                cal.set(Calendar.DAY_OF_WEEK, day+1);
             }
             else {
                 cal.set(Calendar.DAY_OF_WEEK, 7);
             }
+            */
 
-            //If the time is earlier in the day, move the time so it goes off at the next correct instance
+            // If the time is earlier in the day, move the time so it goes off at the next correct instance
             Date futureAlarmTime = cal.getTime();
-            if (futureAlarmTime.getTime() < System.currentTimeMillis()) {
+
+            if (futureAlarmTime.getTime() < currentCal.getTime().getTime()) {
+                Log.d(TAG, "Setting new alarm one week from now!\n" + "Future Alarm Time: " + futureAlarmTime + "\nCurrent Time: " + currentCal.getTime() + "\n");
                 futureAlarmTime = new Date(futureAlarmTime.getTime() + 1000 * 3600 * 24 * 7);
             }
 

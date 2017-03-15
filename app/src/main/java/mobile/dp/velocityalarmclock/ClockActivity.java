@@ -114,14 +114,15 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      * Closes the NewAlarmFragment
      */
      public void closeSetAlarmFragment() {
+         AlarmCoordinator.getInstance().saveAlarmList(this);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.set_alarm_container));
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        fragmentTransaction.commit();
-        Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
-        myToolbar.setVisibility(View.VISIBLE);
+         FragmentManager fragmentManager = getFragmentManager();
+         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+         fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.set_alarm_container));
+         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+         fragmentTransaction.commit();
+         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
+         myToolbar.setVisibility(View.VISIBLE);
     }
 
     /**

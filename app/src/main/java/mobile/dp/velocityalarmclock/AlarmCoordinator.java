@@ -75,26 +75,28 @@ class AlarmCoordinator {
      * @param alarm
      */
     void createNewAlarm(Context context, Alarm alarm, boolean appRestart) {
-
-        Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
-        alertIntent.putExtra("Alarm-Name", alarm.getName());
-
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long[] times = alarm.calcInitialAlarmTime();
         Alarm.AlarmFrequency freq = alarm.getAlarmFrequency();
 
         // Only give new pendingIntentID if creating new alarm
-        for (int day = 0; day < 7; day++) { //Create the initial start time for any enabled day of the week
-            if (times[day] == -1) continue; //No alarm that day
-            alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[day]); // Will be helpful later
+        for (int dayIndex = 0; dayIndex < 7; dayIndex++) { //Create the initial start time for any enabled day of the week
+            if (times[dayIndex] == -1) continue; //No alarm that day
 
-            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
+            Log.d(TAG, "Created new PendingIntent for day " + dayIndex + ". It is " + Calendar.getInstance().getTimeInMillis() + " and the alarm will go off at " + times[dayIndex]);
+
+            Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
+            alertIntent.putExtra("Alarm-Name", alarm.getName());
+            alertIntent.putExtra("Day-Index", dayIndex);
+            alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[dayIndex]); // Will be helpful later
+
+            PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, alarm.getPendingIntentID()[dayIndex], alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
 
             if (freq.equals(Alarm.AlarmFrequency.NO_REPEAT)) { //If it doesnt repeat don't schedule reg intent
-                alarmMgr.set(AlarmManager.RTC_WAKEUP, times[day], scheduledIntent);
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, times[dayIndex], scheduledIntent);
                 break; //No need to iterate through the rest of the days
             } else {
-                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, times[day], 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, times[dayIndex], 1000 * 60/*24 * 60 * 60 * 1000 * 7*/, scheduledIntent); //Repeats every 7 days hours after
             }
         }
 
@@ -123,16 +125,17 @@ class AlarmCoordinator {
 
         int[] pendingIntentIDs = alarmToBeModified.getPendingIntentID();
         long[] initialAlarmTime = alarmToBeModified.calcInitialAlarmTime();
+        boolean[] daysOfWeek = modifiedAlarm.getDaysOfWeek();
 
         // Step 2: Reschedule the alarm with system services; the way this will be done is by writing
         //         over the current alarm that is scheduled by using the same PendingIntentID
-        int dayIndex = 0;
-        for (boolean day : modifiedAlarm.getDaysOfWeek()) {
-            if (!day)
+        for (int dayIndex = 0; dayIndex < 7; dayIndex++) {
+            if (!daysOfWeek[dayIndex])
                 continue;
 
             Intent alertIntent = new Intent(passedContext, AlarmReceiver.class); // When timer ends, check with receiver
             alertIntent.putExtra("Alarm-Name", alarmToBeModified.getName());
+            alertIntent.putExtra("Day-Index", dayIndex);
             alertIntent.putExtra("Alarm-ID", alarmToBeModified.getPendingIntentID()[dayIndex]); // Will be helpful later
             AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
 
@@ -201,6 +204,7 @@ class AlarmCoordinator {
 
         Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
         alertIntent.putExtra("Alarm-Name", alarm.getName() + " - Snoozed");
+        alertIntent.putExtra("Day-Index", day);
         alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[day]); // Will be helpful later
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE); //Schedule alarm to go off in the snooze time

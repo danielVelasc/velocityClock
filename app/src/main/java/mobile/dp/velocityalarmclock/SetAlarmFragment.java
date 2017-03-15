@@ -43,7 +43,6 @@ public class SetAlarmFragment extends Fragment {
     boolean [] day; // Array to store boolean values of selected days
     int hour, minutes, snooze;
     String alarmName, frequency;
-    Date time;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
     Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to toggle buttons (multi-selection)
@@ -80,7 +79,7 @@ public class SetAlarmFragment extends Fragment {
         if (v == null){
             v = inflater.inflate(R.layout.set_alarm_fragment, container, false);
 
-            Log.d("SetAlarmFragment","onCreateView");
+            Log.d("SetAlarmFragment","onCreateView called in SetAlarmFragment. Alarm Position = " + mPosition);
             setAlarmButton = (Button) v.findViewById(R.id.setAlarmButton);
             cancelButton = (Button) v.findViewById(R.id.cancelButton);
             setAlarmTime = (TimePicker) v.findViewById(R.id.setAlarmTime);
@@ -104,16 +103,6 @@ public class SetAlarmFragment extends Fragment {
             setAlarmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Calendar cal = Calendar.getInstance(); //Create a calendar with the time at which to set off the alarm
-
-//                    // Set the day variables
-//                    if (daySpin.getSelectedItem().toString().equals("Choose Day")){
-//                        //day = cal.get(Calendar.DAY_OF_WEEK);    // Default day is the current day
-//                    }
-//                    else {
-//                       // day = dayToInt(daySpin.getSelectedItem().toString()); // TODO - Change spinner to toggle buttons (multi-selection)
-//                    }
-
                     // Frequency of repeat for alarm
                     Alarm.AlarmFrequency alarmFreq = Alarm.AlarmFrequency.NO_REPEAT;
                     frequency = freqSpin.getSelectedItem().toString();
@@ -279,16 +268,21 @@ public class SetAlarmFragment extends Fragment {
 
         if (allFalse && indexCount == 7) {
             Calendar cal = Calendar.getInstance();
+
+            // DAY_OF_WEEK: SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7; https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
             int calDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            int today; // For some reason, this day is 1 day ahead...subtracted 1 to compensate
+            int today = calDayOfWeek - 1;
+
+            /*
             if (calDayOfWeek > 1){
                 today = calDayOfWeek - 1;
             }
             else {
                 today = 6;
             }
-            Calendar setCal = Calendar.getInstance();
+            */
 
+            Calendar setCal = Calendar.getInstance();
             setCal.set(Calendar.HOUR_OF_DAY, hour);
             setCal.set(Calendar.MINUTE, minutes);
             // if set time is less than current time
@@ -296,21 +290,29 @@ public class SetAlarmFragment extends Fragment {
             // If the set time is greater than the current time, set the alarm for the current day
             //long diff = setCal.getTimeInMillis() - cal.getTimeInMillis();
             if (setCal.getTimeInMillis() > cal.getTimeInMillis()) {
+                day[today] = true;
+
                 // If today is not Sunday
+                /*
                 if (today < 7) {
                     day[today] = true;
                 } else {
                     day[0] = true;  // Sunday
-                }
+                }*/
             }
             // Set the alarm for the next day
             else {
-                // Calendar
+                day[(today + 1) % 7] = true;
+
+                // DAY_OF_WEEK: SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7; https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
+
+                // Calendar << Not according to doc: https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
                 // 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat, 7-Sun
                 // day array
                 // 0-Sun, 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat
 
                 // If today is not Sunday
+                /*
                 if (today == 6) {
                     day[0] = true;  // Saturday --> set Sunday
                 } else if (today == 7) {
@@ -318,6 +320,7 @@ public class SetAlarmFragment extends Fragment {
                 } else {
                     day[today + 1] = true;
                 }
+                */
             }
         }
     }

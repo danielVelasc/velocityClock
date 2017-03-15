@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Date February 5th 2017
  */
 public class AlarmReceiver extends BroadcastReceiver {
+    public final static String TAG = "ALARM_RECEIVER";
 
     String uuid;
     String name;
@@ -39,15 +40,20 @@ public class AlarmReceiver extends BroadcastReceiver {
         name = intent.getStringExtra("Alarm-Name");
         dayIndex = intent.getIntExtra("Day-Index", 0);
         pendingIntentID = intent.getIntExtra("Alarm-ID", -1);
-        Log.d("ALARM-RECEIVER", "onReceiver " + pendingIntentID);
+
+        Log.d(TAG, "onReceive received alarm with PendingIntentID = " + pendingIntentID);
 
         try {
             if (!ApplicationLifecycleManager.isAppVisible()) {
-                Log.d("ALARM-RECEIVER", "app is not visible, loading alarms!");
+                Log.d(TAG, "App is not visible, loading alarms!");
+
                 AlarmCoordinator.getInstance().loadAlarmList(context);
             }
+
             Alarm alarm = AlarmCoordinator.getInstance().getAlarmByPendingIntentID(dayIndex, pendingIntentID);
         } catch (NoSuchElementException e) {
+            Log.d(TAG, "Caught alarm that no longer exists. Dropping alarm.");
+
             return;
         }
 

@@ -29,8 +29,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * @author Daniel Velasco
  * @since February 05, 2017
@@ -41,6 +39,8 @@ import static android.content.ContentValues.TAG;
  *
  */
 public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinatorListener {
+    public final static String TAG = "ALARM_ADAPTER";
+
     List<Alarm> alarmList;
     AlarmAdapterListener mListener;
 
@@ -139,30 +139,30 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                     public boolean onTouch(View v, MotionEvent event) {
                         switch (event.getActionMasked()) {
                             case (MotionEvent.ACTION_DOWN):
-                                Log.d(TAG, "Action was DOWN");
+                                // Log.d(TAG, "Action was DOWN");
                                 downTime = event.getEventTime();
                                 tapCancelled = false;
                                 return true;
                             case (MotionEvent.ACTION_MOVE):
-                                Log.d(TAG, "Action was MOVE");
+                                // Log.d(TAG, "Action was MOVE");
                                 tapCancelled = true;
                                 return true;
                             case (MotionEvent.ACTION_UP):
-                                Log.d(TAG, "Action was UP");
+                                // Log.d(TAG, "Action was UP");
                                 long upTime = event.getEventTime();
                                 if(!tapCancelled && (upTime-downTime)<tapTime) {
-                                    Log.d(TAG,"Action was TAP");
+                                    // Log.d(TAG,"Action was TAP");
                                     int position = (Integer) v.getTag();
                                     mListener.alarmViewTapped(position);
                                 }
                                 return true;
                             case (MotionEvent.ACTION_CANCEL):
-                                Log.d(TAG, "Action was CANCEL");
+                                // Log.d(TAG, "Action was CANCEL");
                                 tapCancelled = true;
                                 return true;
                             case (MotionEvent.ACTION_OUTSIDE):
-                                Log.d(TAG, "Movement occurred outside bounds " +
-                                        "of current screen element");
+                                // Log.d(TAG, "Movement occurred outside bounds " +
+                                //        "of current screen element");
                                 tapCancelled = true;
                                 return true;
                             default:
@@ -175,7 +175,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
 
         // Alarm view exists so now we must update its fields.
         if (position > 0) {
-            Log.d(TAG, "updating position " + position + ". alarmList size: " + alarmList.size());
+            // Log.d(TAG, "updating position " + position + ". alarmList size: " + alarmList.size());
             // Handle TextView and display string from your list
             TextView alarmTimeText = (TextView)view.findViewById(R.id.alarmTime);
             alarmTimeText.setText(new SimpleDateFormat("h:mm a").format(alarmList.get(position).getTime()));
@@ -221,7 +221,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
                     alarmRepeatingView.setText(daysString);
                     break;
             }
-            //alarmRepeatingView.setText(Alarm.ALARM_FREQUENCY_TO_STRING[alarmList.get(position).getAlarmFrequency().ordinal()]);
+            // alarmRepeatingView.setText(Alarm.ALARM_FREQUENCY_TO_STRING[alarmList.get(position).getAlarmFrequency().ordinal()]);
 
             // update alarm name label
             TextView alarmNameView = (TextView) view.findViewById(R.id.alarmName);
