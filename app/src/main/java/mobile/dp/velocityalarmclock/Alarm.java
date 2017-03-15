@@ -47,7 +47,6 @@ public class Alarm implements Serializable {
      * @param frequency - the frequency of the alarm, if daily repeat the bitmask of daysOfWeek should be full.
      */
     public Alarm (boolean[] daysOfWeek, int hourOfDay, int minOfHour, AlarmFrequency frequency) {
-
         this(daysOfWeek, hourOfDay, minOfHour, frequency, "Alarm");
     }
 
@@ -70,7 +69,6 @@ public class Alarm implements Serializable {
         this.pendingIntentIDs = new int[7];
 
         Log.d(getName(), " Days: " + Arrays.toString(daysOfWeek) + " @ Hour " + hourOfDay + " and Minute " + minOfHour);
-
     }
 
     /**
@@ -112,7 +110,6 @@ public class Alarm implements Serializable {
         }
 
         return initialTimes;
-
     }
 
     /**

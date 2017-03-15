@@ -207,7 +207,6 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
             for (int i = 0; i < 7; i++) {
                 if (!onDaysList[i])
                     continue;
-
                 daysString += daysList[i+1].substring(0,3) + " ";
             }
 
