@@ -146,7 +146,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     protected void onPause() {
         AlarmCoordinator.getInstance().saveAlarmList(this);
 
-        super.onStop();
+        super.onPause();
     }
 
     @Override
