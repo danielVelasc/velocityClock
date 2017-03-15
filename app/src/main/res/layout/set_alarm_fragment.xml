@@ -11,17 +11,16 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
         android:elevation="4dp"
-        android:padding="10dp"
-        android:weightSum="1">
-
+        android:background="@android:color/white"
+        android:weightSum="1"
+        android:padding="10dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|center"
-            android:gravity="center_vertical|center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical|center">
 
             <Button
                 android:id="@+id/cancelButton"
@@ -29,11 +28,11 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:background="@color/colorAccent"
+                android:background="@color/mint"
                 android:clickable="true"
                 android:text="&lt;"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/colorPrimaryText" />
 
 
             <TextView
@@ -42,12 +41,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:fontFamily="sans-serif-thin"
+                android:fontFamily="sans-serif"
                 android:text="@string/set_alarm_text"
                 android:textAlignment="center"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="32sp"
-                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/grey1"
+                android:textSize="30sp"
                 android:typeface="sans" />
 
             <Button
@@ -57,15 +56,15 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
-                android:background="@color/colorAccent"
+                android:background="@color/mint"
+                android:fontFamily="sans-serif"
                 android:onClick="submitNewAlarm"
                 android:text="set"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/colorPrimaryText" />
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,69 +87,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal">
-                    <ToggleButton
-                        android:id="@+id/sundayButton"
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/sunday_button_name"
-                        android:textOff="@string/sunday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                    <ToggleButton
-                        android:id="@+id/mondayButton"
-                        android:layout_width="46dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/monday_button_name"
-                        android:textOff="@string/monday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                    <ToggleButton
-                        android:id="@+id/tuesdayButton"
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/tuesday_button_name"
-                        android:textOff="@string/tuesday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                    <ToggleButton
-                        android:id="@+id/wednesdayButton"
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/wednesday_button_name"
-                        android:textOff="@string/wednesday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                    <ToggleButton
-                        android:id="@+id/thursdayButton"
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/thursday_button_name"
-                        android:textOff="@string/thursday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                    <ToggleButton
-                        android:id="@+id/fridayButton"
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/friday_button_name"
-                        android:textOff="@string/friday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                    <ToggleButton
-                        android:id="@+id/saturdayButton"
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:disabledAlpha="1.2"
-                        android:textOn="@string/saturday_button_name"
-                        android:textOff="@string/saturday_button_name"
-                        android:layout_gravity="center_horizontal"/>
-                </TableRow>
-
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -158,6 +94,12 @@
                     android:hint="@string/alarm_name_hint"
                     android:inputType="text"
                     android:maxLines="1"/>
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/daySpin"
+                    android:entries="@array/days"/>
 
                 <Spinner
                     android:layout_width="wrap_content"

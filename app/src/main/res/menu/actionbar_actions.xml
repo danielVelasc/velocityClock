@@ -5,7 +5,7 @@
     <!-- "Add Alarm", should appear as action button, Far Left -->
     <item
         android:id="@+id/action_add_alarm"
-        android:icon="@drawable/ic_action_name"
+        android:icon="@drawable/dark_theme_add_alarm"
         android:title="@string/add_alarm"
         app:showAsAction="always"/>
 </menu>

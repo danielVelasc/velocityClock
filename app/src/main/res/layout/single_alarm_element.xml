@@ -9,7 +9,7 @@
 
     <TextView
         android:text="6:00 AM"
-        android:textColor="#ffffff"
+        android:textColor="@color/colorPrimaryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/alarmTime"
@@ -19,29 +19,29 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:text="Everyday"
-        android:textColor="#ffffff"
+        android:id="@+id/alarmRepeating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/alarmRepeating"
-        android:textSize="16sp"
-        android:padding="15dp"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/alarmTime"
-        android:layout_alignParentStart="true" />
+        android:padding="15dp"
+        android:text="Everyday"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/deleteButton"
-        android:tint="#ffffff"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_delete"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        app:backgroundTint="@android:color/transparent"
+        android:layout_alignParentTop="true"
+        android:clickable="true"
+        android:tint="@color/colorPrimaryText"
+        app:backgroundTint="@color/mint"
+        app:elevation="0dp"
+        app:fabSize="mini"
         app:rippleColor="@color/white"
-        app:elevation="0dp" />
+        app:srcCompat="@android:drawable/ic_delete" />
 
     <android.support.v7.widget.SwitchCompat
         android:layout_width="wrap_content"
@@ -52,15 +52,15 @@
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="14dp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/colorPrimaryText"/>
 
     <TextView
         android:text=""
-        android:textColor="#ffffff"
+        android:textColor="@color/colorPrimaryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/alarmName"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:padding="15dp"
         android:layout_below="@+id/alarmTime"
         android:layout_centerHorizontal="true" />
