@@ -23,6 +23,8 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AlarmCoordinator.getInstance().loadAlarmList(this);
+        IDGenerator.loadID(this);
+
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
         myToolbar.setLogo(R.drawable.ic_launcher);
@@ -146,6 +148,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     @Override
     protected void onPause() {
         AlarmCoordinator.getInstance().saveAlarmList(this);
+        IDGenerator.saveID(this);
 
         super.onPause();
     }

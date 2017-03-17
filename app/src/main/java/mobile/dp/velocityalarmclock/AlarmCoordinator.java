@@ -92,6 +92,8 @@ class AlarmCoordinator {
 
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, alarm.getPendingIntentID()[dayIndex], alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
 
+            alertIntent.putExtra("Pending-Intent", scheduledIntent);
+
             if (freq.equals(Alarm.AlarmFrequency.NO_REPEAT)) { //If it doesnt repeat don't schedule reg intent
                 alarmMgr.set(AlarmManager.RTC_WAKEUP, times[dayIndex], scheduledIntent);
                 break; //No need to iterate through the rest of the days
