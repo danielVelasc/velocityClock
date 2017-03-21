@@ -78,7 +78,9 @@
             android:numbersSelectorColor="@color/mint"
             android:headerBackground="@color/mint"
             android:layout_below="@+id/addAlarmButton"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:scaleY="0.8"
+            android:scaleX="0.8"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -89,6 +91,7 @@
                 android:orientation="vertical">
 
                 <TableRow
+                    android:id="@+id/toggleRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal">

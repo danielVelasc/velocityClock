@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -88,7 +89,6 @@ public class SetAlarmFragment extends Fragment {
             snoozeTime = (EditText) v.findViewById(R.id.snoozeTime);
             day = new boolean[7];
 
-
             // Cancel setting the alarm and return back to the main alarm view
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -152,28 +152,6 @@ public class SetAlarmFragment extends Fragment {
                 }
             });
 
-            freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
-                        for (ToggleButton button : toggleMap.keySet()){
-                            button.setVisibility(View.INVISIBLE);
-                        }
-
-                    } else {
-                        //daySpin.setVisibility(View.VISIBLE);
-                        for (ToggleButton button : toggleMap.keySet()){
-                            button.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-
             // If we are modifying an existing alarm, mPosition will be > 0. We must fill fields in the existing alarm
             if (mPosition > 0) {
                 // Modify title view to say "Modify Alarm"
@@ -195,10 +173,36 @@ public class SetAlarmFragment extends Fragment {
                 //daySpin.setSelection(existingAlarm.getDaysOfWeek());
                 freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
 
-                if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {
-                    daySpin.setVisibility(View.INVISIBLE);
-                }
+//                if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {
+//                    daySpin.setVisibility(View.INVISIBLE);
+//                }
             }
+
+            freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    TableRow toggleRow = (TableRow) v.findViewById(R.id.toggleRow);
+
+                    if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
+                        toggleRow.setVisibility(View.GONE);
+//                        for (ToggleButton button : toggleMap.keySet()){
+//                            button.setVisibility(View.INVISIBLE);
+//                        }
+
+                    } else {
+                        toggleRow.setVisibility(View.VISIBLE);
+
+//                        for (ToggleButton button : toggleMap.keySet()){
+//                            button.setVisibility(View.VISIBLE);
+//                        }
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
         }
         return v;
     }
