@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 import java.util.Calendar;
-import java.util.HashMap;
 
 /**
  * @author Sharon Wang
@@ -186,22 +185,15 @@ public class SetAlarmFragment extends Fragment {
         }
     }
 
-    // Converts the String format of a day into an Integer
-    public int dayToInt(String convertDay){
-        Log.d("SetAlarmFragment","dayToInt");
-        HashMap<String, Integer> convertMap = new HashMap<String, Integer>();
-        convertMap.put("Sunday",1);
-        convertMap.put("Monday",2);
-        convertMap.put("Tuesday",3);
-        convertMap.put("Wednesday",4);
-        convertMap.put("Thursday",5);
-        convertMap.put("Friday",6);
-        convertMap.put("Saturday",7);
-
-        return convertMap.get(convertDay).intValue();
-    }
-
+    /**
+     * This method grabs the toggle information from the ToggleButtons
+     * for each day and populates the day array with true or false if
+     * the day is selected or not selected, respectively.
+     *
+     * @param v the view containing the buttons
+     */
     public void populateDayArray(View v){
+        // Grab the ToggleButton objects for each day
         ToggleButton sundayToggle = (ToggleButton) v.findViewById(R.id.sundayButton);
         ToggleButton mondayToggle = (ToggleButton) v.findViewById(R.id.mondayButton);
         ToggleButton tuesdayToggle = (ToggleButton) v.findViewById(R.id.tuesdayButton);
@@ -210,6 +202,7 @@ public class SetAlarmFragment extends Fragment {
         ToggleButton fridayToggle = (ToggleButton) v.findViewById(R.id.fridayButton);
         ToggleButton saturdayToggle = (ToggleButton) v.findViewById(R.id.saturdayButton);
 
+        // Set the toggle value (true or false) for each day
         day[0] = sundayToggle.isChecked();
         day[1] = mondayToggle.isChecked();
         day[2] = tuesdayToggle.isChecked();
@@ -218,6 +211,8 @@ public class SetAlarmFragment extends Fragment {
         day[5] = fridayToggle.isChecked();
         day[6] = saturdayToggle.isChecked();
 
+        // Check if no days were selected
+        // allFalse will be true if none are selected
         boolean allFalse = true;
         int indexCount = 0;
         for (boolean b : day) {
@@ -228,6 +223,9 @@ public class SetAlarmFragment extends Fragment {
             indexCount++;
         }
 
+        // If no days are selected, default to the current day if the set time is
+        // greater than the current time, or set the alarm for the next day if the
+        // set time is less than the current time
         if (allFalse && indexCount == 7) {
             Calendar cal = Calendar.getInstance();
 
@@ -241,7 +239,6 @@ public class SetAlarmFragment extends Fragment {
             // if set time is less than current time
 
             // If the set time is greater than the current time, set the alarm for the current day
-            //long diff = setCal.getTimeInMillis() - cal.getTimeInMillis();
             if (setCal.getTimeInMillis() > cal.getTimeInMillis()) {
                 day[today] = true;
             }
