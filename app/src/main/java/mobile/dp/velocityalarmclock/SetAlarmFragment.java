@@ -16,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,7 +39,6 @@ public class SetAlarmFragment extends Fragment {
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
     Spinner freqSpin;
-    HashMap<ToggleButton, Boolean> toggleMap = new HashMap<>();
     EditText nameField, snoozeTime;
 
     public static SetAlarmFragment newInstance() {
@@ -87,7 +85,6 @@ public class SetAlarmFragment extends Fragment {
                 public void onClick(View view) {
                     mListener.closeSetAlarmFragment();
                     nameField.setText("\r\n");
-                    Toast.makeText(getActivity(), "alarm cancelled!", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -130,16 +127,12 @@ public class SetAlarmFragment extends Fragment {
                     // If we are modifying an existing alarm, mPosition will be > 0
                     if (mPosition > 0) {
                         AlarmCoordinator.getInstance().modifyAlarm(mPosition, getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm modified: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
                     // Otherwise, create a new alarm
                     else {
                         AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm set: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
                     mListener.closeSetAlarmFragment();
-                    Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getActivity(), "frequency: " + frequency + "\nsnooze: " + snooze, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -224,14 +217,6 @@ public class SetAlarmFragment extends Fragment {
         day[4] = thursdayToggle.isChecked();
         day[5] = fridayToggle.isChecked();
         day[6] = saturdayToggle.isChecked();
-
-        toggleMap.put(sundayToggle, sundayToggle.isEnabled());
-        toggleMap.put(mondayToggle, mondayToggle.isEnabled());
-        toggleMap.put(tuesdayToggle, tuesdayToggle.isEnabled());
-        toggleMap.put(wednesdayToggle, wednesdayToggle.isEnabled());
-        toggleMap.put(thursdayToggle, thursdayToggle.isEnabled());
-        toggleMap.put(fridayToggle, fridayToggle.isEnabled());
-        toggleMap.put(saturdayToggle, saturdayToggle.isEnabled());
 
         boolean allFalse = true;
         int indexCount = 0;
