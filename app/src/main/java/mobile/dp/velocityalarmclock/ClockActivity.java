@@ -136,7 +136,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
             this.finish();
         } else {
             getFragmentManager().popBackStack();
-            Toast.makeText(this, "alarm cancelled!", Toast.LENGTH_SHORT).show();
         }
     }
 
