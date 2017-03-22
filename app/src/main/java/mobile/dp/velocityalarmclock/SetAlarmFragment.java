@@ -9,24 +9,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * @author Sharon Wang
@@ -46,10 +39,9 @@ public class SetAlarmFragment extends Fragment {
     String alarmName, frequency;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
-    Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to toggle buttons (multi-selection)
+    Spinner freqSpin;
     HashMap<ToggleButton, Boolean> toggleMap = new HashMap<>();
     EditText nameField, snoozeTime;
-    // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
 
     public static SetAlarmFragment newInstance() {
         SetAlarmFragment fragment = new SetAlarmFragment();
@@ -145,7 +137,6 @@ public class SetAlarmFragment extends Fragment {
                         AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
                         Toast.makeText(getActivity(), "alarm set: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
-
                     mListener.closeSetAlarmFragment();
                     Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
                     Toast.makeText(getActivity(), "frequency: " + frequency + "\nsnooze: " + snooze, Toast.LENGTH_SHORT).show();
@@ -167,40 +158,22 @@ public class SetAlarmFragment extends Fragment {
                     setAlarmTime.setCurrentHour(existingAlarm.getHourOfDay());
                     setAlarmTime.setCurrentMinute(existingAlarm.getMinOfHour());
                 }
-
                 nameField.setText(existingAlarm.getName());
-                // TODO - dayspin to toggle buttons
-                //daySpin.setSelection(existingAlarm.getDaysOfWeek());
                 freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
-
-//                if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {
-//                    daySpin.setVisibility(View.INVISIBLE);
-//                }
             }
 
             freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     TableRow toggleRow = (TableRow) v.findViewById(R.id.toggleRow);
-
                     if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
                         toggleRow.setVisibility(View.GONE);
-//                        for (ToggleButton button : toggleMap.keySet()){
-//                            button.setVisibility(View.INVISIBLE);
-//                        }
-
                     } else {
                         toggleRow.setVisibility(View.VISIBLE);
-
-//                        for (ToggleButton button : toggleMap.keySet()){
-//                            button.setVisibility(View.VISIBLE);
-//                        }
                     }
                 }
-
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
-
                 }
             });
         }
@@ -277,15 +250,6 @@ public class SetAlarmFragment extends Fragment {
             int calDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int today = calDayOfWeek - 1;
 
-            /*
-            if (calDayOfWeek > 1){
-                today = calDayOfWeek - 1;
-            }
-            else {
-                today = 6;
-            }
-            */
-
             Calendar setCal = Calendar.getInstance();
             setCal.set(Calendar.HOUR_OF_DAY, hour);
             setCal.set(Calendar.MINUTE, minutes);
@@ -295,36 +259,10 @@ public class SetAlarmFragment extends Fragment {
             //long diff = setCal.getTimeInMillis() - cal.getTimeInMillis();
             if (setCal.getTimeInMillis() > cal.getTimeInMillis()) {
                 day[today] = true;
-
-                // If today is not Sunday
-                /*
-                if (today < 7) {
-                    day[today] = true;
-                } else {
-                    day[0] = true;  // Sunday
-                }*/
             }
             // Set the alarm for the next day
             else {
                 day[(today + 1) % 7] = true;
-
-                // DAY_OF_WEEK: SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7; https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
-
-                // Calendar << Not according to doc: https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
-                // 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat, 7-Sun
-                // day array
-                // 0-Sun, 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat
-
-                // If today is not Sunday
-                /*
-                if (today == 6) {
-                    day[0] = true;  // Saturday --> set Sunday
-                } else if (today == 7) {
-                    day[1] = true;  // Sunday --> set Monday
-                } else {
-                    day[today + 1] = true;
-                }
-                */
             }
         }
     }
