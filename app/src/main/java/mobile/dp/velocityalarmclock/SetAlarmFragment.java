@@ -9,23 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * @author Sharon Wang
@@ -45,10 +37,8 @@ public class SetAlarmFragment extends Fragment {
     String alarmName, frequency;
     Button setAlarmButton, cancelButton;
     TimePicker setAlarmTime;
-    Spinner daySpin, freqSpin; // TODO - Change daySpin spinner to toggle buttons (multi-selection)
-    HashMap<ToggleButton, Boolean> toggleMap = new HashMap<>();
+    Spinner freqSpin;
     EditText nameField, snoozeTime;
-    // http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
 
     public static SetAlarmFragment newInstance() {
         SetAlarmFragment fragment = new SetAlarmFragment();
@@ -88,14 +78,12 @@ public class SetAlarmFragment extends Fragment {
             snoozeTime = (EditText) v.findViewById(R.id.snoozeTime);
             day = new boolean[7];
 
-
             // Cancel setting the alarm and return back to the main alarm view
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mListener.closeSetAlarmFragment();
                     nameField.setText("\r\n");
-                    Toast.makeText(getActivity(), "alarm cancelled!", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -138,39 +126,12 @@ public class SetAlarmFragment extends Fragment {
                     // If we are modifying an existing alarm, mPosition will be > 0
                     if (mPosition > 0) {
                         AlarmCoordinator.getInstance().modifyAlarm(mPosition, getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm modified: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
                     // Otherwise, create a new alarm
                     else {
                         AlarmCoordinator.getInstance().createNewAlarm(getActivity(), newAlarm);
-                        Toast.makeText(getActivity(), "alarm set: " + newAlarm.getName(), Toast.LENGTH_SHORT).show();
                     }
-
                     mListener.closeSetAlarmFragment();
-                    Toast.makeText(getActivity(), "day: " + day + "\ntime: " + hour + ":" + minutes, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getActivity(), "frequency: " + frequency + "\nsnooze: " + snooze, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
-                        for (ToggleButton button : toggleMap.keySet()){
-                            button.setVisibility(View.INVISIBLE);
-                        }
-
-                    } else {
-                        //daySpin.setVisibility(View.VISIBLE);
-                        for (ToggleButton button : toggleMap.keySet()){
-                            button.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
                 }
             });
 
@@ -189,16 +150,24 @@ public class SetAlarmFragment extends Fragment {
                     setAlarmTime.setCurrentHour(existingAlarm.getHourOfDay());
                     setAlarmTime.setCurrentMinute(existingAlarm.getMinOfHour());
                 }
-
                 nameField.setText(existingAlarm.getName());
-                // TODO - dayspin to toggle buttons
-                //daySpin.setSelection(existingAlarm.getDaysOfWeek());
                 freqSpin.setSelection(existingAlarm.getAlarmFrequency().ordinal());
-
-                if (existingAlarm.getAlarmFrequency() == Alarm.AlarmFrequency.DAILY_REPEAT) {
-                    daySpin.setVisibility(View.INVISIBLE);
-                }
             }
+
+            freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    TableRow toggleRow = (TableRow) v.findViewById(R.id.toggleRow);
+                    if (position == Alarm.AlarmFrequency.DAILY_REPEAT.ordinal()) {
+                        toggleRow.setVisibility(View.GONE);
+                    } else {
+                        toggleRow.setVisibility(View.VISIBLE);
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
         }
         return v;
     }
@@ -216,22 +185,15 @@ public class SetAlarmFragment extends Fragment {
         }
     }
 
-    // Converts the String format of a day into an Integer
-    public int dayToInt(String convertDay){
-        Log.d("SetAlarmFragment","dayToInt");
-        HashMap<String, Integer> convertMap = new HashMap<String, Integer>();
-        convertMap.put("Sunday",1);
-        convertMap.put("Monday",2);
-        convertMap.put("Tuesday",3);
-        convertMap.put("Wednesday",4);
-        convertMap.put("Thursday",5);
-        convertMap.put("Friday",6);
-        convertMap.put("Saturday",7);
-
-        return convertMap.get(convertDay).intValue();
-    }
-
+    /**
+     * This method grabs the toggle information from the ToggleButtons
+     * for each day and populates the day array with true or false if
+     * the day is selected or not selected, respectively.
+     *
+     * @param v the view containing the buttons
+     */
     public void populateDayArray(View v){
+        // Grab the ToggleButton objects for each day
         ToggleButton sundayToggle = (ToggleButton) v.findViewById(R.id.sundayButton);
         ToggleButton mondayToggle = (ToggleButton) v.findViewById(R.id.mondayButton);
         ToggleButton tuesdayToggle = (ToggleButton) v.findViewById(R.id.tuesdayButton);
@@ -240,6 +202,7 @@ public class SetAlarmFragment extends Fragment {
         ToggleButton fridayToggle = (ToggleButton) v.findViewById(R.id.fridayButton);
         ToggleButton saturdayToggle = (ToggleButton) v.findViewById(R.id.saturdayButton);
 
+        // Set the toggle value (true or false) for each day
         day[0] = sundayToggle.isChecked();
         day[1] = mondayToggle.isChecked();
         day[2] = tuesdayToggle.isChecked();
@@ -248,14 +211,8 @@ public class SetAlarmFragment extends Fragment {
         day[5] = fridayToggle.isChecked();
         day[6] = saturdayToggle.isChecked();
 
-        toggleMap.put(sundayToggle, sundayToggle.isEnabled());
-        toggleMap.put(mondayToggle, mondayToggle.isEnabled());
-        toggleMap.put(tuesdayToggle, tuesdayToggle.isEnabled());
-        toggleMap.put(wednesdayToggle, wednesdayToggle.isEnabled());
-        toggleMap.put(thursdayToggle, thursdayToggle.isEnabled());
-        toggleMap.put(fridayToggle, fridayToggle.isEnabled());
-        toggleMap.put(saturdayToggle, saturdayToggle.isEnabled());
-
+        // Check if no days were selected
+        // allFalse will be true if none are selected
         boolean allFalse = true;
         int indexCount = 0;
         for (boolean b : day) {
@@ -266,6 +223,9 @@ public class SetAlarmFragment extends Fragment {
             indexCount++;
         }
 
+        // If no days are selected, default to the current day if the set time is
+        // greater than the current time, or set the alarm for the next day if the
+        // set time is less than the current time
         if (allFalse && indexCount == 7) {
             Calendar cal = Calendar.getInstance();
 
@@ -273,54 +233,18 @@ public class SetAlarmFragment extends Fragment {
             int calDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int today = calDayOfWeek - 1;
 
-            /*
-            if (calDayOfWeek > 1){
-                today = calDayOfWeek - 1;
-            }
-            else {
-                today = 6;
-            }
-            */
-
             Calendar setCal = Calendar.getInstance();
             setCal.set(Calendar.HOUR_OF_DAY, hour);
             setCal.set(Calendar.MINUTE, minutes);
             // if set time is less than current time
 
             // If the set time is greater than the current time, set the alarm for the current day
-            //long diff = setCal.getTimeInMillis() - cal.getTimeInMillis();
             if (setCal.getTimeInMillis() > cal.getTimeInMillis()) {
                 day[today] = true;
-
-                // If today is not Sunday
-                /*
-                if (today < 7) {
-                    day[today] = true;
-                } else {
-                    day[0] = true;  // Sunday
-                }*/
             }
             // Set the alarm for the next day
             else {
                 day[(today + 1) % 7] = true;
-
-                // DAY_OF_WEEK: SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7; https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
-
-                // Calendar << Not according to doc: https://developer.android.com/reference/java/util/Calendar.html#SUNDAY
-                // 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat, 7-Sun
-                // day array
-                // 0-Sun, 1-Mon, 2-Tue, 3-Wed, 4-Thu, 5-Fri, 6-Sat
-
-                // If today is not Sunday
-                /*
-                if (today == 6) {
-                    day[0] = true;  // Saturday --> set Sunday
-                } else if (today == 7) {
-                    day[1] = true;  // Sunday --> set Monday
-                } else {
-                    day[today + 1] = true;
-                }
-                */
             }
         }
     }

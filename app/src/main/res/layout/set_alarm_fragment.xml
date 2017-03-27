@@ -46,7 +46,7 @@
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/grey1"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:typeface="sans" />
 
             <Button
@@ -78,7 +78,10 @@
             android:numbersSelectorColor="@color/mint"
             android:headerBackground="@color/mint"
             android:layout_below="@+id/addAlarmButton"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"/>
+            <!--For scaling timepicker down in size-->
+            <!--android:scaleY="0.8"-->
+            <!--android:scaleX="0.8"-->
 
         <ScrollView
             android:layout_width="match_parent"
@@ -89,6 +92,7 @@
                 android:orientation="vertical">
 
                 <TableRow
+                    android:id="@+id/toggleRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal">

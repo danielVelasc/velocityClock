@@ -34,7 +34,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
-        myToolbar.setLogo(R.drawable.ic_launcher);
+        //myToolbar.setLogo(R.drawable.ic_launcher);
         setSupportActionBar(myToolbar);
 
         //Register ActivityLifecycleCallbacks in for a lifecycle manager for recording data about
@@ -160,7 +160,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
             this.finish();
         } else {
             getFragmentManager().popBackStack();
-            Toast.makeText(this, "alarm cancelled!", Toast.LENGTH_SHORT).show();
         }
     }
 
