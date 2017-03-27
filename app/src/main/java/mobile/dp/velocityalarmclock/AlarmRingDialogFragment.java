@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -18,32 +18,37 @@ import java.util.NoSuchElementException;
  */
 public class AlarmRingDialogFragment extends DialogFragment {
     public final static String TAG = "ALARM_RING_DIALOG";
+
+    ClockActivity mClockActivity;
     Alarm mAlarm;
+    boolean mAlarmDismissed = false;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final ClockActivity ra = (ClockActivity) getActivity();
+        mClockActivity = (ClockActivity) getActivity();
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity()); //Create dialog window
         final AlarmCoordinator ac = AlarmCoordinator.getInstance();
 
         try {
-            int pendingIntentID = ra.getIntent().getIntExtra("Alarm-ID", -1);
+            int pendingIntentID = mClockActivity.getIntent().getIntExtra("Alarm-ID", -1);
             Log.d(TAG, "Looking for alarm with PendingIntentID = " + pendingIntentID);
 
             mAlarm = ac.getAlarmByPendingIntentID(Calendar.getInstance().getTime().getDay(), pendingIntentID);
+            ac.playAlarmNoise(mClockActivity);
 
-            dialogBuilder.setMessage("Alarm - " + ra.getIntent().getStringExtra("Alarm-Name"))
+            dialogBuilder.setMessage("Alarm - " + mClockActivity.getIntent().getStringExtra("Alarm-Name"))
                     .setIcon(R.drawable.bell_icon)
                     .setPositiveButton("Snooze", new DialogInterface.OnClickListener() { //Add snooze button
                         public void onClick(DialogInterface dialog, int id) {
-                            ac.snoozeAlarm(getContext(), mAlarm);
+                            ac.snoozeAlarm(mClockActivity, mAlarm);
                             dismiss();
                         }
                     })
                     .setNegativeButton("Stop", new DialogInterface.OnClickListener() { //Add stop button
                         public void onClick(DialogInterface dialog, int id) {
-                            ac.dismissAlarm(getContext(), mAlarm);
+                            mAlarmDismissed = true;
+                            ac.dismissAlarm(mClockActivity, mAlarm);
                             dismiss(); // In the future - stop the alarm
                         }
                     });
@@ -65,7 +70,9 @@ public class AlarmRingDialogFragment extends DialogFragment {
     @Override
     public void onStop() {
         try {
-            AlarmCoordinator.getInstance().dismissAlarm(getContext(), mAlarm);
+            if (!mAlarmDismissed) {
+                AlarmCoordinator.getInstance().dismissAlarm(mClockActivity, mAlarm);
+            }
         } catch (NullPointerException e) {
             // Alarm was not found, do nothing.
         }

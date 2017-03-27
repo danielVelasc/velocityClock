@@ -1,6 +1,7 @@
 package mobile.dp.velocityalarmclock;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 import android.util.Log;
@@ -45,14 +47,21 @@ import java.util.UUID;
 class AlarmCoordinator {
     private static final String TAG = "ALARM_COORDINATOR";
     private static final String ALARM_LIST_FILE_NAME = "alarm-list";
+    private static final String PENDING_ALARM_LIST_FILE_NAME = "pending-alarm-list";
 
+    private ArrayList<Integer> alarmNotificationList;
+    private ArrayList<Intent> alarmPendingList;
     private ArrayList<Alarm> alarmList;
     private ArrayList<AlarmCoordinatorListener> listeners;
 
     private static final AlarmCoordinator instance = new AlarmCoordinator();
     private MediaPlayer mPlayer;
+    private boolean pendingAlarmRunning;
 
     private AlarmCoordinator () {
+        alarmNotificationList = new ArrayList<>();
+        alarmPendingList = new ArrayList<>();
+        pendingAlarmRunning = false;
         alarmList = new ArrayList<>();
         listeners = new ArrayList<>();
     }
@@ -194,6 +203,7 @@ class AlarmCoordinator {
     public void snoozeAlarm(Context context, Alarm alarm) {
         stopAlarmNoise(context); //Stop the alarm noise.
         scheduleNextSnooze(context, alarm);
+        nextPendingAlarm(context);
     }
 
     /**
@@ -220,8 +230,10 @@ class AlarmCoordinator {
      * @param alarm Alarm that was dismissed
      */
     public void dismissAlarm(Context context, Alarm alarm) {
+        Log.d(TAG, "dimissing alarm " + alarm.getName());
         stopAlarmNoise(context);
         alarm.setState(false);
+        nextPendingAlarm(context);
     }
 
     void notifyAlarmChange() {
@@ -301,6 +313,10 @@ class AlarmCoordinator {
         //activating looping ringtone sound
     /*    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         mPlayer = MediaPlayer.create(context, notification); */
+
+        // Stop playing all other alarms.
+        stopAlarmNoise(context);
+
         mPlayer = MediaPlayer.create(context, R.raw.alarm_sound);
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mPlayer.setLooping(true);
@@ -355,6 +371,45 @@ class AlarmCoordinator {
         for(int i = 1; i < alarmList.size(); i++){
             createNewAlarm(context, alarmList.get(i), true);
         }
+    }
+
+    synchronized public void addPendingAlarm(Context context, Intent intent) {
+        alarmPendingList.add(intent);
+        Log.d(TAG, "pending alarm added. new size of list: " + alarmPendingList.size());
+    }
+
+    synchronized public void startPendingAlarm(Context context) {
+        if (!pendingAlarmRunning) {
+            pendingAlarmRunning = true;
+            Intent intent = alarmPendingList.remove(0);
+            context.startActivity(intent);
+        }
+    }
+
+    synchronized public void nextPendingAlarm(Context context) {
+        if (alarmPendingList.size() > 0) {
+            Intent intent = alarmPendingList.remove(0);
+            Log.d(TAG, "running next pending alarm. new size of list: " + alarmPendingList.size());
+            context.startActivity(intent);
+        } else {
+            Log.d(TAG, "no more pending alarms to run.");
+            pendingAlarmRunning = false;
+        }
+    }
+
+    public void addAlarmNotification(int id) {
+        Log.d(TAG, "Adding alarm notification");
+        alarmNotificationList.add(id);
+    }
+
+    public void clearAlarmNotifications(Context context) {
+        NotificationManager notManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        for (int id : alarmNotificationList) {
+            notManager.cancel(id);
+        }
+
+        alarmNotificationList.clear();
     }
 }
 

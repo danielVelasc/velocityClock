@@ -64,15 +64,19 @@ public class AlarmReceiver extends BroadcastReceiver {
             dialogIntent.putExtra("Launch-Dialog", true);
             dialogIntent.putExtra("Alarm-ID", pendingIntentID);
             dialogIntent.putExtra("Alarm-Name", name);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             alarmCoordinator.playAlarmNoise(context);
 
+            // Add alarm to pending alarm list
+            alarmCoordinator.addPendingAlarm(context, dialogIntent);
+
             // Check if app is open to skip the notification
-            if (ApplicationLifecycleManager.isAppInForeground()) {
-                context.startActivity(dialogIntent);
+            if (ApplicationLifecycleManager.isAppVisible()) {
+                alarmCoordinator.startPendingAlarm(context);
             } else {
-                createNotification(context, "Alarm", name, "Alarm " + name + "!", dialogIntent);
+                alarmCoordinator.addAlarmNotification(createNotification(context, "Alarm", name, "Alarm " + name + "!", dialogIntent));
             }
 
         } catch (NoSuchElementException e) {
@@ -89,8 +93,9 @@ public class AlarmReceiver extends BroadcastReceiver {
      * @param msg - The Title text
      * @param msgText The Description Text
      * @param msgAlert - Status bar text
+     * @return the notification ID
      */
-    public void createNotification(Context context, String msg, String msgText, String msgAlert, Intent intent) {
+    public int createNotification(Context context, String msg, String msgText, String msgAlert, Intent intent) {
 
         PendingIntent notIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -103,9 +108,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setDefaults(NotificationCompat.DEFAULT_SOUND)
                 .setAutoCancel(true);
 
+        int id = IDGenerator.getID();
         NotificationManager notManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notManager.notify(id, notifyBuilder.build()); //Execute notification
 
-        notManager.notify(IDGenerator.getID(), notifyBuilder.build()); //Execute notification
+        return id;
     }
 }
 

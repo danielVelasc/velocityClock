@@ -1,5 +1,6 @@
 package mobile.dp.velocityalarmclock;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -16,13 +17,19 @@ import android.widget.Toast;
 public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener, AlarmAdapterListener
 {
     private static final String TAG = "CLOCK_ACTIVITY";
+
     SetAlarmFragment setAlarmFragment;
     ListView alarmListView;
+    boolean alarmDialogFragmentCreated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AlarmCoordinator.getInstance().loadAlarmList(this);
+        AlarmCoordinator alarmCoordinator = AlarmCoordinator.getInstance();
+        alarmCoordinator.loadAlarmList(this);
+
+        alarmDialogFragmentCreated = false;
+
         IDGenerator.loadID(this);
 
         setContentView(R.layout.activity_clock);
@@ -30,25 +37,40 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         myToolbar.setLogo(R.drawable.ic_launcher);
         setSupportActionBar(myToolbar);
 
-        Log.d("CLOCK_ACTIVITY","onCreate");
-
         //Register ActivityLifecycleCallbacks in for a lifecycle manager for recording data about
         //the apps current location in the lifecycle.
         getApplication().registerActivityLifecycleCallbacks(new ApplicationLifecycleManager());
 
-        AlarmAdapter alarmAdapter = new AlarmAdapter(this, R.layout.single_alarm_element, AlarmCoordinator.getInstance().getAlarmList());
+        AlarmAdapter alarmAdapter = new AlarmAdapter(this, R.layout.single_alarm_element, alarmCoordinator.getAlarmList());
         alarmListView = (ListView)findViewById(R.id.alarmListView);
         alarmListView.setAdapter(alarmAdapter);
 
-        AlarmCoordinator.getInstance().registerListener(alarmAdapter);
+        alarmCoordinator.registerListener(alarmAdapter);
+
+        Log.d(TAG, "onCreate called on ClockActivity");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart called on ClockActivity");
+
+        AlarmCoordinator alarmCoordinator = AlarmCoordinator.getInstance();
+
+        // Clear all alarm notifications
+        alarmCoordinator.clearAlarmNotifications(this);
 
         // If the calling intent wants to launch the alarm dialog box do so. ie the alarms going off
-        if (getIntent().getBooleanExtra("Launch-Dialog", false)) {
-            AlarmRingDialogFragment frag = new AlarmRingDialogFragment();
-            frag.show(getSupportFragmentManager(), "AlarmRingDialog");
-        }
+        if (!alarmDialogFragmentCreated && getIntent().getBooleanExtra("Launch-Dialog", false)) {
+            alarmDialogFragmentCreated = true;
 
+            AlarmRingDialogFragment frag = new AlarmRingDialogFragment();
+            frag.show(getFragmentManager(), "AlarmRingDialog");
+        }
     }
+
+
+
 
     /**
      * This function is called by the 'Add' button to create a fragment from which
