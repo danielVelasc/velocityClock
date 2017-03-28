@@ -6,27 +6,17 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.service.notification.StatusBarNotification;
-import android.util.Log;
-import android.widget.Toast;
 import android.util.Log;
 
+import java.io.EOFException;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 /**
  * @author Daniel Velasco
@@ -45,9 +35,14 @@ import java.util.UUID;
  */
 
 class AlarmCoordinator {
+    public final static String ALARM_LAUNCH_DIALOG = "alarm-launch-dialog";
+    public final static String ALARM_NAME = "alarm-name";
+    public final static String ALARM_ID = "alarm-id";
+    public final static String ALARM_DAY_INDEX = "alarm-day-index";
+    public final static String ALARM_PENDING_INTENT = "alarm-pending-intent";
+
     private static final String TAG = "ALARM_COORDINATOR";
-    private static final String ALARM_LIST_FILE_NAME = "alarm-list";
-    private static final String PENDING_ALARM_LIST_FILE_NAME = "pending-alarm-list";
+    private static final String ALARM_COORDINATOR_DATA_FILE_NAME = "alarm-coordinator-data";
 
     private ArrayList<Integer> alarmNotificationList;
     private ArrayList<Intent> alarmPendingList;
@@ -95,9 +90,9 @@ class AlarmCoordinator {
             Log.d(TAG, "Created new PendingIntent for day " + dayIndex + ". It is " + Calendar.getInstance().getTimeInMillis() + " and the alarm will go off at " + times[dayIndex]);
 
             Intent alertIntent = new Intent(context, AlarmReceiver.class); // When timer ends, check with receiver
-            alertIntent.putExtra("Alarm-Name", alarm.getName());
-            alertIntent.putExtra("Day-Index", dayIndex);
-            alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[dayIndex]); // Will be helpful later
+            alertIntent.putExtra(ALARM_NAME, alarm.getName());
+            alertIntent.putExtra(ALARM_ID, alarm.getPendingIntentID()[dayIndex]); // Will be helpful later
+            alertIntent.putExtra(ALARM_DAY_INDEX, dayIndex);
 
             PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, alarm.getPendingIntentID()[dayIndex], alertIntent, PendingIntent.FLAG_UPDATE_CURRENT); //Generate pending intent
 
@@ -145,9 +140,9 @@ class AlarmCoordinator {
                 continue;
 
             Intent alertIntent = new Intent(passedContext, AlarmReceiver.class); // When timer ends, check with receiver
-            alertIntent.putExtra("Alarm-Name", alarmToBeModified.getName());
-            alertIntent.putExtra("Day-Index", dayIndex);
-            alertIntent.putExtra("Alarm-ID", alarmToBeModified.getPendingIntentID()[dayIndex]); // Will be helpful later
+            alertIntent.putExtra(ALARM_NAME, alarmToBeModified.getName());
+            alertIntent.putExtra(ALARM_DAY_INDEX, dayIndex);
+            alertIntent.putExtra(ALARM_ID, alarmToBeModified.getPendingIntentID()[dayIndex]); // Will be helpful later
             AlarmManager alarmMgr = (AlarmManager) passedContext.getSystemService(Context.ALARM_SERVICE);
 
             // TODO need to refactor all this stuff once the ENUM is added
@@ -215,9 +210,9 @@ class AlarmCoordinator {
         int day = Calendar.getInstance().getTime().getDay();
 
         Intent alertIntent = new Intent(context, AlarmReceiver.class); //When timer ends, check with receiver
-        alertIntent.putExtra("Alarm-Name", alarm.getName() + " - Snoozed");
-        alertIntent.putExtra("Day-Index", day);
-        alertIntent.putExtra("Alarm-ID", alarm.getPendingIntentID()[day]); // Will be helpful later
+        alertIntent.putExtra(ALARM_NAME, alarm.getName() + " - Snoozed");
+        alertIntent.putExtra(ALARM_DAY_INDEX, day);
+        alertIntent.putExtra(ALARM_ID, alarm.getPendingIntentID()[day]); // Will be helpful later
 
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE); //Schedule alarm to go off in the snooze time
         PendingIntent scheduledIntent = PendingIntent.getBroadcast(context, IDGenerator.getID(), alertIntent, PendingIntent.FLAG_ONE_SHOT);
@@ -230,9 +225,10 @@ class AlarmCoordinator {
      * @param alarm Alarm that was dismissed
      */
     public void dismissAlarm(Context context, Alarm alarm) {
-        Log.d(TAG, "dimissing alarm " + alarm.getName());
+        Log.d(TAG, "dismissing alarm " + alarm.getName());
         stopAlarmNoise(context);
         alarm.setState(false);
+        alarmPendingList.remove(0);
         nextPendingAlarm(context);
     }
 
@@ -253,40 +249,43 @@ class AlarmCoordinator {
 
     //TODO Add method to serialize alarms
     /**
-     * Saves alarmList to file in internal storage.
+     * Saves alarmList and alarmPendingList to file in internal storage.
      * @param context Calling context (activity)
      */
-    public void saveAlarmList(Context context) {
-        ObjectOutputStream outputStream;
+    public void saveAlarmData(Context context) {
+        ObjectOutputStream alarmDataOutputStream;
 
         try {
-            outputStream =  new ObjectOutputStream(context.openFileOutput(ALARM_LIST_FILE_NAME, Context.MODE_PRIVATE));
+            alarmDataOutputStream = new ObjectOutputStream(context.openFileOutput(ALARM_COORDINATOR_DATA_FILE_NAME, Context.MODE_PRIVATE));
 
-            if (alarmList == null) {
-                outputStream.writeObject(new ArrayList<Alarm>());
-            } else {
-                outputStream.writeObject(alarmList);
-            }
+            AlarmCoordinatorAppData alarmCoordinatorAppData = new AlarmCoordinatorAppData(alarmList, alarmPendingList);
 
-            outputStream.close();
+            alarmDataOutputStream.writeObject(alarmCoordinatorAppData);
+
+            alarmDataOutputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Loads file containing alarms in internal storage into alarmList.
+     * Loads file containing alarms and alarm intents in internal storage into alarmList.
      * @param context Calling context (activity)
      */
-    public void loadAlarmList(Context context) {
+    public void loadAlarmData(Context context) {
         ObjectInputStream inputStream;
 
         try {
-            inputStream = new ObjectInputStream(context.openFileInput(ALARM_LIST_FILE_NAME));
-            Object list = inputStream.readObject();
+            inputStream = new ObjectInputStream(context.openFileInput(ALARM_COORDINATOR_DATA_FILE_NAME));
 
-            if (list != null && ((ArrayList<Alarm>) list).size() > 0) {
-                alarmList = (ArrayList<Alarm>) list;
+            AlarmCoordinatorAppData alarmCoordinatorAppData = (AlarmCoordinatorAppData) inputStream.readObject();
+
+            // Retrieve saved alarms and initialize alarmList
+            ArrayList<Alarm> list = alarmCoordinatorAppData.getAlarmList();
+
+            if (list.size() > 0) {
+                // Assign alarmList to loaded existing alarm list.
+                alarmList = list;
                 Log.d(TAG, "loaded alarm list with " + alarmList.size() + " alarms");
             } else {
                 // Add an empty alarm at the start that will never be referenced.
@@ -295,8 +294,38 @@ class AlarmCoordinator {
                 Log.d(TAG, "adding null alarm");
             }
 
+            // Retrieve saved alarm intents and initialize alarmPendingList
+            ArrayList<Intent> intents = alarmCoordinatorAppData.getAlarmPendingList();
+            for (Intent intent : intents) {
+                boolean isUnique = true;
+                for (Intent pIntent : alarmPendingList) {
+                    if (intent.getIntExtra(ALARM_ID, -1) == pIntent.getIntExtra(ALARM_ID, -2)) {
+                        isUnique = false;
+                        break;
+                    }
+                }
+
+                if (isUnique) {
+                    alarmPendingList.add(intent);
+                }
+            }
+
+            // Remove pending alarms intents that are no longer associated with an alarm.
+            int i = 0;
+            while (i < alarmPendingList.size()) {
+                Intent intent = alarmPendingList.get(i);
+                try {
+                    getAlarmByPendingIntentID(intent.getIntExtra(ALARM_DAY_INDEX, 0), intent.getIntExtra(ALARM_ID, -1));
+                    i++;
+                } catch (NoSuchElementException e) {
+                    alarmPendingList.remove(i);
+                }
+            }
+
+            Log.d(TAG, "loaded alarm pending list with " + alarmPendingList.size() + " intents");
+
             inputStream.close();
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | EOFException e) {
             alarmList.add(new Alarm());
             notifyAlarmChange();
             Log.d(TAG, "adding null alarm");
@@ -367,7 +396,7 @@ class AlarmCoordinator {
      * @param context Context that is passed from BootReceiver
      */
     public void rescheduleAlarms(Context context){
-        loadAlarmList(context);
+        loadAlarmData(context);
         for(int i = 1; i < alarmList.size(); i++){
             createNewAlarm(context, alarmList.get(i), true);
         }
@@ -375,26 +404,37 @@ class AlarmCoordinator {
 
     synchronized public void addPendingAlarm(Context context, Intent intent) {
         alarmPendingList.add(intent);
-        Log.d(TAG, "pending alarm added. new size of list: " + alarmPendingList.size());
+        Log.d(TAG, "addPendingAlarm - pending alarm added. new size of pending list is: " + alarmPendingList.size());
     }
 
     synchronized public void startPendingAlarm(Context context) {
         if (!pendingAlarmRunning) {
             pendingAlarmRunning = true;
-            Intent intent = alarmPendingList.remove(0);
+            Intent intent = alarmPendingList.get(0);
+            Log.d(TAG, "startPendingAlarm - running first pending alarm with id: " + intent.getIntExtra(ALARM_ID, -1) + ". New size of list: " + (alarmPendingList.size() - 1));
             context.startActivity(intent);
+        } else {
+            Log.d(TAG, "startPendingAlarm - pending alarm already running!");
         }
     }
 
     synchronized public void nextPendingAlarm(Context context) {
         if (alarmPendingList.size() > 0) {
-            Intent intent = alarmPendingList.remove(0);
-            Log.d(TAG, "running next pending alarm. new size of list: " + alarmPendingList.size());
+            Intent intent = alarmPendingList.get(0);
+            Log.d(TAG, "nextPendingAlarm - running next pending alarm with id: " + intent.getIntExtra(ALARM_ID, -1) + ". New size of list: " + (alarmPendingList.size() - 1));
             context.startActivity(intent);
         } else {
-            Log.d(TAG, "no more pending alarms to run.");
+            Log.d(TAG, "nextPendingAlarm - no more pending alarms to run.");
             pendingAlarmRunning = false;
         }
+    }
+
+    public int getCurrentPendingIntentID() {
+        if (alarmPendingList.size() > 0) {
+            return alarmPendingList.get(0).getIntExtra(ALARM_ID, -1);
+        }
+
+        return 0;
     }
 
     public void addAlarmNotification(int id) {

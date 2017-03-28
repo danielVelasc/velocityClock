@@ -12,9 +12,9 @@ import android.util.Log;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.prefs.Preferences;
 
 /**
  * This class handles the tasks which should be done when an alarm reaches its time
@@ -42,10 +42,10 @@ public class AlarmReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        name = intent.getStringExtra("Alarm-Name");
-        dayIndex = intent.getIntExtra("Day-Index", 0);
-        pendingIntentID = intent.getIntExtra("Alarm-ID", -1);
-        pendingIntent = intent.getParcelableExtra("Pending-Intent");
+        name = intent.getStringExtra(AlarmCoordinator.ALARM_NAME);
+        pendingIntentID = intent.getIntExtra(AlarmCoordinator.ALARM_ID, -1);
+        dayIndex = intent.getIntExtra(AlarmCoordinator.ALARM_DAY_INDEX, 0);
+        pendingIntent = intent.getParcelableExtra(AlarmCoordinator.ALARM_PENDING_INTENT);
 
         Log.d(TAG, "onReceive received alarm with PendingIntentID = " + pendingIntentID);
         AlarmCoordinator alarmCoordinator = AlarmCoordinator.getInstance();
@@ -53,7 +53,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         try {
             if (!ApplicationLifecycleManager.isAppVisible()) {
                 Log.d(TAG, "App is not visible, loading alarms!");
-                alarmCoordinator.loadAlarmList(context);
+                alarmCoordinator.loadAlarmData(context);
             }
 
             // This will throw a NoSuchElementException if the alarm no longer exists, or was modified
@@ -61,9 +61,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             // Open activity that creates dialog prompt
             Intent dialogIntent = new Intent(context, ClockActivity.class);
-            dialogIntent.putExtra("Launch-Dialog", true);
-            dialogIntent.putExtra("Alarm-ID", pendingIntentID);
-            dialogIntent.putExtra("Alarm-Name", name);
+            dialogIntent.putExtra(AlarmCoordinator.ALARM_LAUNCH_DIALOG, true);
+            dialogIntent.putExtra(AlarmCoordinator.ALARM_ID, pendingIntentID);
+            dialogIntent.putExtra(AlarmCoordinator.ALARM_NAME, name);
+            dialogIntent.putExtra(AlarmCoordinator.ALARM_DAY_INDEX, dayIndex);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -71,6 +72,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             // Add alarm to pending alarm list
             alarmCoordinator.addPendingAlarm(context, dialogIntent);
+
+            // Save new pending alarm
+            alarmCoordinator.saveAlarmData(context);
 
             // Check if app is open to skip the notification
             if (ApplicationLifecycleManager.isAppVisible()) {

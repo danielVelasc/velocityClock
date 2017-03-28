@@ -1,8 +1,8 @@
 package mobile.dp.velocityalarmclock;
 
-import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +18,8 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
 {
     private static final String TAG = "CLOCK_ACTIVITY";
 
+    private static final String ALARM_DIALOG_FRAGMENT_CREATED = "alarm-dialog-fragment-created";
+
     SetAlarmFragment setAlarmFragment;
     ListView alarmListView;
     boolean alarmDialogFragmentCreated;
@@ -25,12 +27,14 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate - loading alarm data and initializing adapter");
+
         AlarmCoordinator alarmCoordinator = AlarmCoordinator.getInstance();
-        alarmCoordinator.loadAlarmList(this);
+        alarmCoordinator.loadAlarmData(this);
+        IDGenerator.loadID(this);
 
         alarmDialogFragmentCreated = false;
-
-        IDGenerator.loadID(this);
 
         setContentView(R.layout.activity_clock);
         Toolbar myToolbar = (Toolbar)findViewById(R.id.my_toolbar);
@@ -46,14 +50,12 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         alarmListView.setAdapter(alarmAdapter);
 
         alarmCoordinator.registerListener(alarmAdapter);
-
-        Log.d(TAG, "onCreate called on ClockActivity");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart called on ClockActivity");
+        Log.d(TAG, "onStart - clearing notifications and checking for alarm launch dialog");
 
         AlarmCoordinator alarmCoordinator = AlarmCoordinator.getInstance();
 
@@ -61,16 +63,25 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         alarmCoordinator.clearAlarmNotifications(this);
 
         // If the calling intent wants to launch the alarm dialog box do so. ie the alarms going off
-        if (!alarmDialogFragmentCreated && getIntent().getBooleanExtra("Launch-Dialog", false)) {
+        if (!alarmDialogFragmentCreated && alarmCoordinator.getCurrentPendingIntentID() >= 0) {
+
+            /*
+            Intent lastAlarmPending = alarmCoordinator.getLastAlarmPending();
+            if (lastAlarmPending != null && lastAlarmPending.getIntExtra(AlarmCoordinator.ALARM_ID, -1) == alarmCoordinator.getCurrentPendingIntentID()) {
+                // This means that the same alarm dialog intent has gone off already! Do nothing!
+                Log.d(TAG, "onStart - NOT creating new alarm launch dialog for id " + alarmCoordinator.getCurrentPendingIntentID());
+                return;
+            }
+            */
+
+            Log.d(TAG, "onStart - creating new alarm launch dialog");
             alarmDialogFragmentCreated = true;
+            // alarmCoordinator.setLastAlarmPending(getIntent());
 
             AlarmRingDialogFragment frag = new AlarmRingDialogFragment();
             frag.show(getFragmentManager(), "AlarmRingDialog");
         }
     }
-
-
-
 
     /**
      * This function is called by the 'Add' button to create a fragment from which
@@ -138,7 +149,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
      * Closes the NewAlarmFragment
      */
      public void closeSetAlarmFragment() {
-         AlarmCoordinator.getInstance().saveAlarmList(this);
+         AlarmCoordinator.getInstance().saveAlarmData(this);
 
          FragmentManager fragmentManager = getFragmentManager();
          FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -164,11 +175,12 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     }
 
     /**
-     * Saving alarms upon application exit
+     * Saving alarm data and ID master list on activity pause
      */
     @Override
     protected void onPause() {
-        AlarmCoordinator.getInstance().saveAlarmList(this);
+        Log.d(TAG, "onPause - Saving alarm data");
+        AlarmCoordinator.getInstance().saveAlarmData(this);
         IDGenerator.saveID(this);
 
         super.onPause();
@@ -178,7 +190,7 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d("CLOCK_ACTIVITY","onDestroy");
+        Log.d(TAG,"onDestroy");
     }
 
     @Override

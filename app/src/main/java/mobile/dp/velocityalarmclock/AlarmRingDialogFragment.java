@@ -31,13 +31,13 @@ public class AlarmRingDialogFragment extends DialogFragment {
         final AlarmCoordinator ac = AlarmCoordinator.getInstance();
 
         try {
-            int pendingIntentID = mClockActivity.getIntent().getIntExtra("Alarm-ID", -1);
+            int pendingIntentID = ac.getCurrentPendingIntentID(); // mClockActivity.getIntent().getIntExtra(AlarmCoordinator.ALARM_ID, -1);
             Log.d(TAG, "Looking for alarm with PendingIntentID = " + pendingIntentID);
 
             mAlarm = ac.getAlarmByPendingIntentID(Calendar.getInstance().getTime().getDay(), pendingIntentID);
             ac.playAlarmNoise(mClockActivity);
 
-            dialogBuilder.setMessage("Alarm - " + mClockActivity.getIntent().getStringExtra("Alarm-Name"))
+            dialogBuilder.setMessage("Alarm - " + mAlarm .getName()) // mClockActivity.getIntent().getStringExtra(AlarmCoordinator.ALARM_NAME))
                     .setIcon(R.drawable.bell_icon)
                     .setPositiveButton("Snooze", new DialogInterface.OnClickListener() { //Add snooze button
                         public void onClick(DialogInterface dialog, int id) {
