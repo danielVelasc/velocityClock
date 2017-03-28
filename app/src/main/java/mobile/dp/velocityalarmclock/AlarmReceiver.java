@@ -71,7 +71,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmCoordinator.playAlarmNoise(context);
 
             // Add alarm to pending alarm list
-            alarmCoordinator.addPendingAlarm(context, dialogIntent);
+            alarmCoordinator.addPendingAlarm(dialogIntent);
 
             // Save new pending alarm
             alarmCoordinator.saveAlarmData(context);

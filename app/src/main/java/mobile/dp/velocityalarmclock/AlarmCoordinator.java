@@ -402,11 +402,19 @@ class AlarmCoordinator {
         }
     }
 
-    synchronized public void addPendingAlarm(Context context, Intent intent) {
+    /**
+     * Adds intent to alarmPendingList. These are intents that will be used in the future to ring an alarm.
+     * @param intent
+     */
+    synchronized public void addPendingAlarm(Intent intent) {
         alarmPendingList.add(intent);
         Log.d(TAG, "addPendingAlarm - pending alarm added. new size of pending list is: " + alarmPendingList.size());
     }
 
+    /**
+     * Starts the first intent in alarmPendingList ONLY if an alarm is not already running.
+     * @param context
+     */
     synchronized public void startPendingAlarm(Context context) {
         if (!pendingAlarmRunning) {
             pendingAlarmRunning = true;
@@ -418,6 +426,11 @@ class AlarmCoordinator {
         }
     }
 
+    /**
+     * Start the next intent and don't check if alarms are already running.
+     * Only to be called by alarms that are already running when they finish!
+     * @param context
+     */
     synchronized public void nextPendingAlarm(Context context) {
         if (alarmPendingList.size() > 0) {
             Intent intent = alarmPendingList.get(0);
@@ -429,12 +442,15 @@ class AlarmCoordinator {
         }
     }
 
+    /**
+     * Gets the current pending intent ID
+     * @return
+     */
     public int getCurrentPendingIntentID() {
         if (alarmPendingList.size() > 0) {
             return alarmPendingList.get(0).getIntExtra(ALARM_ID, -1);
         }
-
-        return 0;
+        return -1;
     }
 
     public void addAlarmNotification(int id) {
