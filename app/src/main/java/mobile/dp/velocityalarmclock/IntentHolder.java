@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Serializable object that saves important Intent data. Allows for converting from IntentHolder to Intent
  *
- * Created by ferna on 2017-03-27.
+ * Created by Fernando Valera on 2017-03-27.
  */
 
 public class IntentHolder implements Serializable {

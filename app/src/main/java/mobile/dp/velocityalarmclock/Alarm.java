@@ -1,16 +1,12 @@
 package mobile.dp.velocityalarmclock;
 
-import android.app.PendingIntent;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.UUID;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Implementation of an Alarm and its attributes

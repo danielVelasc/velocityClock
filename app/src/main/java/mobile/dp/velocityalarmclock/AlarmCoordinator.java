@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -20,18 +19,18 @@ import java.util.NoSuchElementException;
 
 /**
  * @author Daniel Velasco
- * @since February 13, 2017
  * @version 1.0
- *
- * This class will manage all alarms set by the user.
- * It is the central point for alarm:
- *      - creation
- *      - deletion
- *      - modification
- *      - aggregation (i.e. alarms will be maintained here)
- *      - serialization/deserialization
- * Classes interested in keeping track of alarm updates should subscribe by calling the
- * register method and implementing the corresponding interface.
+ *          <p>
+ *          This class will manage all alarms set by the user.
+ *          It is the central point for alarm:
+ *          - creation
+ *          - deletion
+ *          - modification
+ *          - aggregation (i.e. alarms will be maintained here)
+ *          - serialization/deserialization
+ *          Classes interested in keeping track of alarm updates should subscribe by calling the
+ *          register method and implementing the corresponding interface.
+ * @since February 13, 2017
  */
 
 class AlarmCoordinator {
@@ -53,7 +52,7 @@ class AlarmCoordinator {
     private MediaPlayer mPlayer;
     private boolean pendingAlarmRunning;
 
-    private AlarmCoordinator () {
+    private AlarmCoordinator() {
         alarmNotificationList = new ArrayList<>();
         alarmPendingList = new ArrayList<>();
         pendingAlarmRunning = false;
@@ -61,11 +60,13 @@ class AlarmCoordinator {
         listeners = new ArrayList<>();
     }
 
-    protected static AlarmCoordinator getInstance ()
-    { return instance; }
+    protected static AlarmCoordinator getInstance() {
+        return instance;
+    }
 
     /**
      * Schedules a new alarm(s) in the system services. Additionally adds alarms to be kept track of.
+     *
      * @param context
      * @param alarm
      */
@@ -75,6 +76,7 @@ class AlarmCoordinator {
 
     /**
      * Schedules a new alarm(s) in the system services. Additionally adds alarms to be kept track of.
+     *
      * @param context
      * @param alarm
      */
@@ -118,12 +120,13 @@ class AlarmCoordinator {
      * 1. Modifies the relevant alarm in the alarmList
      * 2. Reschedules the modified alarm with system services
      * 3. Broadcasts changes to listeners
-     * @param i The index of the alarm that is to be modified
+     *
+     * @param i             The index of the alarm that is to be modified
      * @param passedContext
      * @param modifiedAlarm the modify fragment makes a temporary alarm object that should passed
      *                      to this method
      */
-    void modifyAlarm(int i, Context passedContext, Alarm modifiedAlarm){
+    void modifyAlarm(int i, Context passedContext, Alarm modifiedAlarm) {
         // Step 1: Get the current alarm from the alarmList and modify it in accordance with the modifiedAlarm
         // TODO This might not be the correct way of getting the alarm
         Alarm alarmToBeModified = alarmList.get(i);
@@ -169,14 +172,15 @@ class AlarmCoordinator {
      * First removes the alarm from the alarmList via its ID, then tells the AlarmManager to cancel it via
      * the alarm's scheduledIntent memeber variable. Finally, broadcasts a message to all listeners to do the
      * same.
+     *
      * @param alarm the Alarm to be deleted
      */
     void deleteAlarm(Alarm alarm, Context context) {
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         // 1. Remove the alarm from AlarmCoordinator's alarmList
-        for(int position = 1; position < alarmList.size(); position++){
-            if(alarmList.get(position).getUuid().equals(alarm.getUuid())){
+        for (int position = 1; position < alarmList.size(); position++) {
+            if (alarmList.get(position).getUuid().equals(alarm.getUuid())) {
                 alarmList.remove(position);
                 break;
             }
@@ -192,8 +196,9 @@ class AlarmCoordinator {
 
     /**
      * Snoozes an alarm
+     *
      * @param context The calling context
-     * @param alarm The alarm to snooze
+     * @param alarm   The alarm to snooze
      */
     public void snoozeAlarm(Context context, Alarm alarm) {
         stopAlarmNoise(context); //Stop the alarm noise.
@@ -203,8 +208,9 @@ class AlarmCoordinator {
 
     /**
      * Schedule System alarm to go down in the alarm's snooze time
+     *
      * @param context Calling context
-     * @param alarm Alarm that was snoozed
+     * @param alarm   Alarm that was snoozed
      */
     private void scheduleNextSnooze(Context context, Alarm alarm) {
         int day = Calendar.getInstance().getTime().getDay();
@@ -221,8 +227,9 @@ class AlarmCoordinator {
 
     /**
      * Dismiss an alarm
+     *
      * @param context Calling context
-     * @param alarm Alarm that was dismissed
+     * @param alarm   Alarm that was dismissed
      */
     public void dismissAlarm(Context context, Alarm alarm) {
         Log.d(TAG, "dismissing alarm " + alarm.getName());
@@ -233,7 +240,7 @@ class AlarmCoordinator {
     }
 
     void notifyAlarmChange() {
-        for(AlarmCoordinatorListener listener: listeners)
+        for (AlarmCoordinatorListener listener : listeners)
             listener.alarmChanged();
     }
 
@@ -241,15 +248,19 @@ class AlarmCoordinator {
         listeners.add(listener);
     }
 
-    Alarm getAlarm(int position) { return alarmList.get(position); }
+    Alarm getAlarm(int position) {
+        return alarmList.get(position);
+    }
 
     ArrayList<Alarm> getAlarmList() {
         return alarmList;
     }
 
     //TODO Add method to serialize alarms
+
     /**
      * Saves alarmList and alarmPendingList to file in internal storage.
+     *
      * @param context Calling context (activity)
      */
     public void saveAlarmData(Context context) {
@@ -270,6 +281,7 @@ class AlarmCoordinator {
 
     /**
      * Loads file containing alarms and alarm intents in internal storage into alarmList.
+     *
      * @param context Calling context (activity)
      */
     public void loadAlarmData(Context context) {
@@ -336,6 +348,7 @@ class AlarmCoordinator {
 
     /**
      * Will play the alarm noise on repeat until stopAlarmNoise is called
+     *
      * @param context Calling context
      */
     public void playAlarmNoise(Context context) {
@@ -354,6 +367,7 @@ class AlarmCoordinator {
 
     /**
      * Stops playing the alarm ringing
+     *
      * @param context Calling context
      */
     public void stopAlarmNoise(Context context) {
@@ -366,6 +380,7 @@ class AlarmCoordinator {
 
     /**
      * Obtains the Alarm with a given UUID
+     *
      * @param UUID The UUID of the alarm to request
      * @return The alarm with specified UUID
      * @throws NoSuchElementException if the alarm could not be found
@@ -379,6 +394,7 @@ class AlarmCoordinator {
 
     /**
      * Obtains the Alarm with a given UUID
+     *
      * @param ID The PendingIntent UUID of the alarm to request
      * @return The alarm with specified UUID
      * @throws NoSuchElementException if the alarm could not be found
@@ -393,17 +409,19 @@ class AlarmCoordinator {
     /**
      * This function is called by the onReceive method of the BootReceiver. When called, it
      * should reschedule all of the PendingIntents.
+     *
      * @param context Context that is passed from BootReceiver
      */
-    public void rescheduleAlarms(Context context){
+    public void rescheduleAlarms(Context context) {
         loadAlarmData(context);
-        for(int i = 1; i < alarmList.size(); i++){
+        for (int i = 1; i < alarmList.size(); i++) {
             createNewAlarm(context, alarmList.get(i), true);
         }
     }
 
     /**
      * Adds intent to alarmPendingList. These are intents that will be used in the future to ring an alarm.
+     *
      * @param intent
      */
     synchronized public void addPendingAlarm(Intent intent) {
@@ -413,6 +431,7 @@ class AlarmCoordinator {
 
     /**
      * Starts the first intent in alarmPendingList ONLY if an alarm is not already running.
+     *
      * @param context
      */
     synchronized public void startPendingAlarm(Context context) {
@@ -429,6 +448,7 @@ class AlarmCoordinator {
     /**
      * Start the next intent and don't check if alarms are already running.
      * Only to be called by alarms that are already running when they finish!
+     *
      * @param context
      */
     synchronized public void nextPendingAlarm(Context context) {
@@ -444,6 +464,7 @@ class AlarmCoordinator {
 
     /**
      * Gets the current pending intent ID
+     *
      * @return
      */
     public int getCurrentPendingIntentID() {

@@ -9,5 +9,5 @@ package mobile.dp.velocityalarmclock;
  */
 
 public interface AlarmCoordinatorListener {
-    public void alarmChanged();
+    void alarmChanged();
 }
