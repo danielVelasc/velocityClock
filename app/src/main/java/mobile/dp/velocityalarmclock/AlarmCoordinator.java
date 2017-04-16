@@ -479,7 +479,7 @@ class AlarmCoordinator {
     /**
      * Gets the current pending intent ID
      *
-     * @return
+     * @return The current PendingIntent ID
      */
     public int getCurrentPendingIntentID() {
         if (alarmPendingList.size() > 0) {
@@ -488,11 +488,21 @@ class AlarmCoordinator {
         return -1;
     }
 
+    /**
+     * Adds currently active alarm notification to list.
+     *
+     * @param id ID of the active notification
+     */
     public void addAlarmNotification(int id) {
         Log.d(TAG, "Adding alarm notification");
         alarmNotificationList.add(id);
     }
 
+    /**
+     * Clears all alarm notifications with the IDs in alarmNotificationList
+     *
+     * @param context Calling application context
+     */
     public void clearAlarmNotifications(Context context) {
         NotificationManager notManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

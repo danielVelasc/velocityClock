@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by Fernando Valera on 2017-03-27.
  */
 
-public class IntentHolder implements Serializable {
+class IntentHolder implements Serializable {
     private static final long serialVersionUID = 394812374685943687L;
 
     private boolean mLaunchDialog;
@@ -18,7 +18,12 @@ public class IntentHolder implements Serializable {
     private int mAlarmID;
     private int mFlags;
 
-    public IntentHolder(Intent intent) {
+    /**
+     * Creates a new IntentHolder with Intent data
+     *
+     * @param intent The input Intent
+     */
+    IntentHolder(Intent intent) {
         if (intent != null) {
             mLaunchDialog = intent.getBooleanExtra(AlarmCoordinator.ALARM_LAUNCH_DIALOG, false);
             mAlarmName = intent.getStringExtra(AlarmCoordinator.ALARM_NAME);
@@ -31,6 +36,11 @@ public class IntentHolder implements Serializable {
         }
     }
 
+    /**
+     * Coverts data into Intent object
+     *
+     * @return The restored Intent
+     */
     public Intent getIntent() {
         Intent intent = new Intent();
         intent.putExtra(AlarmCoordinator.ALARM_LAUNCH_DIALOG, mLaunchDialog);

@@ -11,13 +11,19 @@ import java.util.ArrayList;
  * Created by ferna on 2017-03-27.
  */
 
-public class AlarmCoordinatorAppData implements Serializable {
+class AlarmCoordinatorAppData implements Serializable {
     private static final long serialVersionUID = 591435783475973445L;
 
     private ArrayList<Alarm> mAlarmList;
     private ArrayList<IntentHolder> mAlarmPendingList;
 
-    public AlarmCoordinatorAppData(ArrayList<Alarm> alarmList, ArrayList<Intent> alarmPendingList) {
+    /**
+     * Creates new AlarmCoordinatorAppData object
+     *
+     * @param alarmList An arrayList of Alarm objects to be saved
+     * @param alarmPendingList An arrayList of Intent objects to be saved
+     */
+    AlarmCoordinatorAppData(ArrayList<Alarm> alarmList, ArrayList<Intent> alarmPendingList) {
         mAlarmList = alarmList;
         mAlarmPendingList = new ArrayList<>();
 
@@ -26,11 +32,19 @@ public class AlarmCoordinatorAppData implements Serializable {
         }
     }
 
-    public ArrayList<Alarm> getAlarmList() {
+    /**
+     * Getter for retrieving Alarm list
+     * @return ArrayList of Alarm objects
+     */
+    ArrayList<Alarm> getAlarmList() {
         return mAlarmList;
     }
 
-    public ArrayList<Intent> getAlarmPendingList() {
+    /**
+     * Getter for retrieving Intent list
+     * @return ArrayList of Intent objects
+     */
+    ArrayList<Intent> getAlarmPendingList() {
         ArrayList<Intent> pendingIntents = new ArrayList<>();
 
         for (IntentHolder intentHolder : mAlarmPendingList) {

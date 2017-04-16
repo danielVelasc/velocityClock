@@ -41,14 +41,12 @@ public class SetAlarmFragment extends Fragment {
     Spinner freqSpin;
     EditText nameField, snoozeTime;
 
-    public static SetAlarmFragment newInstance() {
-        SetAlarmFragment fragment = new SetAlarmFragment();
-        Bundle args = new Bundle();
-        args.putInt(EXISTING_ALARM_POSITION, 0);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    /**
+     * Creates a new instance of SetAlarmFragment with a specified position in alarm list
+     *
+     * @param position The position in the alarm list
+     * @return An instance of SetAlarmFragment
+     */
     public static SetAlarmFragment newInstance(int position) {
         SetAlarmFragment fragment = new SetAlarmFragment();
         Bundle args = new Bundle();
@@ -65,6 +63,16 @@ public class SetAlarmFragment extends Fragment {
         }
     }
 
+    /**
+     * Inflates the set_alarm_fragment view and sets up listeners for buttons.
+     * Fields in the container are filled with previous alarm data if alarms
+     * are being modified.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (v == null){

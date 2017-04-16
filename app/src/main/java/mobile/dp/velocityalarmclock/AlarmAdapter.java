@@ -79,6 +79,15 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
         return 0;
     }
 
+    /**
+     * Updates the view at a specified position and creates a new view if it null
+     * Handles the case of clock_element (position == 0) and single_alarm_element (position > 0)
+     *
+     * @param position The position in the list
+     * @param convertView The view associated with the list item
+     * @param viewGroup The parent ViewGroup
+     * @return The updated view
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         List<Alarm> alarmList = AlarmCoordinator.getInstance().getAlarmList();
