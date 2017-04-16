@@ -15,13 +15,13 @@ import java.util.UUID;
  * @Date February 5th 2017
  */
 public class Alarm implements Serializable {
+    // Static member variables used for various utilities and functions
     public static final String TAG = "ALARM";
     static final String[] ALARM_FREQUENCY_TO_STRING = {"", "Daily", "Weekly"};
-
     static final int DEFAULT_SNOOZE = 60 * 1000;
-
     private static final long serialVersionUID = 697655753434998385L;
 
+    // The Alarm-specific member variables that define an alarm
     private String name;
     private String uuid; //The unique alarm id
     private int hourOfDay, minOfHour;

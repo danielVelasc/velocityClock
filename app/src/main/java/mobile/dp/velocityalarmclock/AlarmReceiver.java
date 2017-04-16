@@ -126,7 +126,6 @@ class IDGenerator implements Serializable {
     private static final long serialVersionUID = 183742938754926378L;
     private static final String ID_GENERATOR_FILE_NAME = "id-generator";
 
-    //TODO: Should probably be saved somewhere in case app is killed. Could also make the same as alarm id
     private final static AtomicInteger c = new AtomicInteger(0);
 
     /**

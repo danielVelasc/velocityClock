@@ -36,6 +36,12 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
     List<Alarm> alarmList;
     AlarmAdapterListener mListener;
 
+    /**
+     * Basic Constructor for AlarmAdapter that initializes member variables
+     * @param context
+     * @param resource
+     * @param items
+     */
     public AlarmAdapter(Context context, int resource, List<Alarm> items) {
         super(context, resource, items);
 
@@ -43,6 +49,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> implements AlarmCoordinato
         mListener = (AlarmAdapterListener)context;
     }
 
+    /**
+     * @return The number of elements in the alarmList
+     */
     @Override
     public int getCount() {
         return alarmList.size();

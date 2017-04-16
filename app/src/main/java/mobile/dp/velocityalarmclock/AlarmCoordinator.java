@@ -29,7 +29,8 @@ import java.util.NoSuchElementException;
  *          - aggregation (i.e. alarms will be maintained here)
  *          - serialization/deserialization
  *          Classes interested in keeping track of alarm updates should subscribe by calling the
- *          register method and implementing the corresponding interface.
+ *          register method and implementing the corresponding interface. This class implements
+ *          the singleton design pattern.
  * @since February 13, 2017
  */
 
@@ -65,8 +66,8 @@ class AlarmCoordinator {
     }
 
     /**
-     * Schedules a new alarm(s) in the system services. Additionally adds alarms to be kept track of.
-     *
+     * Schedules a new alarm(s) in the system services. Additionally adds alarms to be kept track
+     * of.
      * @param context
      * @param alarm
      */
@@ -239,24 +240,37 @@ class AlarmCoordinator {
         nextPendingAlarm(context);
     }
 
+    /**
+     * Notifies any listeners that the AlarmList has changed.
+     */
     void notifyAlarmChange() {
         for (AlarmCoordinatorListener listener : listeners)
             listener.alarmChanged();
     }
 
+    /**
+     * Registers a new listener by inserting it into the listeners list.
+     * @param listener The new listener to be registered.
+     */
     void registerListener(AlarmCoordinatorListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Returns the Alarm at a given position in the list.
+     * @param position index of the alarm to be returned
+     * @return The alarm at index of the alarmList indicated by position variable
+     */
     Alarm getAlarm(int position) {
         return alarmList.get(position);
     }
 
+    /**
+     * @return Gets the alarmList
+     */
     ArrayList<Alarm> getAlarmList() {
         return alarmList;
     }
-
-    //TODO Add method to serialize alarms
 
     /**
      * Saves alarmList and alarmPendingList to file in internal storage.

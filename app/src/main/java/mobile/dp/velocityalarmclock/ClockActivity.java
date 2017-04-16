@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+/**
+ * The main activity for the application, managing UI elements and making calls to
+ * the rest of the application's code.
+ */
 public class ClockActivity extends AppCompatActivity implements SetAlarmFragmentListener, AlarmAdapterListener
 {
     private static final String TAG = "CLOCK_ACTIVITY";
@@ -23,6 +27,10 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
     ListView alarmListView;
     boolean alarmDialogFragmentCreated;
 
+    /**
+     * Performs numerous initialization-related tasks
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +59,13 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         alarmCoordinator.registerListener(alarmAdapter);
     }
 
+    /**
+     * onStart method that clears any lingering notifications and checks to see if the alarm launch
+     * dialog is waiting to be displayed.
+     */
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart - clearing notifications and checking for alarm launch dialog");
 
         AlarmCoordinator alarmCoordinator = AlarmCoordinator.getInstance();
 
@@ -73,7 +84,6 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
             }
             */
 
-            Log.d(TAG, "onStart - creating new alarm launch dialog");
             alarmDialogFragmentCreated = true;
             // alarmCoordinator.setLastAlarmPending(getIntent());
 

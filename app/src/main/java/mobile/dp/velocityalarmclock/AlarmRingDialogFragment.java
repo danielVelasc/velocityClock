@@ -23,6 +23,12 @@ public class AlarmRingDialogFragment extends DialogFragment {
     Alarm mAlarm;
     boolean mAlarmDismissed = false;
 
+    /**
+     * Generates a dialog for the alarm that is scheduled to go off; checks the pending
+     * intent of the alarm to make sure that the alarm has not been deleted.
+     * @param savedInstanceState
+     * @return the generated dialog
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mClockActivity = (ClockActivity) getActivity();
@@ -67,6 +73,9 @@ public class AlarmRingDialogFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Manages the Alarm Dialog when the application is stopped.
+     */
     @Override
     public void onStop() {
         try {

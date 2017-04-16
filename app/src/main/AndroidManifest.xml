@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Defines the Receiver used for Alarm Broadcasts-->
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
@@ -29,7 +30,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- For Restart Functionality -->
+        <!-- Defines the Receiver used for Restart Functionality -->
         <receiver
             android:name=".BootReceiver"
             android:enabled="true" >
