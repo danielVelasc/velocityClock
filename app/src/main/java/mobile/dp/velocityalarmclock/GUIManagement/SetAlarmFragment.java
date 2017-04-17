@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.GUIManagement;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -19,6 +19,10 @@ import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import java.util.Calendar;
+
+import mobile.dp.velocityalarmclock.Alarm;
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
+import mobile.dp.velocityalarmclock.R;
 
 /**
  * @author Sharon Wang

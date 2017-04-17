@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.AlarmManagement;
 
 /**
  * @author Daniel Velasco

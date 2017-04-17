@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.GUIManagement;
 
 /**
  * Simple Interface to be implemented by classes that need to be notified when

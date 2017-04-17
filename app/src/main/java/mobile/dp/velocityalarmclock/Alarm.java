@@ -1,12 +1,16 @@
 package mobile.dp.velocityalarmclock;
 
+import android.content.Context;
 import android.util.Log;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Implementation of an Alarm and its attributes
@@ -18,7 +22,7 @@ public class Alarm implements Serializable {
     // Static member variables used for various utilities and functions
     public static final String TAG = "ALARM";
     static final String[] ALARM_FREQUENCY_TO_STRING = {"", "Daily", "Weekly"};
-    static final int DEFAULT_SNOOZE = 60 * 1000;
+    public static final int DEFAULT_SNOOZE = 60 * 1000;
     private static final long serialVersionUID = 697655753434998385L;
 
     // The Alarm-specific member variables that define an alarm
@@ -294,4 +298,3 @@ public class Alarm implements Serializable {
         return 0;
     }
 }
-

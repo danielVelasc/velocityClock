@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ClockActivity"
+            android:name=".GUIManagement.ClockActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
@@ -22,7 +22,7 @@
 
         <!-- Defines the Receiver used for Alarm Broadcasts-->
         <receiver
-            android:name=".AlarmReceiver"
+            android:name=".AlarmManagement.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -32,7 +32,7 @@
 
         <!-- Defines the Receiver used for Restart Functionality -->
         <receiver
-            android:name=".BootReceiver"
+            android:name=".AlarmManagement.BootReceiver"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.GUIManagement;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,6 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
+import mobile.dp.velocityalarmclock.AlarmManagement.ApplicationLifecycleManager;
+import mobile.dp.velocityalarmclock.IDGenerator;
+import mobile.dp.velocityalarmclock.R;
 
 /**
  * The main activity for the application, managing UI elements and making calls to
@@ -207,3 +212,5 @@ public class ClockActivity extends AppCompatActivity implements SetAlarmFragment
         createSetAlarmFragment(position);
     }
 }
+
+

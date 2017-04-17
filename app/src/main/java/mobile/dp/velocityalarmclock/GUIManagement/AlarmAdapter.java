@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.GUIManagement;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -20,6 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import mobile.dp.velocityalarmclock.Alarm;
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinatorListener;
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
+import mobile.dp.velocityalarmclock.R;
 
 /**
  * @author Daniel Velasco

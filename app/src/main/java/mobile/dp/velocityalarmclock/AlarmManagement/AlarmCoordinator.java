@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.AlarmManagement;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
 
+import mobile.dp.velocityalarmclock.Alarm;
+import mobile.dp.velocityalarmclock.IDGenerator;
+import mobile.dp.velocityalarmclock.R;
+
 /**
  * @author Daniel Velasco
  * @version 1.0
@@ -34,7 +38,7 @@ import java.util.NoSuchElementException;
  * @since February 13, 2017
  */
 
-class AlarmCoordinator {
+public class AlarmCoordinator {
     public final static String ALARM_LAUNCH_DIALOG = "alarm-launch-dialog";
     public final static String ALARM_NAME = "alarm-name";
     public final static String ALARM_ID = "alarm-id";
@@ -61,7 +65,7 @@ class AlarmCoordinator {
         listeners = new ArrayList<>();
     }
 
-    protected static AlarmCoordinator getInstance() {
+    public static AlarmCoordinator getInstance() {
         return instance;
     }
 
@@ -71,7 +75,7 @@ class AlarmCoordinator {
      * @param context
      * @param alarm
      */
-    void createNewAlarm(Context context, Alarm alarm) {
+    public void createNewAlarm(Context context, Alarm alarm) {
         createNewAlarm(context, alarm, false);
     }
 
@@ -81,7 +85,7 @@ class AlarmCoordinator {
      * @param context
      * @param alarm
      */
-    void createNewAlarm(Context context, Alarm alarm, boolean appRestart) {
+    public void createNewAlarm(Context context, Alarm alarm, boolean appRestart) {
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long[] times = alarm.calcInitialAlarmTime();
         Alarm.AlarmFrequency freq = alarm.getAlarmFrequency();
@@ -127,7 +131,7 @@ class AlarmCoordinator {
      * @param modifiedAlarm the modify fragment makes a temporary alarm object that should passed
      *                      to this method
      */
-    void modifyAlarm(int i, Context passedContext, Alarm modifiedAlarm) {
+    public void modifyAlarm(int i, Context passedContext, Alarm modifiedAlarm) {
         // Step 1: Get the current alarm from the alarmList and modify it in accordance with the modifiedAlarm
         // TODO This might not be the correct way of getting the alarm
         Alarm alarmToBeModified = alarmList.get(i);
@@ -165,7 +169,7 @@ class AlarmCoordinator {
         notifyAlarmChange();
     }
 
-    void deleteAlarm(int i, Context passedContext) {
+    public void deleteAlarm(int i, Context passedContext) {
         deleteAlarm(alarmList.get(i), passedContext);
     }
 
@@ -252,7 +256,7 @@ class AlarmCoordinator {
      * Registers a new listener by inserting it into the listeners list.
      * @param listener The new listener to be registered.
      */
-    void registerListener(AlarmCoordinatorListener listener) {
+    public void registerListener(AlarmCoordinatorListener listener) {
         listeners.add(listener);
     }
 
@@ -261,14 +265,14 @@ class AlarmCoordinator {
      * @param position index of the alarm to be returned
      * @return The alarm at index of the alarmList indicated by position variable
      */
-    Alarm getAlarm(int position) {
+    public Alarm getAlarm(int position) {
         return alarmList.get(position);
     }
 
     /**
      * @return Gets the alarmList
      */
-    ArrayList<Alarm> getAlarmList() {
+    public ArrayList<Alarm> getAlarmList() {
         return alarmList;
     }
 

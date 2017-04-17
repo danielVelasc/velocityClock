@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.AlarmManagement;
 
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;

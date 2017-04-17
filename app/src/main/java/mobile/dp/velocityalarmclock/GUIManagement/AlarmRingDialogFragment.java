@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.GUIManagement;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +9,10 @@ import android.util.Log;
 
 import java.util.Calendar;
 import java.util.NoSuchElementException;
+
+import mobile.dp.velocityalarmclock.Alarm;
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
+import mobile.dp.velocityalarmclock.R;
 
 /**
  * This fragment opens a dialog box displaying the alarm that went off and options to snooze and cancel

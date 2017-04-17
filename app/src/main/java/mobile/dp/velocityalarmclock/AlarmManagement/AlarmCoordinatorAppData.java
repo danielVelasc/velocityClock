@@ -1,9 +1,12 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.AlarmManagement;
 
 import android.content.Intent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import mobile.dp.velocityalarmclock.Alarm;
+import mobile.dp.velocityalarmclock.AlarmManagement.IntentHolder;
 
 /**
  * Container for data that must be saved and loaded in a permanent location when required by the alarm coordinator.

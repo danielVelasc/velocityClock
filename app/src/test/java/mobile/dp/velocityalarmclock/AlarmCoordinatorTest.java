@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
 
 import static org.junit.Assert.*;
 

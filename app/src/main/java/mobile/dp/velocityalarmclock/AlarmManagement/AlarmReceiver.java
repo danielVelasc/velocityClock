@@ -1,4 +1,4 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.AlarmManagement;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
+import mobile.dp.velocityalarmclock.AlarmManagement.ApplicationLifecycleManager;
+import mobile.dp.velocityalarmclock.GUIManagement.ClockActivity;
+import mobile.dp.velocityalarmclock.IDGenerator;
+import mobile.dp.velocityalarmclock.R;
 
 /**
  * This class handles the tasks which should be done when an alarm reaches its time
@@ -119,47 +121,3 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 }
 
-/**
- * A singleton class to keep track of notification id's
- */
-class IDGenerator implements Serializable {
-    private static final long serialVersionUID = 183742938754926378L;
-    private static final String ID_GENERATOR_FILE_NAME = "id-generator";
-
-    private final static AtomicInteger c = new AtomicInteger(0);
-
-    /**
-     * @return a unique id.
-     */
-    public static int getID() {
-        return c.incrementAndGet();
-    }
-
-    public static void saveID(Context context) {
-        ObjectOutputStream outputStream;
-
-        try {
-            outputStream =  new ObjectOutputStream(context.openFileOutput(ID_GENERATOR_FILE_NAME, Context.MODE_PRIVATE));
-
-            outputStream.writeInt(c.intValue());
-
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void loadID(Context context) {
-        ObjectInputStream inputStream;
-
-        try {
-            inputStream =  new ObjectInputStream(context.openFileInput(ID_GENERATOR_FILE_NAME));
-
-            c.set(inputStream.readInt());
-
-            inputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}

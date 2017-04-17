@@ -1,8 +1,10 @@
-package mobile.dp.velocityalarmclock;
+package mobile.dp.velocityalarmclock.AlarmManagement;
 
 import android.content.Intent;
 
 import java.io.Serializable;
+
+import mobile.dp.velocityalarmclock.AlarmManagement.AlarmCoordinator;
 
 /**
  * Serializable object that saves important Intent data. Allows for converting from IntentHolder to Intent
