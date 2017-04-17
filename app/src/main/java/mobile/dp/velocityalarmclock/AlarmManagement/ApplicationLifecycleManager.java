@@ -20,11 +20,6 @@ import android.os.Bundle;
  * go between the resumed and paused states -- for example when the device goes to
  * sleep, when an activity result is delivered, when a new intent is delivered --
  * so the code in these methods should be fairly lightweight.
- *
- *
- * **** Source: http://stackoverflow.com/questions/5504632/how-can-i-tell-if-android-app-is-running-in-the-foreground ****
- *
- *
  * */
 public class ApplicationLifecycleManager implements ActivityLifecycleCallbacks {
 
